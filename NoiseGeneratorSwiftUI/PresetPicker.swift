@@ -1,32 +1,19 @@
-//
-//  PresetPicker.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/11/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct PresetPicker: View {
     
-    @State private var presetIndex = 4
+    @State var title = "EFFECT TITLE"
     @State var showPresets = false
     
-    /*
-    var presets: [Preset] = [Preset(name:"Cathedral"), Preset(name:"Large Hall"), Preset(name:"Large Hall 2"),
-    Preset(name:"Large Room"), Preset(name:"Large Room 2"), Preset(name:"Medium Chamber"),
-    Preset(name:"Medium Hall"), Preset(name:"Medium Hall 2"), Preset(name:"Medium Hall 3"),
-    Preset(name:"Medium Room"), Preset(name:"Plate"), Preset(name:"Small Room")]
-     */
+    @Binding var isBypassed : Bool
+    @Binding var presetIndex : Int
+    @Binding var knobModel : KnobCompleteModel
+    @Binding var presets: [String]
     
-    var presets = ["Cathedral", "Large Hall", "Large Hall 2",
-    "Large Room", "Large Room 2", "Medium Chamber",
-    "Medium Hall", "Medium Hall 2", "Medium Hall 3",
-    "Medium Room", "Plate", "Small Room"]
     
     var body: some View {
         GeometryReader{ geometry in
+            
         VStack{
             if(self.showPresets)
             {
@@ -38,7 +25,7 @@ struct PresetPicker: View {
                             self.showPresets.toggle()
                         }, label: {
                             Text(self.presets[n])
-                                .font(.system(size: 26))
+                                .font(.system(size: 20))
                                 .bold()
                                 .foregroundColor(Color.white)
                         })
@@ -51,8 +38,63 @@ struct PresetPicker: View {
             }
             }
             else{
-                
-                
+                ZStack
+                {
+                    VStack {
+                        HStack {
+                            Button(action: {self.isBypassed.toggle()} ){
+                                if(!self.isBypassed){
+                                Circle()
+                                    .fill(Color.init(red: 0.2, green: 0.2, blue: 0.2))
+                                    .frame(width:geometry.size.width * 0.09,
+                                           height:geometry.size.width * 0.09)
+                                    .overlay(
+                                    Image(systemName: "power")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(Color.yellow)
+                                    )
+                                }
+                                else{
+                                    Circle()
+                                    .fill(Color.init(red: 0.2, green: 0.2, blue: 0.2))
+                                    .frame(width:geometry.size.width * 0.09,
+                                           height:geometry.size.width * 0.09)
+                                    .overlay(
+                                    Image(systemName: "power")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(Color.gray)
+                                    )
+                                }
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .padding(5)
+                VStack{
+                Spacer()
+                VStack {
+                    Text(self.knobModel.display)
+                        .font(.system(size: 14))
+                    KnobComplete(knobModel: self.$knobModel)
+                        .frame(maxWidth:geometry.size.width * 0.3)
+                        .frame(maxHeight:geometry.size.width * 0.3)
+                    Text(self.knobModel.name)
+                        .font(.system(size: 14))
+                        .bold()
+                        .foregroundColor(Color.black)
+                    
+                }
+                .frame(width:geometry.size.width * 0.35)
+                Spacer()
+                HStack {
+                    Text(self.title)
+                        .font(.system(size: 16))
+                        .bold()
+                        .foregroundColor(Color.white)
+                }
+                .frame(minWidth: 0,maxWidth: .infinity,minHeight: 30)
+                .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
                 HStack {
                     Spacer()
                     Button(action: {
@@ -60,75 +102,56 @@ struct PresetPicker: View {
                         {
                             self.presetIndex = self.presetIndex - 1
                         }
-                    }, label: {
-                        Image(systemName: "chevron.left.circle.fill")
-                            .font(.system(size: 26))
-                            .foregroundColor(Color.white)
-                    })
-                    .frame(minWidth: 0,maxWidth: 40)
+                    }){
+                        
+                        Text("Prev.")
+                    }
+                    .frame(minWidth: 50)
+                    Spacer()
                     Button(action: {
                         self.showPresets.toggle()
                     }, label: {
                         Text(self.presets[self.presetIndex])
-                            .font(.system(size: 26))
+                            .font(.system(size: 16))
                             .bold()
                             .foregroundColor(Color.white)
                     })
                     .frame(minWidth: 0,maxWidth: .infinity)
+                    Spacer()
                     Button(action: {
                         if(self.presetIndex < self.presets.count - 1)
                         {
                             self.presetIndex = self.presetIndex + 1
                         }
                     }, label: {
-                        Image(systemName: "chevron.right.circle.fill")
-                        .font(.system(size: 26))
-                        .foregroundColor(Color.white)
+                        Text("Next")
                     })
-                    .frame(minWidth: 0,maxWidth: 40)
+                    .frame(minWidth: 50)
+                    //.frame(minWidth: 0,maxWidth: 40)
                     Spacer()
                 }
-                .frame(minHeight: 40)
+                .frame(minHeight: 30)
                 .background(Color.gray)
-                Spacer()
-                VStack {
-                    
-                    Text("Value")
-                    KnobComplete(knobModel: .constant(KnobCompleteModel()))
-                        .frame(maxHeight:geometry.size.width * 0.3)
-                    Text("DRY/WET")
-                        .font(.system(size: 14))
-                        .bold()
-                        .foregroundColor(Color.black)
-                    
-                }
-                .frame(width:geometry.size.width * 0.3)
                 
-                Spacer()
-                HStack {
-                    Text("Apple Simple Reverb")
-                        .font(.system(size: 26))
-                        .bold()
-                        .foregroundColor(Color.white)
-                        
-                        
-                }
-                .frame(minWidth: 0,maxWidth: .infinity)
-                .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
-                
+                    }
             }
-
+            }
             }
             .padding(5)
             .border(Color.black, width: 5)
+            
         }
     }
 }
 
 struct PresetPicker_Previews: PreviewProvider {
     static var previews: some View {
-        PresetPicker()
-        .previewLayout(.fixed(width: 400, height: 280))
+        PresetPicker(isBypassed: .constant(false),
+                     presetIndex: .constant(0),
+            knobModel: .constant(KnobCompleteModel()),
+                     presets: .constant(["Preset 1", "Preset 2", "Preset 3",
+                                        "Preset 4", "Preset 5", "Preset 6"]))
+        .previewLayout(.fixed(width: 280, height: 220))
     }
 }
 

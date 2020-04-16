@@ -1,14 +1,4 @@
-//
-//  TextPicker.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/10/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
-
-
 
 struct TextPicker: View {
     
@@ -19,7 +9,6 @@ struct TextPicker: View {
     "Large Room", "Large Room 2", "Medium Chamber",
     "Medium Hall", "Medium Hall 2", "Medium Hall 3",
     "Medium Room", "Plate", "Small Room"]
-    
     
     var body: some View {
         VStack{

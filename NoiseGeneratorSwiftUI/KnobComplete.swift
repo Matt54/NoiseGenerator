@@ -1,22 +1,10 @@
-//
-//  KnobComplete.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/9/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
+import Combine
 
 struct KnobComplete: View {
-    //@ObservedObject var knobModel = KnobCompleteModel()
-    
-    //@Binding var percentRotated: Double// = 1.0
-    //@Binding var realModValue: Double// = 1.0
-    //@Binding var realModulationRange: Double// = 1.0
-    //@Binding var modSelected: Bool// = 1.0
     
     @Binding var knobModel : KnobCompleteModel
+    
     
     var body: some View {
         GeometryReader{ geometry in
@@ -58,7 +46,8 @@ struct KnobComplete: View {
     }
 }
 
-final class KnobCompleteModel : ObservableObject{
+class KnobCompleteModel : ObservableObject{
+    
     @Published var percentRotated = 0.0{
     didSet {
         calculateRealValue()
@@ -76,8 +65,6 @@ final class KnobCompleteModel : ObservableObject{
         else{
             realModValue = modulationValue + percentRotated
         }
-        
-        //display = String(format: "%.1f", realModValue * range) + unit
     }
     
     func calculateRealRange(){
@@ -91,36 +78,22 @@ final class KnobCompleteModel : ObservableObject{
             realModulationRange = attemptedModulationRange
         }
     }
-    
-    
+
     @Published var modSelected = false
     @Published var realModValue = 0.0
+    
+    //This value will be constantly adjusted by the modulation
     @Published var modulationValue = 0.0
+    
     @Published var realModulationRange = 0.0
     @Published var attemptedModulationRange = 0.0
     
     @Published var name = "Parameter"
     @Published var range = 1.0
     @Published var unit = ""
-    
     @Published var display = "Display"
-    
-    //var timer = Timer()
-    
-    @objc func timerAction(){
-        modulationValue = modulationValue + (realModulationRange / 200)
-        if(modulationValue > realModulationRange){
-            modulationValue = 0
-        }
-        calculateRealValue()
-        calculateRealRange()
-    }
 
     init(){
-        /*
-        timer.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: 0.005, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-         */
         calculateRealValue()
         calculateRealRange()
     }
