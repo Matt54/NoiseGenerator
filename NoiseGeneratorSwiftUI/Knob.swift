@@ -1,11 +1,3 @@
-//
-//  Knob.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/7/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct Knob: View {

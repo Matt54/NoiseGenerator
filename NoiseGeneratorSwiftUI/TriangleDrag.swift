@@ -1,11 +1,3 @@
-//
-//  TriangleDrag.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/1/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct TriangleDrag: View {

@@ -1,11 +1,3 @@
-//
-//  NoiseModel.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 3/29/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import AudioKit
 import Combine
 
@@ -51,190 +43,23 @@ final class NoiseModel : ObservableObject{
     
     //Audio Effects
     var audioEffects : [AKInput] = []
-    @Published var allControlEffects: [AudioEffect] = []
     
-    class ObservableArray<T>: ObservableObject {
-
-        @Published var array:[T] = []
-        
-        var cancellables = [AnyCancellable]()
-
-        init(array: [T]) {
-            self.array = array
-
-        }
-
-        func observeChildrenChanges<T: ObservableObject>() -> ObservableArray<T> {
-            let array2 = array as! [T]
-            array2.forEach({
-                let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
-
-                // Important: You have to keep the returned value allocated,
-                // otherwise the sink subscription gets cancelled
-                self.cancellables.append(c)
-            })
-            return self as! ObservableArray<T>
-        }
-    }
-    
+    @Published var allControlEffects = [AudioEffect]()//: [AudioEffect] = []
     @Published var twoControlEffects = [TwoControlAudioEffect]()
-    
-    
-    @Published var twoControlEffectsStore : ObservableArray<TwoControlAudioEffect> = ObservableArray(array:[])
-    
-    class AudioEffect: Identifiable, ObservableObject{
-        
-        var id: UUID = UUID()
-        var effect: AKInput
-        
-        @Published var isBypassed = false{
-            didSet{
-                setBypass()
-            }
-        }
-
-        // Position in the audio effect chain
-        @Published var position: Int
-        
-        // Is the effect currently shown on GUI
-        @Published var isDisplayed = true
-        
-        init(pos: Int, toggle: AKToggleable, node: AKInput ){
-            position = pos
-            toggleControls = toggle
-            effect = node
-            //setBypass()
-        }
-
-        var toggleControls: AKToggleable
-        
-        func toggleDisplayed(){
-            isDisplayed.toggle()
-        }
-        
-        func setBypass(){
-            if(isBypassed){
-                toggleControls.stop()
-            }
-            else{
-                toggleControls.start()
-            }
-        }
-        
-    }
-    
-    public class TwoControlAudioEffect: AudioEffect{
-        
-        override init(pos: Int, toggle: AKToggleable, node: AKInput){
-            super.init(pos: pos, toggle: toggle, node: node)
-        }
-        @Published var control1 = KnobCompleteModel(){
-            didSet{ setControl1() }
-        }
-        @Published var control2 = KnobCompleteModel(){
-            didSet{ setControl2() }
-        }
-        func setControl1(){}
-        func setControl2(){}
-    }
-    
-    class MoogLadderAudioEffect: TwoControlAudioEffect{
-        var filter = AKMoogLadder()
-        init(pos: Int){
-            super.init(pos: pos, toggle: filter, node: filter)
-            setDefaults()
-            setControl1()
-            setControl2()
-        }
-        func setDefaults(){
-            filter.rampDuration = 0.0
-            control1.name = "Cutoff"
-            control1.range = 19980
-            control1.unit = " Hz"
-            //control1.percentRotated = 0.0
-            control2.name = "Resonance"
-        }
-        override func setControl1(){
-            filter.cutoffFrequency = 8 + pow(control1.realModValue, 5) * control1.range
-            control1.display = String(format: "%.1f", 8 + pow(control1.percentRotated, 5) * control1.range) + control1.unit
-        }
-        override func setControl2(){
-            filter.resonance = control2.realModValue * control2.range
-            control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
-        }
-    }
-    
-    //@Published var myFilter = MoogLadderAudioEffect(pos: 1)
-    
-    
-    //FILTER
-    /*
-    var lowPassFilter = AKMoogLadder() //AKLowPassFilter()
-    @Published var filterDisplayed = true
-    @Published var filterBypassed = false {
-        didSet{ setLowPassBypass() }
-    }
-    @Published var lowPassCutoffControl = KnobCompleteModel(){
-        didSet{setLowPassCutoff()}
-    }
-    @Published var lowPassResonanceControl = KnobCompleteModel(){
-        didSet{setLowPassResonance()}
-    }
-    func toggleFilterDisplay(){
-        filterDisplayed.toggle()
-    }
-    */
-    
-    //TREMOLO
-    var tremolo = AKTremolo()
-    @Published var tremoloDisplayed = false;
-    @Published var tremoloBypassed = false {
-        didSet{ setTremoloBypass() }
-    }
-    @Published var tremoloFrequencyControl = KnobCompleteModel(){
-        didSet{setTremoloFrequency()}
-    }
-    @Published var tremoloDepthControl = KnobCompleteModel(){
-        didSet{setTremoloDepth()}
-    }
-    func toggleTremoloDisplay(){
-        tremoloDisplayed.toggle()
-    }
-    
-    //REVERB
-    var reverb = AKReverb()
-    @Published var reverbDisplayed = false;
-    @Published var reverbBypassed = false {
-        didSet{ setReverbBypass() }
-    }
-    @Published var reverbDryWetControl = KnobCompleteModel(){
-        didSet{setReverbDryWet()}
-    }
-    func toggleReverbDisplay(){
-        reverbDisplayed.toggle()
-    }
-    @Published var reverbPresetIndex = 0{
-        didSet{setReverbPreset()}
-    }
-    @Published var reverbPresets = ["Cathedral", "Large Hall", "Large Hall 2",
-    "Large Room", "Large Room 2", "Medium Chamber",
-    "Medium Hall", "Medium Hall 2", "Medium Hall 3",
-    "Medium Room", "Plate", "Small Room"]
+    @Published var oneControlWithPresetsEffects = [OneControlWithPresetsAudioEffect]()
     
     //LIMITER
     var limiter = AKPeakLimiter()
     
     init(){
-        
-        
         getAllAudioInputs()
         setupInputAudioChain()
         connectInputToEffectChain()
 
-        createNewEffect(pos: allControlEffects.count, effectNumber: 1)
+        createNewEffect(pos: allControlEffects.count, effectNumber: 2) //2 is AKTremolo
+        createNewEffect(pos: allControlEffects.count, effectNumber: 1) //1 is AKMoogFilter
+        createNewEffect(pos: allControlEffects.count, effectNumber: 3) //3 is AKReverb
         
-        addEffectToAudioChain(effect: tremolo)
-        addEffectToAudioChain(effect: reverb)
         addEffectToAudioChain(effect: limiter)
         
         setupEffectAudioChain()
@@ -245,9 +70,6 @@ final class NoiseModel : ObservableObject{
         toggleSound()
         setAllAmplitudes()
         setupLimiter()
-        setupReverb()
-        setupTremolo()
-        //setupLowPassFilter()
         
 
         //START AUDIOKIT
@@ -263,8 +85,7 @@ final class NoiseModel : ObservableObject{
         Audiobus.start()
         
         //periodicFunction.start()
-
-        }
+    }
     
     func getAllAudioInputs(){
         addInputToAudioChain(input: whiteNoise)
@@ -302,19 +123,20 @@ final class NoiseModel : ObservableObject{
     }
     
     func createNewEffect(pos: Int, effectNumber: Int){
-        
-        let myFilter = getEffectType(pos: pos, effectNumber: effectNumber)
-            //MoogLadderAudioEffect(pos: effectNumber)
-        
-        addEffectToAudioChain(effect: myFilter.effect)
-        addEffectToControlArray(effect: myFilter)
-        allControlEffects.append(myFilter)
+        let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
+        addEffectToAudioChain(effect: audioEffect.effect)
+        addEffectToControlArray(effect: audioEffect)
+        allControlEffects.append(audioEffect)
     }
     
     func getEffectType(pos: Int, effectNumber: Int) -> AudioEffect{
         switch effectNumber{
         case 1:
             return MoogLadderAudioEffect(pos: pos)
+        case 2:
+            return TremoloAudioEffect(pos: pos)
+        case 3:
+            return AppleReverbAudioEffect(pos: pos)
         default:
             print("I have an unexpected case.")
             return MoogLadderAudioEffect(pos: effectNumber)
@@ -325,6 +147,10 @@ final class NoiseModel : ObservableObject{
         if let myEffect = effect as? TwoControlAudioEffect {
             // obj is a string array. Do something with stringArray
             twoControlEffects.append(myEffect)
+        }
+        else if let myEffect = effect as? OneControlWithPresetsAudioEffect {
+            // obj is a string array. Do something with stringArray
+            oneControlWithPresetsEffects.append(myEffect)
         }
     }
     
@@ -338,157 +164,6 @@ final class NoiseModel : ObservableObject{
     }
     func resetGain(){
         limiter.preGain = 0 // dB
-    }
-    
-    /*
-    func setupLowPassFilter(){
-        lowPassCutoffControl.name = "Cutoff"
-        lowPassCutoffControl.range = 19980//20000
-        lowPassCutoffControl.unit = " Hz"
-        lowPassCutoffControl.percentRotated = 0.0
-        lowPassCutoffControl.modSelected = true
-        lowPassCutoffControl.attemptedModulationRange = 0.5
-        
-        lowPassResonanceControl.name = "Resonance"
-        
-        lowPassFilter.rampDuration = 0.0
-        
-        setLowPassCutoff()
-        setLowPassResonance()
-        setLowPassBypass()
-    }
-    func setLowPassCutoff(){
-        //lowPassFilter.cutoffFrequency = lowPassCutoffControl.realModValue * lowPassCutoffControl.range
-        lowPassFilter.cutoffFrequency = 8 + pow(lowPassCutoffControl.realModValue, 5) * lowPassCutoffControl.range
-        lowPassCutoffControl.display = String(format: "%.1f", 8 + pow(lowPassCutoffControl.percentRotated, 5) * lowPassCutoffControl.range) + lowPassCutoffControl.unit
-    }
-    func setLowPassResonance(){
-        lowPassFilter.resonance = lowPassResonanceControl.realModValue * lowPassResonanceControl.range
-        lowPassResonanceControl.display = String(format: "%.1f", lowPassResonanceControl.percentRotated * lowPassResonanceControl.range) + lowPassResonanceControl.unit
-    }
-    func setLowPassBypass(){
-        if(filterBypassed){
-            lowPassFilter.stop()
-        }
-        else{
-            lowPassFilter.start()
-        }
-    }
-    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
-        print("hello world")
-        shared.modulateLowPassCutoff()
-    }
-    func modulateLowPassCutoff(){
-        
-        //lowPassCutoffControl.stepModulationValue()
-        
-        lowPassCutoffControl.modulationValue = lowPassCutoffControl.modulationValue + (lowPassCutoffControl.realModulationRange / 200)
-        if(lowPassCutoffControl.modulationValue > lowPassCutoffControl.realModulationRange){
-            lowPassCutoffControl.modulationValue = 0
-        }
-        lowPassCutoffControl.calculateRealValue()
-        lowPassCutoffControl.calculateRealRange()
-        //lowPassCutoffControl.objectWillChange.send()
-        setLowPassCutoff()
-        
-        self.objectWillChange.send()
-    }
-    */
-    
-    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
-        print("hello world")
-        //shared.modulateLowPassCutoff()
-    }
-    
-    func setupTremolo(){
-        tremoloDepthControl.name = "Depth"
-        tremoloDepthControl.percentRotated = 0.0
-        
-        tremoloFrequencyControl.name = "Frequency"
-        tremoloFrequencyControl.range = 20
-        tremoloFrequencyControl.unit = " Hz"
-        tremoloFrequencyControl.percentRotated = 0.4
-        
-        setTremoloDepth()
-        setTremoloFrequency()
-        setTremoloBypass()
-    }
-    func setTremoloDepth(){
-        tremolo.depth = tremoloDepthControl.realModValue * tremoloDepthControl.range
-        tremoloDepthControl.display = String(format: "%.1f", tremoloDepthControl.realModValue * tremoloDepthControl.range) + tremoloDepthControl.unit
-    }
-    
-    func setTremoloFrequency(){
-        tremolo.frequency = tremoloFrequencyControl.realModValue * tremoloFrequencyControl.range
-        tremoloFrequencyControl.display = String(format: "%.1f", tremoloFrequencyControl.realModValue * tremoloFrequencyControl.range) + tremoloFrequencyControl.unit
-    }
-    func setTremoloBypass(){
-        if(tremoloBypassed){
-            tremolo.stop()
-        }
-        else{
-            tremolo.start()
-        }
-    }
-    
-    
-    /*
-    func changeReverb(){
-        reverb.dryWetMix = reverbDryWet
-    }
-    */
-    
-    func setupReverb(){
-        reverbDryWetControl.name = "Dry/Wet"
-        reverbDryWetControl.unit = "%"
-        setReverbDryWet()
-        setReverbPreset()
-        setReverbBypass()
-    }
-    func setReverbDryWet(){
-        reverb.dryWetMix = reverbDryWetControl.realModValue * reverbDryWetControl.range
-        reverbDryWetControl.display = String(format: "%.0f", reverbDryWetControl.realModValue * reverbDryWetControl.range * 100) + reverbDryWetControl.unit
-    }
-    func setReverbBypass(){
-        if(reverbBypassed){
-            reverb.stop()
-        }
-        else{
-            reverb.start()
-        }
-    }
-    func setReverbPreset(){
-        switch reverbPresets[reverbPresetIndex]{
-        case "Cathedral":
-            reverb.loadFactoryPreset(.cathedral)
-        case "Large Hall":
-            reverb.loadFactoryPreset(.largeHall)
-        case "Large Hall 2":
-            reverb.loadFactoryPreset(.largeHall2)
-        case "Large Room":
-            reverb.loadFactoryPreset(.largeRoom)
-        case "Large Room 2":
-            reverb.loadFactoryPreset(.largeRoom2)
-        case "Medium Chamber":
-            reverb.loadFactoryPreset(.mediumChamber)
-        case "Medium Hall":
-            reverb.loadFactoryPreset(.mediumHall)
-        case "Medium Hall 2":
-            reverb.loadFactoryPreset(.mediumHall2)
-        case "Medium Hall 3":
-            reverb.loadFactoryPreset(.mediumHall3)
-        case "Medium Room":
-            reverb.loadFactoryPreset(.mediumRoom)
-        case "Plate":
-            reverb.loadFactoryPreset(.plate)
-        case "Small Room":
-            reverb.loadFactoryPreset(.smallRoom)
-        default:
-            print("Error - reverb not found")
-        }
-        
-        
-        
     }
 
     func toggleSound(){
@@ -534,5 +209,33 @@ final class NoiseModel : ObservableObject{
         pinkNoise.start()
         brownNoise.start()
     }
+    
+    /*
+    KEEP THIS MODULATION IDEA
+    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
+        print("hello world")
+        shared.modulateLowPassCutoff()
+    }
+
+    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
+        print("hello world")
+        shared.modulateLowPassCutoff()
+    }
+    func modulateLowPassCutoff(){
+        
+        //lowPassCutoffControl.stepModulationValue()
+        
+        lowPassCutoffControl.modulationValue = lowPassCutoffControl.modulationValue + (lowPassCutoffControl.realModulationRange / 200)
+        if(lowPassCutoffControl.modulationValue > lowPassCutoffControl.realModulationRange){
+            lowPassCutoffControl.modulationValue = 0
+        }
+        lowPassCutoffControl.calculateRealValue()
+        lowPassCutoffControl.calculateRealRange()
+        //lowPassCutoffControl.objectWillChange.send()
+        setLowPassCutoff()
+        
+        self.objectWillChange.send()
+    }
+    */
 
 }

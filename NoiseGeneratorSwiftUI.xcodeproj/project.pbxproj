@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DFEC090B9E0B6E83F8AE647D /* Pods_NoiseGeneratorSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */; };
+		FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA093A352448A94A00BCD16C /* AudioEffect.swift */; };
 		FA377A3624317C3000CBE2C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A3524317C3000CBE2C4 /* AppDelegate.swift */; };
 		FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A3724317C3000CBE2C4 /* SceneDelegate.swift */; };
 		FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A3924317C3000CBE2C4 /* ContentView.swift */; };
@@ -48,6 +49,7 @@
 		16CC8F7AF3524D0BF47ECD41 /* Pods-NoiseGeneratorSwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoiseGeneratorSwiftUI.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NoiseGeneratorSwiftUI/Pods-NoiseGeneratorSwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
 		40AC8FF3BF7BDAF2A0BEA9BC /* Pods-NoiseGeneratorSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoiseGeneratorSwiftUI.release.xcconfig"; path = "Pods/Target Support Files/Pods-NoiseGeneratorSwiftUI/Pods-NoiseGeneratorSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
 		8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoiseGeneratorSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA093A352448A94A00BCD16C /* AudioEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffect.swift; sourceTree = "<group>"; };
 		FA377A3224317C3000CBE2C4 /* NoiseGeneratorSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoiseGeneratorSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA377A3524317C3000CBE2C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA377A3724317C3000CBE2C4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				FA377A4324317C3100CBE2C4 /* Info.plist */,
 				FA377A3D24317C3100CBE2C4 /* Preview Content */,
 				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
+				FA093A352448A94A00BCD16C /* AudioEffect.swift */,
 				FA377A50243228DE00CBE2C4 /* TriangleControl.swift */,
 				FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */,
 				FAFC1309243CF9AB009D1169 /* Knob.swift */,
@@ -255,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */,
+				FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */,
 				FA377A3624317C3000CBE2C4 /* AppDelegate.swift in Sources */,
 				FA4FDC71243F7C5600325F89 /* KnobComplete.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,

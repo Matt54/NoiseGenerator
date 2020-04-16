@@ -1,11 +1,3 @@
-//
-//  TriangleControl.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 3/30/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct TriangleControl: View {
