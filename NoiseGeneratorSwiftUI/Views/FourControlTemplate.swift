@@ -7,6 +7,7 @@ struct FourControlTemplate: View {
     @Binding var knobModel2 : KnobCompleteModel
     @Binding var knobModel3 : KnobCompleteModel
     @Binding var knobModel4 : KnobCompleteModel
+    @State var knobModColor: Color
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -28,7 +29,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel1.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1)
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.knobModColor)
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
                                        maxHeight: geometry.size.width * 0.175)
@@ -45,7 +46,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel2.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel2)
+                            KnobComplete(knobModel: self.$knobModel2, knobModColor: self.knobModColor)
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)
@@ -62,7 +63,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel3.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel3)
+                            KnobComplete(knobModel: self.$knobModel3, knobModColor: self.knobModColor)
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)
@@ -80,7 +81,7 @@ struct FourControlTemplate: View {
 
                             Text(self.knobModel4.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel4)
+                                KnobComplete(knobModel: self.$knobModel4, knobModColor: self.knobModColor)
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)
@@ -154,7 +155,8 @@ struct FourControlTemplate_Previews: PreviewProvider {
                             knobModel1: .constant(KnobCompleteModel()),
                             knobModel2: .constant(KnobCompleteModel()),
                             knobModel3: .constant(KnobCompleteModel()),
-                            knobModel4: .constant(KnobCompleteModel()))
+                            knobModel4: .constant(KnobCompleteModel()),
+                            knobModColor: Color.yellow)
         .previewLayout(.fixed(width: 380, height: 170))
     }
 }

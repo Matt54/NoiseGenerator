@@ -1,10 +1,14 @@
 import SwiftUI
 
-struct ModulationView: View {
+struct TwoControlTemplate: View {
     @State var title = "EFFECT TITLE"
     @Binding var isBypassed : Bool
     @Binding var knobModel1 : KnobCompleteModel
-
+    @Binding var knobModel2 : KnobCompleteModel
+    @State var knobModColor: Color
+    
+    @State var isTargeted = false
+    
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View
@@ -25,7 +29,7 @@ struct ModulationView: View {
                         {
                         Text(self.knobModel1.display)
                             .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel1)
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.knobModColor)
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
@@ -43,7 +47,23 @@ struct ModulationView: View {
                         }
                         .frame(width:geometry.size.width * 0.35)
                         
-                        Spacer()
+                    //Knob 2
+                    Spacer()
+                    VStack
+                        {
+                        Text(self.knobModel2.display)
+                            .font(.system(size: 14))
+                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.knobModColor)
+                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
+                                    minHeight:geometry.size.width * 0.275,
+                                    maxHeight: geometry.size.width * 0.275)
+                        Text(self.knobModel2.name)
+                            .font(.system(size: 14))
+                            .bold()
+                            //.foregroundColor(Color.black)
+                        }
+                        .frame(width:geometry.size.width * 0.35)
+                    Spacer()
                     }
                     
                     //Buttom Bar
@@ -101,11 +121,14 @@ struct ModulationView: View {
     }//view
 }//struct
 
-struct ModulationView_Previews: PreviewProvider {
+
+
+struct TwoControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
-        ModulationView(isBypassed: .constant(false),
-        knobModel1: .constant(KnobCompleteModel()))
+        TwoControlTemplate(isBypassed: .constant(false),
+                            knobModel1: .constant(KnobCompleteModel()),
+                           knobModel2: .constant(KnobCompleteModel()),
+                           knobModColor: Color.yellow)
         .previewLayout(.fixed(width: 280, height: 180))
     }
 }
-

@@ -9,6 +9,7 @@ struct PresetPicker: View {
     @Binding var presetIndex : Int
     @Binding var knobModel : KnobCompleteModel
     @Binding var presets: [String]
+    @State var knobModColor: Color
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -91,7 +92,7 @@ struct PresetPicker: View {
                     VStack {
                         Text(self.knobModel.display)
                             .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel)
+                        KnobComplete(knobModel: self.$knobModel, knobModColor: self.knobModColor)
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
@@ -167,7 +168,8 @@ struct PresetPicker_Previews: PreviewProvider {
                      presetIndex: .constant(0),
             knobModel: .constant(KnobCompleteModel()),
                      presets: .constant(["Preset 1", "Preset 2", "Preset 3",
-                                        "Preset 4", "Preset 5", "Preset 6"]))
+                                        "Preset 4", "Preset 5", "Preset 6"]),
+                                        knobModColor: Color.yellow)
         .previewLayout(.fixed(width: 280, height: 220))
     }
 }

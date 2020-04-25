@@ -1,31 +1,21 @@
 import SwiftUI
 
 struct KnobControl: View {
-    //@ObservedObject var knobModel = KnobControlModel()
-    
-    @Binding var percentRotated: Double// = 1.0
-    @Binding var realModValue: Double// = 1.0
+
+    @Binding var percentRotated: Double
+    @Binding var realModValue: Double
+    @State var knobModColor: Color
     
     var body: some View {
         GeometryReader{ geometry in
             ZStack{
                 Circle()
-                /*
-                Arc(startAngle: .constant(130 * .pi / 180),
-                    endAngle: .constant( (270.0 * 1.0 + 140.0) * .pi / 180.0),
-                    lineWidth: geometry.size.width * 0.025,
-                    center: CGPoint(x: geometry.size.width/2, y: geometry.size.height/2),
-                    radius: geometry.size.width/2 - geometry.size.width/40 * 0.5)
-                */
-
                 Arc(startAngle: .constant((270.0 * self.realModValue + 130) * .pi / 180),
-                    //startAngle: .constant(135 * .pi / 180),
                     endAngle: .constant( (270.0 * self.realModValue + 140.0) * .pi / 180.0),
                     lineWidth: geometry.size.width * 0.05,
                     center: CGPoint(x: geometry.size.width/2, y: geometry.size.height/2),
                     radius: geometry.size.width / 2 - geometry.size.width * 0.05 * 0.5)
-                    .fill(Color.yellow)
-                
+                    .fill(self.knobModColor)
                 Knob(percentRotated: self.$percentRotated)
                     .frame(width:geometry.size.width * 0.9)
                 }
@@ -33,15 +23,6 @@ struct KnobControl: View {
         }
     }
 }
-
-/*
-final class KnobControlModel : ObservableObject{
-    @Published var percentRotated = 1.0
-    @Published var realModValue = 1.0
-    init(){
-    }
-}
- */
 
 struct Arc : Shape
 {
@@ -66,6 +47,6 @@ var radius: CGFloat
 
 struct KnobControl_Previews: PreviewProvider {
     static var previews: some View {
-        KnobControl(percentRotated: .constant(0.5), realModValue: .constant(0.5))
+        KnobControl(percentRotated: .constant(0.5), realModValue: .constant(0.5), knobModColor: Color.yellow)
     }
 }

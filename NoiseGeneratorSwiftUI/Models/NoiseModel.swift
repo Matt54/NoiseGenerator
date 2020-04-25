@@ -88,6 +88,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI{
     
     @Published var modulationSelected: Bool = false
     
+    @Published var knobModColor = Color.init(red: 0, green: 1.0, blue: 0)
+    
     init(){
         getAllAudioInputs()
         setupInputAudioChain()

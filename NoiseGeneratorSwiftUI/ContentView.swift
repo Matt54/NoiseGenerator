@@ -42,12 +42,12 @@ struct ContentView: View {
                     TwoControlTemplate(title: self.noise.twoControlEffects[i].name,
                       isBypassed: self.$noise.twoControlEffects[i].isBypassed,
                       knobModel1: self.$noise.twoControlEffects[i].control1,
-                      knobModel2: self.$noise.twoControlEffects[i].control2)
+                      knobModel2: self.$noise.twoControlEffects[i].control2,
+                      knobModColor: self.noise.knobModColor)
                         .frame(width: 280, height: 180)
                     }
                 }
             }
-
             
             // Add All Four Knob Effect Controls
             ForEach(noise.fourControlEffects.indices, id: \.self){ i in
@@ -59,7 +59,8 @@ struct ContentView: View {
                       knobModel1: self.$noise.fourControlEffects[i].control1,
                       knobModel2: self.$noise.fourControlEffects[i].control2,
                       knobModel3: self.$noise.fourControlEffects[i].control3,
-                      knobModel4: self.$noise.fourControlEffects[i].control4)
+                      knobModel4: self.$noise.fourControlEffects[i].control4,
+                      knobModColor: self.noise.knobModColor)
                         .frame(width: 400, height: 180)
                 }
                 }
@@ -74,7 +75,8 @@ struct ContentView: View {
                     isBypassed: self.$noise.oneControlWithPresetsEffects[i].isBypassed,
                     presetIndex: self.$noise.oneControlWithPresetsEffects[i].presetIndex,
                     knobModel: self.$noise.oneControlWithPresetsEffects[i].control1,
-                    presets: self.$noise.oneControlWithPresetsEffects[i].presets)
+                    presets: self.$noise.oneControlWithPresetsEffects[i].presets,
+                    knobModColor: self.noise.knobModColor)
                         .frame(width: 280, height: 220)
                 }
                 }
@@ -87,7 +89,8 @@ struct ContentView: View {
                     Spacer()
                     ModulationView(title: self.noise.modulations[i].name,
                       isBypassed: self.$noise.modulations[i].isBypassed,
-                      knobModel1: self.$noise.modulations[i].timingControl)
+                      knobModel1: self.$noise.modulations[i].timingControl,
+                      knobModColor: self.noise.knobModColor)
                         .frame(width: 280, height: 180)
                     }
                 }
