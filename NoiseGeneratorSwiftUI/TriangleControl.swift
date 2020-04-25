@@ -20,6 +20,8 @@ struct TriangleControl: View {
     //Reduces circle size by factor of the overall width/height
     //Higher number = smaller circle
     @State var circleFactor: CGFloat = 8
+    
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
         
@@ -32,11 +34,12 @@ struct TriangleControl: View {
                 Rectangle()
                     .fill(Color.clear)
                 Triangle()
-                    .fill(Color.white)
-                    .shadow(radius: 10)
+                    .fill(Color.WhiteBlackColor(for: self.colorScheme))
+                    .shadow(color: Color.BlackWhiteColor(for: self.colorScheme), radius: 10)
 
                 Circle()
-                    .shadow(radius: 10)
+                    .fill(Color.BlackWhiteColor(for: self.colorScheme))
+                    .shadow(color: Color.BlackWhiteColor(for: self.colorScheme),radius: 8)
                     
                     // Get the initial properties of the frame
                     // and the layout of our shapes within

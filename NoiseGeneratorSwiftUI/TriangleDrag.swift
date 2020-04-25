@@ -5,6 +5,8 @@ struct TriangleDrag: View {
     @Binding var tVal: Double
     @Binding var rVal: Double
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     var body: some View {
         GeometryReader{ geometry in
             VStack{
@@ -15,7 +17,7 @@ struct TriangleDrag: View {
                         .frame(width:geometry.size.width * 0.7,
                                height: geometry.size.width * 0.7 * 0.866)
                         .offset(y: -geometry.size.width * 0.01)
-                        .shadow(radius:10)
+                        .shadow(color: Color.BlackWhiteColor(for: self.colorScheme), radius:30)
                     TriangleControl(lVal: self.$lVal,
                                     tVal: self.$tVal,
                                     rVal: self.$rVal,

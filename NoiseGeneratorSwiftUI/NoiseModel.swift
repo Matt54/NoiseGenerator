@@ -1,7 +1,9 @@
 import AudioKit
 import Combine
+import SwiftUI
+import Foundation
 
-final class NoiseModel : ObservableObject{
+final class NoiseModel : ObservableObject, ModulationDelegateUI{
     
     // Single shared data model
     static let shared = NoiseModel()
@@ -13,6 +15,14 @@ final class NoiseModel : ObservableObject{
     @Published var amplitude = 1.0 {
         didSet { setAllAmplitudes() }
     }
+    
+    // External Sound (Disables Inputted Sound)
+    @Published var enabledExternalInput = false {
+        didSet { setExternalSource() }
+    }
+    
+    //External Input
+    let externalInput = AKStereoInput()
     
     // Noise Generating Oscillators
     private let whiteNoise = AKWhiteNoise()
@@ -46,35 +56,58 @@ final class NoiseModel : ObservableObject{
     
     @Published var allControlEffects = [AudioEffect]()//: [AudioEffect] = []
     @Published var twoControlEffects = [TwoControlAudioEffect]()
+    @Published var fourControlEffects = [FourControlAudioEffect]()
     @Published var oneControlWithPresetsEffects = [OneControlWithPresetsAudioEffect]()
     
-    //LIMITER
-    var limiter = AKPeakLimiter()
+    @Published var listedEffects = [
+        ListedEffect(id: 1, display: "Moog Filter", symbol: Image(systemName: "f.circle.fill")),
+        ListedEffect(id: 2, display: "Tremelo", symbol: Image(systemName: "t.circle.fill")),
+        ListedEffect(id: 3, display: "Reverb", symbol: Image(systemName: "r.circle.fill")),
+        ListedEffect(id: 4, display: "Delay", symbol: Image(systemName: "d.circle.fill")),
+        ListedEffect(id: 5, display: "Chorus", symbol: Image(systemName: "c.circle.fill")),
+        ListedEffect(id: 6, display: "Bit Crusher", symbol: Image(systemName: "b.circle.fill")),
+        ListedEffect(id: 7, display: "Flanger", symbol: Image(systemName: "l.circle.fill"))
+    ]
+    
+    @Published var addingEffects: Bool = false
+    
+    //Modulations
+    var modulations : [Modulation] = []
+    
+    func createNewModulation(){
+        let modulation = Modulation()
+        modulation.delegate = self
+        modulation.start()
+        modulations.append(modulation)
+    }
+    
+    // Updates UI when modulation timer triggers
+    func modulationUpdateUI(_ sender: Modulation) {
+        self.objectWillChange.send()
+    }
+    
+    @Published var modulationSelected: Bool = false
     
     init(){
         getAllAudioInputs()
         setupInputAudioChain()
         connectInputToEffectChain()
-
-        createNewEffect(pos: allControlEffects.count, effectNumber: 2) //2 is AKTremolo
-        createNewEffect(pos: allControlEffects.count, effectNumber: 1) //1 is AKMoogFilter
-        createNewEffect(pos: allControlEffects.count, effectNumber: 3) //3 is AKReverb
         
-        addEffectToAudioChain(effect: limiter)
-        
+        //addEffectToAudioChain(effect: limiter)
         setupEffectAudioChain()
         
+        //create a filter to play with
+        createNewEffect(pos: allControlEffects.count, effectNumber: 1)
+
         AudioKit.output = outputMixer
         
         //SETUP DEFAULTS
         toggleSound()
         setAllAmplitudes()
-        setupLimiter()
-        
+        //setupLimiter()
 
         //START AUDIOKIT
         do{
-            //try AudioKit.start(withPeriodicFunctions: periodicFunction)
             try AudioKit.start()
         }
         catch{
@@ -83,14 +116,25 @@ final class NoiseModel : ObservableObject{
         
         //START AUDIOBUS
         Audiobus.start()
+
+        if let inputs = AudioKit.inputDevices {
+            for input in inputs{
+                print(input)
+            }
+        }
         
-        //periodicFunction.start()
+        createNewModulation()
+        modulations[0].addTarget(newTarget: twoControlEffects[0].control1)
+        
+        twoControlEffects[0].control1.modSelected = true
+        twoControlEffects[0].control1.attemptedModulationRange = 0.5
     }
     
     func getAllAudioInputs(){
         addInputToAudioChain(input: whiteNoise)
         addInputToAudioChain(input: pinkNoise)
         addInputToAudioChain(input: brownNoise)
+        addInputToAudioChain(input: externalInput)
     }
     
     func addInputToAudioChain(input: AKNode){
@@ -100,6 +144,15 @@ final class NoiseModel : ObservableObject{
     func setupInputAudioChain(){
         for audioInput in audioInputs{
             inputMixer.connect(input: audioInput)
+        }
+    }
+    
+    func setExternalSource(){
+        if(enabledExternalInput){
+            inputMixer.connect(input: externalInput)
+        }
+        else{
+            externalInput.disconnectOutput(from: inputMixer)
         }
     }
     
@@ -113,20 +166,27 @@ final class NoiseModel : ObservableObject{
     }
     
     func setupEffectAudioChain(){
-        
-        for i in 1..<audioEffects.count {
-            audioEffects[i-1].connect(to: audioEffects[i])
+        // Disconnect all audio effect outputs
+        for i in 0..<audioEffects.count {
+            audioEffects[i].disconnectOutput()
         }
         
+        // Route each audio effect to the next in line
+        for i in 0..<audioEffects.count - 1 {
+            //audioEffects[i].connect(to: audioEffects[i+1])
+            audioEffects[i].setOutput(to: audioEffects[i+1])
+        }
+            
         //set the output of the last effect to our output mixer
-        audioEffects[audioEffects.count-1].setOutput(to: outputMixer)
+        audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
     }
     
-    func createNewEffect(pos: Int, effectNumber: Int){
+    public func createNewEffect(pos: Int, effectNumber: Int){
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
         addEffectToAudioChain(effect: audioEffect.effect)
         addEffectToControlArray(effect: audioEffect)
         allControlEffects.append(audioEffect)
+        setupEffectAudioChain()
     }
     
     func getEffectType(pos: Int, effectNumber: Int) -> AudioEffect{
@@ -137,6 +197,14 @@ final class NoiseModel : ObservableObject{
             return TremoloAudioEffect(pos: pos)
         case 3:
             return AppleReverbAudioEffect(pos: pos)
+        case 4:
+            return AppleDelayAudioEffect(pos: pos)
+        case 5:
+            return ChorusAudioEffect(pos: pos)
+        case 6:
+            return BitCrusherAudioEffect(pos: pos)
+        case 7:
+            return FlangerAudioEffect(pos: pos)
         default:
             print("I have an unexpected case.")
             return MoogLadderAudioEffect(pos: effectNumber)
@@ -152,18 +220,10 @@ final class NoiseModel : ObservableObject{
             // obj is a string array. Do something with stringArray
             oneControlWithPresetsEffects.append(myEffect)
         }
-    }
-    
-    func setupLimiter(){
-        limiter.attackDuration = 0.001 // Secs
-        limiter.decayDuration = 0.01 // Secs
-        limiter.preGain = 0 // dB
-    }
-    func dropGain(){
-        limiter.preGain = -40 // dB
-    }
-    func resetGain(){
-        limiter.preGain = 0 // dB
+        else if let myEffect = effect as? FourControlAudioEffect {
+            // obj is a string array. Do something with stringArray
+            fourControlEffects.append(myEffect)
+        }
     }
 
     func toggleSound(){
@@ -209,33 +269,5 @@ final class NoiseModel : ObservableObject{
         pinkNoise.start()
         brownNoise.start()
     }
-    
-    /*
-    KEEP THIS MODULATION IDEA
-    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
-        print("hello world")
-        shared.modulateLowPassCutoff()
-    }
-
-    let periodicFunction = AKPeriodicFunction(frequency: 100.0){
-        print("hello world")
-        shared.modulateLowPassCutoff()
-    }
-    func modulateLowPassCutoff(){
-        
-        //lowPassCutoffControl.stepModulationValue()
-        
-        lowPassCutoffControl.modulationValue = lowPassCutoffControl.modulationValue + (lowPassCutoffControl.realModulationRange / 200)
-        if(lowPassCutoffControl.modulationValue > lowPassCutoffControl.realModulationRange){
-            lowPassCutoffControl.modulationValue = 0
-        }
-        lowPassCutoffControl.calculateRealValue()
-        lowPassCutoffControl.calculateRealRange()
-        //lowPassCutoffControl.objectWillChange.send()
-        setLowPassCutoff()
-        
-        self.objectWillChange.send()
-    }
-    */
 
 }

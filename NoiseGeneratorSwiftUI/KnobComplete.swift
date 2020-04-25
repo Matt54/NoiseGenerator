@@ -5,7 +5,6 @@ struct KnobComplete: View {
     
     @Binding var knobModel : KnobCompleteModel
     
-    
     var body: some View {
         GeometryReader{ geometry in
             ZStack{
@@ -48,6 +47,8 @@ struct KnobComplete: View {
 
 class KnobCompleteModel : ObservableObject{
     
+    var delegate:ModulationDelegate?
+    
     @Published var percentRotated = 0.0{
     didSet {
         calculateRealValue()
@@ -55,6 +56,8 @@ class KnobCompleteModel : ObservableObject{
         }
     }
     
+    // sets the realModValue from the position + modulationValue logic
+    // doesn't allow it to go below 0 or above 1.0
     func calculateRealValue(){
         if(percentRotated + modulationValue > 1.0){
             realModValue = 1.0
@@ -65,8 +68,11 @@ class KnobCompleteModel : ObservableObject{
         else{
             realModValue = modulationValue + percentRotated
         }
+        delegate?.modulationValueWasChanged(self)
     }
     
+    // sets the realModulationRange from the position + attemptedModulationRange logic
+    // doesn't allow the position + range to go above 1.0 or below 0
     func calculateRealRange(){
         if(percentRotated + attemptedModulationRange > 1.0){
             realModulationRange = (1.0 - percentRotated)
@@ -86,7 +92,11 @@ class KnobCompleteModel : ObservableObject{
     @Published var modulationValue = 0.0
     
     @Published var realModulationRange = 0.0
-    @Published var attemptedModulationRange = 0.0
+    @Published var attemptedModulationRange = 0.0{
+    didSet {
+        calculateRealRange()
+        }
+    }
     
     @Published var name = "Parameter"
     @Published var range = 1.0
@@ -97,6 +107,10 @@ class KnobCompleteModel : ObservableObject{
         calculateRealValue()
         calculateRealRange()
     }
+}
+
+protocol ModulationDelegate {
+    func modulationValueWasChanged(_ sender: KnobCompleteModel)
 }
 
 

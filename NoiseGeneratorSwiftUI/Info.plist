@@ -8,6 +8,18 @@
 			<key>manufacturer</key>
 			<string>Matt</string>
 			<key>name</key>
+			<string>NoiseGeneratorSwiftUI: filter</string>
+			<key>subtype</key>
+			<string>filx</string>
+			<key>type</key>
+			<string>aurx</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>manufacturer</key>
+			<string>Matt</string>
+			<key>name</key>
 			<string>NoiseGeneratorSwiftUI: sender</string>
 			<key>subtype</key>
 			<string>sndx</string>
@@ -74,6 +86,8 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allows for external audio input.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

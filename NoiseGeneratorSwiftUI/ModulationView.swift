@@ -1,13 +1,10 @@
 import SwiftUI
 
-struct TwoControlTemplate: View {
+struct ModulationView: View {
     @State var title = "EFFECT TITLE"
     @Binding var isBypassed : Bool
     @Binding var knobModel1 : KnobCompleteModel
-    @Binding var knobModel2 : KnobCompleteModel
-    
-    @State var isTargeted = false
-    
+
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View
@@ -46,23 +43,7 @@ struct TwoControlTemplate: View {
                         }
                         .frame(width:geometry.size.width * 0.35)
                         
-                    //Knob 2
-                    Spacer()
-                    VStack
-                        {
-                        Text(self.knobModel2.display)
-                            .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel2)
-                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
-                                    minHeight:geometry.size.width * 0.275,
-                                    maxHeight: geometry.size.width * 0.275)
-                        Text(self.knobModel2.name)
-                            .font(.system(size: 14))
-                            .bold()
-                            //.foregroundColor(Color.black)
-                        }
-                        .frame(width:geometry.size.width * 0.35)
-                    Spacer()
+                        Spacer()
                     }
                     
                     //Buttom Bar
@@ -120,13 +101,11 @@ struct TwoControlTemplate: View {
     }//view
 }//struct
 
-
-
-struct TwoControlTemplate_Previews: PreviewProvider {
+struct ModulationView_Previews: PreviewProvider {
     static var previews: some View {
-        TwoControlTemplate(isBypassed: .constant(false),
-                            knobModel1: .constant(KnobCompleteModel()),
-                           knobModel2: .constant(KnobCompleteModel()))
+        ModulationView(isBypassed: .constant(false),
+        knobModel1: .constant(KnobCompleteModel()))
         .previewLayout(.fixed(width: 280, height: 180))
     }
 }
+
