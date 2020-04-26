@@ -5,6 +5,7 @@ struct ModulationView: View {
     @Binding var isBypassed : Bool
     @Binding var knobModel1 : KnobCompleteModel
     @State var knobModColor: Color
+    @Binding var isConnectingModulation: Bool
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -20,13 +21,24 @@ struct ModulationView: View {
                 Spacer()
                 HStack
                     {
+                        
+                    Spacer()
+                        
+                    Button(action: {
+                        self.isConnectingModulation.toggle()
+                    }){
+                        Image(systemName: "plus.rectangle.fill")
+                            .foregroundColor(self.knobModColor)
+                            .font(.system(size: 36))
+                    }
+                        
                     //Knob 1
                     Spacer()
                     VStack
                         {
                         Text(self.knobModel1.display)
                             .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.knobModColor)
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: .constant(false))
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
@@ -44,7 +56,7 @@ struct ModulationView: View {
                         }
                         .frame(width:geometry.size.width * 0.35)
                         
-                        Spacer()
+                    Spacer()
                     }
                     
                     //Buttom Bar
@@ -106,7 +118,8 @@ struct ModulationView_Previews: PreviewProvider {
     static var previews: some View {
         ModulationView(isBypassed: .constant(false),
         knobModel1: .constant(KnobCompleteModel()),
-        knobModColor: Color.yellow)
+        knobModColor: Color.yellow,
+        isConnectingModulation: .constant(false))
         .previewLayout(.fixed(width: 280, height: 180))
     }
 }

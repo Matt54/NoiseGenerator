@@ -43,7 +43,8 @@ struct ContentView: View {
                       isBypassed: self.$noise.twoControlEffects[i].isBypassed,
                       knobModel1: self.$noise.twoControlEffects[i].control1,
                       knobModel2: self.$noise.twoControlEffects[i].control2,
-                      knobModColor: self.noise.knobModColor)
+                      knobModColor: self.$noise.knobModColor,
+                      modulationBeingAssigned: self.$noise.modulationBeingAssigned)
                         .frame(width: 280, height: 180)
                     }
                 }
@@ -60,7 +61,8 @@ struct ContentView: View {
                       knobModel2: self.$noise.fourControlEffects[i].control2,
                       knobModel3: self.$noise.fourControlEffects[i].control3,
                       knobModel4: self.$noise.fourControlEffects[i].control4,
-                      knobModColor: self.noise.knobModColor)
+                      knobModColor: self.$noise.knobModColor,
+                      modulationBeingAssigned: self.$noise.modulationBeingAssigned)
                         .frame(width: 400, height: 180)
                 }
                 }
@@ -76,7 +78,8 @@ struct ContentView: View {
                     presetIndex: self.$noise.oneControlWithPresetsEffects[i].presetIndex,
                     knobModel: self.$noise.oneControlWithPresetsEffects[i].control1,
                     presets: self.$noise.oneControlWithPresetsEffects[i].presets,
-                    knobModColor: self.noise.knobModColor)
+                    knobModColor: self.$noise.knobModColor,
+                    modulationBeingAssigned: self.$noise.modulationBeingAssigned)
                         .frame(width: 280, height: 220)
                 }
                 }
@@ -90,7 +93,8 @@ struct ContentView: View {
                     ModulationView(title: self.noise.modulations[i].name,
                       isBypassed: self.$noise.modulations[i].isBypassed,
                       knobModel1: self.$noise.modulations[i].timingControl,
-                      knobModColor: self.noise.knobModColor)
+                      knobModColor: self.noise.knobModColor,
+                      isConnectingModulation: self.$noise.modulationBeingAssigned)
                         .frame(width: 280, height: 180)
                     }
                 }
@@ -112,10 +116,13 @@ struct ContentView: View {
                     }){
                         if(mod.isDisplayed){
                             Image(systemName: "m.circle.fill")
+                                .foregroundColor(mod.modulationColor)
                                 .font(.system(size: 26))
+                            
                         }
                         else{
                             Image(systemName: "m.circle")
+                                .foregroundColor(mod.modulationColor)
                                 .font(.system(size: 26))
                         }
                     }

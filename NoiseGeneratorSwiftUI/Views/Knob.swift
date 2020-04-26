@@ -52,20 +52,12 @@ struct Knob: View {
                     .onChanged{
                         value in //Value stores event details (value inputted)
                         
-                        
-                        //self.deltaX = Double(value.translation.width)
-                        //self.deltaY = Double(value.translation.height)
-                        
                         if (self.currentX != 0.0 && self.currentY != 0.0){
                             self.deltaX = Double(self.currentX - value.location.x)
                             self.deltaY = Double(self.currentY - value.location.y)
                         }
                         self.currentX = value.location.x
                         self.currentY = value.location.y
-                        
-                        
-                        //let y_move = self.deltaY
-                        //let x_move = self.deltaX
                         
                         self.currentAngle = self.currentAngle + self.deltaY * self.sensitivity
                         self.currentAngle = self.currentAngle - self.deltaX * self.sensitivity
@@ -78,25 +70,12 @@ struct Knob: View {
                         }
                         
                         self.percentRotated = (self.currentAngle + self.endAngle) / self.range
-                        
-                        
-                        
-                        /*
-                        if (y_move > 0){
-                            
-                        }
-                            
-                        else{
-                            
-                        }*/
-                            
                     }
                 .onEnded{
                     value in //Value stores event details (value inputted)
                     self.currentX = 0.0
                     self.currentY = 0.0
                     }
-                
                 )
             }
         }

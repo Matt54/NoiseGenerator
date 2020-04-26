@@ -2,7 +2,7 @@ import AudioKit
 import Combine
 import SwiftUI
 
-public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate{
+public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, KnobModelModulationHandoff{
     
     // We should never see a heart
     @Published var displayOnImage = Image(systemName: "heart.circle")
@@ -51,12 +51,23 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate{
 
     // Called when any KnobCompleteModel notices a change
     func modulationValueWasChanged(_ sender: KnobCompleteModel) {}
+    
+    var handoffDelegate:AudioEffectKnobHandoff?
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelAssignToModulation(sender)
+    }
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
+        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
+    }
 }
 
 public class TwoControlAudioEffect: AudioEffect{
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
         control1.delegate = self
+        control2.delegate = self
+        control1.handoffDelegate = self
+        control2.handoffDelegate = self
     }
     @Published var control1 = KnobCompleteModel(){
         didSet{ setControl1() }
@@ -465,4 +476,9 @@ public class ListedEffect{
         self.display = display
         self.symbol = symbol
     }
+}
+
+protocol AudioEffectKnobHandoff{
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

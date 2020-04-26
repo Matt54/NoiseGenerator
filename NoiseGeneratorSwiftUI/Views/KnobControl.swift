@@ -4,7 +4,7 @@ struct KnobControl: View {
 
     @Binding var percentRotated: Double
     @Binding var realModValue: Double
-    @State var knobModColor: Color
+    @Binding var knobModColor: Color
     
     var body: some View {
         GeometryReader{ geometry in
@@ -47,6 +47,6 @@ var radius: CGFloat
 
 struct KnobControl_Previews: PreviewProvider {
     static var previews: some View {
-        KnobControl(percentRotated: .constant(0.5), realModValue: .constant(0.5), knobModColor: Color.yellow)
+        KnobControl(percentRotated: .constant(0.5), realModValue: .constant(0.5), knobModColor: .constant(Color.yellow))
     }
 }

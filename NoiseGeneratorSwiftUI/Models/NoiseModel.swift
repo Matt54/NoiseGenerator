@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 import Foundation
 
-final class NoiseModel : ObservableObject, ModulationDelegateUI{
+final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnobHandoff{
     
     // Single shared data model
     static let shared = NoiseModel()
@@ -86,16 +86,45 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI{
         self.objectWillChange.send()
     }
     
-    @Published var modulationSelected: Bool = false
+    func modulationDisplayChange(_ sender: Modulation) {
+        if(sender.isDisplayed){
+            knobModColor = sender.modulationColor
+        }
+        else{
+            knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
+            self.modulationBeingAssigned = false
+        }
+        self.objectWillChange.send()
+    }
     
-    @Published var knobModColor = Color.init(red: 0, green: 1.0, blue: 0)
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
+        print("we hit noise")
+        for modulation in modulations{
+            if(modulation.isDisplayed){
+                modulation.addModulationTarget(newTarget: sender)
+                print("knob added")
+            }
+        }
+    }
+    
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
+        for modulation in modulations{
+            if(modulation.isDisplayed){
+                print("Range Should Adjust")
+                modulation.adjustModulationRange(target: sender, val: adjust)
+            }
+        }
+    }
+    
+    @Published var modulationSelected: Bool = false
+    @Published var modulationBeingAssigned: Bool = false
+    @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
     init(){
         getAllAudioInputs()
         setupInputAudioChain()
         connectInputToEffectChain()
-        
-        //addEffectToAudioChain(effect: limiter)
+
         setupEffectAudioChain()
         
         //create a filter to play with
@@ -106,7 +135,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI{
         //SETUP DEFAULTS
         toggleSound()
         setAllAmplitudes()
-        //setupLimiter()
 
         //START AUDIOKIT
         do{
@@ -126,17 +154,13 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI{
         }
         
         createNewModulation()
-        modulations[0].addTarget(newTarget: twoControlEffects[0].control1)
-        
-        twoControlEffects[0].control1.modSelected = true
-        twoControlEffects[0].control1.attemptedModulationRange = 0.5
     }
     
     func getAllAudioInputs(){
         addInputToAudioChain(input: whiteNoise)
         addInputToAudioChain(input: pinkNoise)
         addInputToAudioChain(input: brownNoise)
-        addInputToAudioChain(input: externalInput)
+        //addInputToAudioChain(input: externalInput)
     }
     
     func addInputToAudioChain(input: AKNode){
@@ -189,6 +213,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI{
         addEffectToControlArray(effect: audioEffect)
         allControlEffects.append(audioEffect)
         setupEffectAudioChain()
+        audioEffect.handoffDelegate = self
     }
     
     func getEffectType(pos: Int, effectNumber: Int) -> AudioEffect{

@@ -3,6 +3,7 @@ import Foundation
 public class KnobCompleteModel : ObservableObject{
     
     var delegate:ModulationDelegate?
+    var handoffDelegate:KnobModelModulationHandoff?
     
     @Published var percentRotated = 0.0{
     didSet {
@@ -40,13 +41,25 @@ public class KnobCompleteModel : ObservableObject{
         }
     }
 
+    // This controls the display of the modulation amount
+    // When a mod is selected that targets this knob
     @Published var modSelected = false
+    
+    // Can never be below 0 or above 1
     @Published var realModValue = 0.0
     
-    //This value will be constantly adjusted by the modulation
-    @Published var modulationValue = 0.0
+    //This value will be constantly adjusted by the modulations
+    //This value can be above 1 and below zero
+    @Published var modulationValue = 0.0{
+    didSet {
+        calculateRealValue()
+        }
+    }
     
+    // can never be outside the range of the arc
     @Published var realModulationRange = 0.0
+    
+    // can be outside the range of the arc
     @Published var attemptedModulationRange = 0.0{
     didSet {
         calculateRealRange()
@@ -62,8 +75,23 @@ public class KnobCompleteModel : ObservableObject{
         calculateRealValue()
         calculateRealRange()
     }
+    
+    func handoffKnobModel(){
+        print("handoffKnobModel")
+        handoffDelegate?.KnobModelAssignToModulation(self)
+    }
+    
+    func adjustModulationRange(adjust: Double){
+        handoffDelegate?.KnobModelAdjustModulationRange(self, adjust: adjust)
+    }
+    
 }
 
 protocol ModulationDelegate {
     func modulationValueWasChanged(_ sender: KnobCompleteModel)
+}
+
+protocol KnobModelModulationHandoff{
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

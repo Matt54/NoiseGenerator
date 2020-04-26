@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public class Modulation : Identifiable, ObservableObject{
     
@@ -8,6 +9,11 @@ public class Modulation : Identifiable, ObservableObject{
     public var name: String
     
     public var id: Int
+    
+    public var modulationColor: Color = Color.init(red: 1.0, green: 1.0, blue: 1.0)
+    
+    // Can only be between 0 and 1 (in the future, may allow -1 to 1 [bi-directional] )
+    var modulationValue = 0.0
     
     var numberOfSteps = 500.0
     
@@ -22,13 +28,29 @@ public class Modulation : Identifiable, ObservableObject{
     }
     
     // Is the modulation currently shown on GUI
-    @Published var isDisplayed = true
+    @Published var isDisplayed = false
     
     // Is the modulation currently shown on GUI
     @Published var isBypassed = false
     
     func toggleDisplayed(){
         isDisplayed.toggle()
+        
+        if(isDisplayed){
+            for target in modulationTargets{
+                target.knobModel.modSelected = true
+            }
+        }
+        else{
+            for target in modulationTargets{
+                target.knobModel.modSelected = false
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.delegate?.modulationDisplayChange(self)
+        }
+        
     }
     
     var timer = RepeatingTimer(timeInterval: 0.01)
@@ -37,7 +59,9 @@ public class Modulation : Identifiable, ObservableObject{
         Modulation.numberOfModulations = Modulation.numberOfModulations + 1
         id = Modulation.numberOfModulations
         name = "Modulation " + String(id)
+        modulationColor = self.getColorForModulation(num: id)
         timer.eventHandler = {self.timerAction()}
+        
         
         timingControl.name = "Rate"
         timingControl.range = 0.0099
@@ -46,18 +70,45 @@ public class Modulation : Identifiable, ObservableObject{
         
         setTimeInterval()
     }
-
-    // Target Parameters
-    var targets : [KnobCompleteModel] = []
     
-    func addTarget(newTarget: KnobCompleteModel){
-        targets.append(newTarget)
+    func getColorForModulation(num: Int) -> Color{
+        switch num{
+        case 1:
+            return Color.init(red: 0, green: 1.0, blue: 0) //green
+        case 2:
+            return Color.init(red: 0, green: 0, blue: 1.0) //blue
+        case 3:
+            return Color.init(red: 1.0, green: 0, blue: 0) //red
+        case 4:
+            return Color.init(red: 1.0, green: 1.0, blue: 0) //yellow
+        default:
+            return Color.init(red: 1.0, green: 1.0, blue: 1.0) //white
+        }
     }
     
-    func removeTarget(removeTarget: KnobCompleteModel){
-        for i in 0..<targets.count {
-            if(targets[i] === removeTarget){
-                targets.remove(at: i)
+    // Modulation Targets (New)
+    var modulationTargets : [ModulationTarget] = []
+    
+    func addModulationTarget(newTarget: KnobCompleteModel){
+        let modulationTarget = ModulationTarget(knobModel: newTarget)
+        modulationTargets.append(modulationTarget)
+        newTarget.modSelected = true
+        print("mod selected")
+    }
+    
+    func removeModulationTarget(removeTarget: KnobCompleteModel){
+        for i in 0..<modulationTargets.count {
+            if(modulationTargets[i].knobModel === removeTarget){
+                modulationTargets.remove(at: i)
+                break
+            }
+        }
+    }
+    
+    func adjustModulationRange(target: KnobCompleteModel, val: Double){
+        for i in 0..<modulationTargets.count {
+            if(modulationTargets[i].knobModel === target){
+                modulationTargets[i].modulationRange = modulationTargets[i].modulationRange + val
                 break
             }
         }
@@ -85,28 +136,63 @@ public class Modulation : Identifiable, ObservableObject{
     
     //new function
     @objc func timerAction(){
-        for target in targets{
-            // step the new modulation value
-            target.modulationValue = target.modulationValue + (target.realModulationRange / numberOfSteps)
-            
-            // reset modulation value if it is outside of range
-            if(target.modulationValue > target.realModulationRange){
-                target.modulationValue = 0
-            }
-            
-            // tell control that we have a new value to write
-            target.calculateRealValue()
-            
-            // tell the UI to get new binding values
-            DispatchQueue.main.async {
-                self.delegate?.modulationUpdateUI(self)
-                //self.objectWillChange.send()
-            }
+        
+        //let previousModulationValue = modulationValue
+        
+        // Calculate next value
+        modulationValue = modulationValue + 1 / numberOfSteps
+        
+        // Reset if required
+        if(modulationValue > 1.0){
+            modulationValue = 0.0
+        }
+        
+        //let deltaValue = modulationValue - previousModulationValue
+        
+        // Relay the value to the targets
+        for target in modulationTargets{
+            target.calculateTargetModulation(modulationValue: modulationValue)
+        }
+        
+        // tell the UI to get new binding values
+        DispatchQueue.main.async {
+            self.delegate?.modulationUpdateUI(self)
         }
     }
-    
 }
 
 protocol ModulationDelegateUI {
     func modulationUpdateUI(_ sender: Modulation)
+    func modulationDisplayChange(_ sender: Modulation)
+}
+
+class ModulationTarget {
+    
+    @Published var knobModel: KnobCompleteModel
+    
+    // Always between -1.0 and 1.0
+    @Published var modulationRange = 0.0{
+    didSet {
+        limitRange()
+        }
+    }
+
+    init(knobModel: KnobCompleteModel) { // Constructor
+        self.knobModel = knobModel
+    }
+    
+    func limitRange(){
+        if(modulationRange > 1.0){
+            modulationRange = 1.0
+        }
+        if(modulationRange < -1.0){
+            modulationRange = -1.0
+        }
+        knobModel.attemptedModulationRange = modulationRange
+    }
+    
+    public func calculateTargetModulation(modulationValue: Double){
+        knobModel.modulationValue = modulationValue * modulationRange
+    }
+    
 }

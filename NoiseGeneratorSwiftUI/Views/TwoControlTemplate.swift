@@ -5,7 +5,8 @@ struct TwoControlTemplate: View {
     @Binding var isBypassed : Bool
     @Binding var knobModel1 : KnobCompleteModel
     @Binding var knobModel2 : KnobCompleteModel
-    @State var knobModColor: Color
+    @Binding var knobModColor: Color
+    @Binding var modulationBeingAssigned: Bool
     
     @State var isTargeted = false
     
@@ -29,7 +30,7 @@ struct TwoControlTemplate: View {
                         {
                         Text(self.knobModel1.display)
                             .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.knobModColor)
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
@@ -53,7 +54,7 @@ struct TwoControlTemplate: View {
                         {
                         Text(self.knobModel2.display)
                             .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.knobModColor)
+                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                     minHeight:geometry.size.width * 0.275,
                                     maxHeight: geometry.size.width * 0.275)
@@ -128,7 +129,7 @@ struct TwoControlTemplate_Previews: PreviewProvider {
         TwoControlTemplate(isBypassed: .constant(false),
                             knobModel1: .constant(KnobCompleteModel()),
                            knobModel2: .constant(KnobCompleteModel()),
-                           knobModColor: Color.yellow)
+                           knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 280, height: 180))
     }
 }
