@@ -15,11 +15,16 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     public var id: Int//UUID = UUID()
     var effect: AKInput
     
+    var inputMixer = AKMixer()
+    var outputMixer = AKMixer()
+    
     @Published var isBypassed = false{
         didSet{
             setBypass()
         }
     }
+    
+    var toggleControls: AKToggleable
 
     // Position in the audio effect chain
     @Published var position: Int
@@ -33,9 +38,13 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
         effect = node
         AudioEffect.numberOfEffects = AudioEffect.numberOfEffects + 1
         id = AudioEffect.numberOfEffects
+        setupAudioRouting()
     }
 
-    var toggleControls: AKToggleable
+    func setupAudioRouting(){
+        inputMixer.setOutput(to: effect)
+        effect.setOutput(to: outputMixer)
+    }
     
     func toggleDisplayed(){
         isDisplayed.toggle()

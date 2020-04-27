@@ -61,7 +61,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     var audioInputs : [AKNode] = []
     
     // Audio Effects (The Actual Nodes)
-    var audioEffects : [AKInput] = []
+    //var audioEffects : [AKInput] = []
     
     // Control Effects (What the user interracts with)
     @Published var allControlEffects = [AudioEffect]()
@@ -100,7 +100,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         setupInputAudioChain()
         connectInputToEffectChain()
 
-        setupEffectAudioChain()
+        //setupEffectAudioChain()
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
@@ -158,30 +158,64 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
+    //TODO: FIND A WAY TO REPLACE audioEffects with allControlEffects.effect
     func connectInputToEffectChain(){
+        /*
         addEffectToAudioChain(effect: effectMixer)
         inputMixer.connect(to: audioEffects[0])
+        */
+        
+        // Disconnect input mixer from all outputs
+        // if there are audio effects, connect to the first in chain
+        // else, connect to the output mixer
+        inputMixer.disconnectOutput()
+        if(allControlEffects.count > 0){
+            inputMixer.connect(to: allControlEffects[0].inputMixer)
+        }
+        else{
+            inputMixer.connect(to: outputMixer)
+        }
     }
     
+    /*
     func addEffectToAudioChain(effect: AKInput){
         audioEffects.append(effect)
     }
+    */
     
     func setupEffectAudioChain(){
+        
+        // Connect input
+        connectInputToEffectChain()
+        
         // Disconnect all audio effect outputs
+        /*
         for i in 0..<audioEffects.count {
             audioEffects[i].disconnectOutput()
         }
+        */
+        for i in 0..<allControlEffects.count {
+            allControlEffects[i].outputMixer.disconnectOutput()
+        }
+        
         
         // Route each audio effect to the next in line
+        /*
         for i in 0..<audioEffects.count - 1 {
-            //audioEffects[i].connect(to: audioEffects[i+1])
             audioEffects[i].setOutput(to: audioEffects[i+1])
         }
-            
+        */
+        for i in 0..<allControlEffects.count - 1  {
+            allControlEffects[i].outputMixer.setOutput(to: allControlEffects[i+1].inputMixer)
+        }
+        
         //set the output of the last effect to our output mixer
-        audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
+        //audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
+        allControlEffects[allControlEffects.count - 1].outputMixer.setOutput(to: outputMixer)
     }
+    
+    
+    
     
     func setupOutputChain(){
         outputMixer.volume = masterAmplitude
@@ -206,7 +240,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     public func createNewEffect(pos: Int, effectNumber: Int){
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
-        addEffectToAudioChain(effect: audioEffect.effect)
+        //addEffectToAudioChain(effect: audioEffect.effect)
         addEffectToControlArray(effect: audioEffect)
         allControlEffects.append(audioEffect)
         setupEffectAudioChain()
