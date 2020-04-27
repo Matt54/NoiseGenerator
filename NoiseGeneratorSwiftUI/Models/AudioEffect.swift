@@ -5,6 +5,7 @@ import SwiftUI
 public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, KnobModelModulationHandoff{
     
     // We should never see a heart
+    @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
     @Published var displayOffImage = Image(systemName: "heart.circle.fill")
     
@@ -38,6 +39,16 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     
     func toggleDisplayed(){
         isDisplayed.toggle()
+        setDisplayImage()
+    }
+    
+    func setDisplayImage(){
+        if(isDisplayed){
+            displayImage = displayOnImage
+        }
+        else{
+            displayImage = displayOffImage
+        }
     }
     
     func setBypass(){
@@ -141,6 +152,7 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
         name = "Moog Ladder Filter"
         displayOnImage = Image(systemName: "f.circle.fill")
         displayOffImage = Image(systemName: "f.circle")
+        setDisplayImage()
         
         filter.rampDuration = 0.0
         control1.name = "Cutoff"
@@ -191,6 +203,7 @@ public class TremoloAudioEffect: TwoControlAudioEffect{
         name = "Tremolo"
         displayOnImage = Image(systemName: "t.circle.fill")
         displayOffImage = Image(systemName: "t.circle")
+        setDisplayImage()
         
         control1.name = "Depth"
         
@@ -221,6 +234,8 @@ public class BitCrusherAudioEffect: TwoControlAudioEffect{
         name = "Bit Crush"
         displayOnImage = Image(systemName: "b.circle.fill")
         displayOffImage = Image(systemName: "b.circle")
+        setDisplayImage()
+        
         bitCrusher.rampDuration = 0.01
         
         control1.name = "Bit Depth"
@@ -265,6 +280,7 @@ public class ChorusAudioEffect: FourControlAudioEffect{
         name = "Chorus"
         displayOnImage = Image(systemName: "c.circle.fill")
         displayOffImage = Image(systemName: "c.circle")
+        setDisplayImage()
         
         control1.name = "Depth" //in seconds
         control1.unit = "%"
@@ -315,6 +331,7 @@ public class FlangerAudioEffect: FourControlAudioEffect{
         name = "Flanger"
         displayOnImage = Image(systemName: "l.circle.fill")
         displayOffImage = Image(systemName: "l.circle")
+        setDisplayImage()
         
         control1.name = "Depth" //in seconds
         control1.unit = "%"
@@ -365,6 +382,7 @@ public class AppleDelayAudioEffect: FourControlAudioEffect{
         name = "Simple Delay"
         displayOnImage = Image(systemName: "d.circle.fill")
         displayOffImage = Image(systemName: "d.circle")
+        setDisplayImage()
         
         control1.name = "Time" //in seconds
         control1.range = 5

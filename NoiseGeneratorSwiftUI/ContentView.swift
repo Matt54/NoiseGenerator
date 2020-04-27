@@ -24,6 +24,8 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            // Noise Triangle
             HStack {
                 Spacer()
                 TriangleDrag(lVal: $noise.whiteVal,
@@ -134,49 +136,31 @@ struct ContentView: View {
                     Image(systemName: "plus.circle")
                         .font(.system(size: 26))
                 }
-                
-                /*
-                ForEach(noise.allControlEffects.indices) { i in
-                Button(action: {
-                    self.noise.objectWillChange.send()
-                    self.noise.allControlEffects[i].toggleDisplayed()
-                }){
-                    if(self.noise.allControlEffects[i].isDisplayed){
-                        self.noise.allControlEffects[i].displayOnImage
-                            .font(.system(size: 26))
-                    }
-                    else{
-                        self.noise.allControlEffects[i].displayOffImage
-                            .font(.system(size: 26))
-                    }
-                }
-                }
-                */
-                
                 ForEach(noise.allControlEffects , id: \.id){ effect in
-                    Button(action: {
-                        self.noise.objectWillChange.send()
-                        effect.toggleDisplayed()
-                    }){
-                        if(effect.isDisplayed){
-                            effect.displayOnImage
-                                .font(.system(size: 26))
+                    effect.displayImage
+                        .font(.system(size: 26))
+                        .onTapGesture(count: 1) {
+                            self.noise.objectWillChange.send()
+                            effect.toggleDisplayed()
                         }
-                        else{
-                            effect.displayOffImage
-                                .font(.system(size: 26))
+                        .onLongPressGesture(minimumDuration: 0.5) {
+                            print("Long Press")
                         }
-                    }
                 }
-                
                 Spacer()
-                
             }
-            
         }
         .padding(.leading,30)
         .padding(.trailing,30)
         .padding(.bottom,10)
+            
+            //Master Volume Control
+            HStack {
+                Spacer()
+                VolumeControl(volume: self.$noise.outputAmplitude,amplitudeControl: self.$noise.masterAmplitude, isRightHanded: .constant(true), numberOfRects: .constant(20))
+                    .frame(width: 30, height: 200)
+            }
+            .padding()
             
             if(noise.addingEffects){
                 AddEffectForm(noise: _noise)

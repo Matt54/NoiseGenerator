@@ -133,8 +133,7 @@ public class Modulation : Identifiable, ObservableObject{
     func stop(){
         timer.suspend()
     }
-    
-    //new function
+
     @objc func timerAction(){
         
         //let previousModulationValue = modulationValue

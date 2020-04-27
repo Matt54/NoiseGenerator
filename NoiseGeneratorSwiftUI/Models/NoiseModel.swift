@@ -11,7 +11,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Master Sound On/Off
     @Published var isPlaying = true
     
-    // Master Amplitude
+    // Master Amplitude Control
+    @Published var masterAmplitude = 0.9{
+        didSet { outputMixer.volume = masterAmplitude }
+    }
+    
+    // Input Noise Amplitude Control
     @Published var amplitude = 1.0 {
         didSet { setAllAmplitudes() }
     }
@@ -34,6 +39,10 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     var effectMixer = AKMixer()
     var outputMixer = AKMixer()
     
+    // Ouput Amplitude Tracker
+    var outputAmplitudeTracker = AKAmplitudeTracker()
+    @Published var outputAmplitude: Double = 0.0
+    
     // Amplitude of Noise Oscillators
     private var whiteAmplitude = 0.33
     @Published var whiteVal = 1.0 {
@@ -48,17 +57,19 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         didSet { setBrownAmplitude() }
     }
     
-    //Audio Inputs
+    // Audio Inputs
     var audioInputs : [AKNode] = []
     
-    //Audio Effects
+    // Audio Effects (The Actual Nodes)
     var audioEffects : [AKInput] = []
     
-    @Published var allControlEffects = [AudioEffect]()//: [AudioEffect] = []
+    // Control Effects (What the user interracts with)
+    @Published var allControlEffects = [AudioEffect]()
     @Published var twoControlEffects = [TwoControlAudioEffect]()
     @Published var fourControlEffects = [FourControlAudioEffect]()
     @Published var oneControlWithPresetsEffects = [OneControlWithPresetsAudioEffect]()
     
+    // All Effects that can be added
     @Published var listedEffects = [
         ListedEffect(id: 1, display: "Moog Filter", symbol: Image(systemName: "f.circle.fill")),
         ListedEffect(id: 2, display: "Tremelo", symbol: Image(systemName: "t.circle.fill")),
@@ -69,55 +80,19 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         ListedEffect(id: 7, display: "Flanger", symbol: Image(systemName: "l.circle.fill"))
     ]
     
+    // Used for navigation of the UI when adding a new effect
     @Published var addingEffects: Bool = false
     
-    //Modulations
+    // Modulations
     var modulations : [Modulation] = []
-    
-    func createNewModulation(){
-        let modulation = Modulation()
-        modulation.delegate = self
-        modulation.start()
-        modulations.append(modulation)
-    }
-    
-    // Updates UI when modulation timer triggers
-    func modulationUpdateUI(_ sender: Modulation) {
-        self.objectWillChange.send()
-    }
-    
-    func modulationDisplayChange(_ sender: Modulation) {
-        if(sender.isDisplayed){
-            knobModColor = sender.modulationColor
-        }
-        else{
-            knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
-            self.modulationBeingAssigned = false
-        }
-        self.objectWillChange.send()
-    }
-    
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        print("we hit noise")
-        for modulation in modulations{
-            if(modulation.isDisplayed){
-                modulation.addModulationTarget(newTarget: sender)
-                print("knob added")
-            }
-        }
-    }
-    
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
-        for modulation in modulations{
-            if(modulation.isDisplayed){
-                print("Range Should Adjust")
-                modulation.adjustModulationRange(target: sender, val: adjust)
-            }
-        }
-    }
-    
+
+    // ON - modulation range and color is shown on knobs
     @Published var modulationSelected: Bool = false
+    
+    // ON - modulation can be assigned and range can be adjusted
     @Published var modulationBeingAssigned: Bool = false
+    
+    // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
     init(){
@@ -130,7 +105,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
 
-        AudioKit.output = outputMixer
+        setupOutputChain()
+        AudioKit.output = outputAmplitudeTracker//outputMixer
         
         //SETUP DEFAULTS
         toggleSound()
@@ -207,6 +183,27 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
     }
     
+    func setupOutputChain(){
+        outputMixer.volume = masterAmplitude
+        outputAmplitudeTracker = AKAmplitudeTracker(outputMixer)
+        outputAmplitudeTracker.mode = .peak
+        outputAmplitudeTimer.eventHandler = {self.getOutputAmplitude()}
+        outputAmplitudeTimer.resume()
+    }
+    
+    var outputAmplitudeTimer = RepeatingTimer(timeInterval: 0.1)
+    @objc func getOutputAmplitude(){
+        DispatchQueue.main.async {
+            //print(String(self.outputAmplitudeTracker.amplitude))
+            self.outputAmplitude = self.outputAmplitudeTracker.amplitude
+            
+            /*
+            print(String(20 * log10(self.outputAmplitudeTracker.amplitude)))
+            self.outputAmplitude = 20 * log10(self.outputAmplitudeTracker.amplitude) // Convert to DBFS
+             */
+        }
+    }
+    
     public func createNewEffect(pos: Int, effectNumber: Int){
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
         addEffectToAudioChain(effect: audioEffect.effect)
@@ -252,7 +249,49 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
             fourControlEffects.append(myEffect)
         }
     }
-
+    
+    func createNewModulation(){
+        let modulation = Modulation()
+        modulation.delegate = self
+        modulation.start()
+        modulations.append(modulation)
+    }
+    
+    // Updates UI when modulation timer triggers
+    func modulationUpdateUI(_ sender: Modulation) {
+        self.objectWillChange.send()
+    }
+    
+    func modulationDisplayChange(_ sender: Modulation) {
+        if(sender.isDisplayed){
+            knobModColor = sender.modulationColor
+        }
+        else{
+            knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
+            self.modulationBeingAssigned = false
+        }
+        self.objectWillChange.send()
+    }
+    
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
+        print("we hit noise")
+        for modulation in modulations{
+            if(modulation.isDisplayed){
+                modulation.addModulationTarget(newTarget: sender)
+                print("knob added")
+            }
+        }
+    }
+    
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
+        for modulation in modulations{
+            if(modulation.isDisplayed){
+                print("Range Should Adjust")
+                modulation.adjustModulationRange(target: sender, val: adjust)
+            }
+        }
+    }
+    
     func toggleSound(){
         if isPlaying{
             stopGenerator()
