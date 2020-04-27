@@ -8,6 +8,11 @@ struct TwoControlTemplate: View {
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
     
+    @Binding var inputAmplitude: Double
+    @Binding var inputVolume: Double
+    @Binding var outputAmplitude: Double
+    @Binding var outputVolume: Double
+    
     @State var isTargeted = false
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -24,6 +29,12 @@ struct TwoControlTemplate: View {
                 Spacer()
                 HStack
                     {
+                    Spacer()
+                        
+                    //Input Volume
+                        VolumeControl(volume: self.$inputAmplitude, amplitudeControl: self.$inputVolume, isRightHanded: .constant(false), numberOfRects: .constant(20))
+                        .frame(width: 30)
+                        
                     //Knob 1
                     Spacer()
                     VStack
@@ -46,7 +57,7 @@ struct TwoControlTemplate: View {
                             .bold()
                             //.foregroundColor(Color.black)
                         }
-                        .frame(width:geometry.size.width * 0.35)
+                        .frame(width:geometry.size.width * 0.3)
                         
                     //Knob 2
                     Spacer()
@@ -63,8 +74,15 @@ struct TwoControlTemplate: View {
                             .bold()
                             //.foregroundColor(Color.black)
                         }
-                        .frame(width:geometry.size.width * 0.35)
+                        .frame(width:geometry.size.width * 0.3)
                     Spacer()
+                        
+                    //Output Volume
+                    VolumeControl(volume: self.$outputAmplitude, amplitudeControl: self.$outputVolume, isRightHanded: .constant(true), numberOfRects: .constant(20))
+                        .frame(width: 30)
+                        
+                    Spacer()
+                        
                     }
                     
                     //Buttom Bar
@@ -127,9 +145,14 @@ struct TwoControlTemplate: View {
 struct TwoControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
         TwoControlTemplate(isBypassed: .constant(false),
-                            knobModel1: .constant(KnobCompleteModel()),
+                           knobModel1: .constant(KnobCompleteModel()),
                            knobModel2: .constant(KnobCompleteModel()),
-                           knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false))
-        .previewLayout(.fixed(width: 280, height: 180))
+                           knobModColor: .constant(Color.yellow),
+                           modulationBeingAssigned: .constant(false),
+                           inputAmplitude: .constant(1.0),
+                           inputVolume: .constant(1.0),
+                           outputAmplitude: .constant(0.0),
+                           outputVolume: .constant(0.5))
+        .previewLayout(.fixed(width: 300, height: 180))
     }
 }

@@ -170,7 +170,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         // else, connect to the output mixer
         inputMixer.disconnectOutput()
         if(allControlEffects.count > 0){
-            inputMixer.connect(to: allControlEffects[0].inputMixer)
+            inputMixer.connect(to: allControlEffects[0].input)
         }
         else{
             inputMixer.connect(to: outputMixer)
@@ -195,7 +195,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
         */
         for i in 0..<allControlEffects.count {
-            allControlEffects[i].outputMixer.disconnectOutput()
+            allControlEffects[i].output.disconnectOutput()
         }
         
         
@@ -206,16 +206,14 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
         */
         for i in 0..<allControlEffects.count - 1  {
-            allControlEffects[i].outputMixer.setOutput(to: allControlEffects[i+1].inputMixer)
+            allControlEffects[i].output.setOutput(to: allControlEffects[i+1].input)
         }
         
         //set the output of the last effect to our output mixer
         //audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
-        allControlEffects[allControlEffects.count - 1].outputMixer.setOutput(to: outputMixer)
+        allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
     }
-    
-    
-    
+
     
     func setupOutputChain(){
         outputMixer.volume = masterAmplitude
@@ -225,11 +223,17 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         outputAmplitudeTimer.resume()
     }
     
-    var outputAmplitudeTimer = RepeatingTimer(timeInterval: 0.1)
+    var outputAmplitudeTimer = RepeatingTimer(timeInterval: 0.03)
     @objc func getOutputAmplitude(){
         DispatchQueue.main.async {
             //print(String(self.outputAmplitudeTracker.amplitude))
             self.outputAmplitude = self.outputAmplitudeTracker.amplitude
+            
+            for i in 0..<self.allControlEffects.count {
+                if(self.allControlEffects[i].isDisplayed){
+                    self.allControlEffects[i].readAmplitudes()
+                }
+            }
             
             /*
             print(String(20 * log10(self.outputAmplitudeTracker.amplitude)))

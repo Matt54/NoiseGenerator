@@ -15,8 +15,20 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     public var id: Int//UUID = UUID()
     var effect: AKInput
     
-    var inputMixer = AKMixer()
+    @Published var inputAmplitude = 1.0
+    @Published var outputAmplitude = 1.0
+    
+    @Published var inputVolume = 1.0{
+        didSet { input.volume = inputVolume }
+    }
+    @Published var outputVolume = 1.0{
+        didSet { outputMixer.volume = outputVolume }
+    }
+    
+    var input = AKMixer()
+    var inputTracker = AKAmplitudeTracker()
     var outputMixer = AKMixer()
+    var output = AKAmplitudeTracker()
     
     @Published var isBypassed = false{
         didSet{
@@ -42,8 +54,18 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     }
 
     func setupAudioRouting(){
-        inputMixer.setOutput(to: effect)
+        inputTracker.mode = .peak
+        output.mode = .peak
+        
+        input.setOutput(to: inputTracker)
+        inputTracker.setOutput(to: effect)
         effect.setOutput(to: outputMixer)
+        outputMixer.setOutput(to: output)
+    }
+    
+    func readAmplitudes(){
+        inputAmplitude = inputTracker.amplitude
+        outputAmplitude = output.amplitude
     }
     
     func toggleDisplayed(){

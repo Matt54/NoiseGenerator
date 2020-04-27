@@ -35,7 +35,6 @@ struct ContentView: View {
                 Spacer()
             }
             
-            
             // Add All Two Knob Effect Controls
             ForEach(noise.twoControlEffects.indices, id: \.self){ i in
                 VStack{
@@ -46,7 +45,11 @@ struct ContentView: View {
                       knobModel1: self.$noise.twoControlEffects[i].control1,
                       knobModel2: self.$noise.twoControlEffects[i].control2,
                       knobModColor: self.$noise.knobModColor,
-                      modulationBeingAssigned: self.$noise.modulationBeingAssigned)
+                      modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                      inputAmplitude: self.$noise.twoControlEffects[i].inputAmplitude,
+                      inputVolume: self.$noise.twoControlEffects[i].inputVolume,
+                      outputAmplitude: self.$noise.twoControlEffects[i].outputAmplitude,
+                      outputVolume: self.$noise.twoControlEffects[i].outputVolume)
                         .frame(width: 280, height: 180)
                     }
                 }
@@ -155,10 +158,14 @@ struct ContentView: View {
         .padding(.bottom,10)
             
             //Master Volume Control
-            HStack {
+            VStack {
+                HStack {
+                    Spacer()
+                    VolumeControl(volume: self.$noise.outputAmplitude,amplitudeControl: self.$noise.masterAmplitude, isRightHanded: .constant(true), numberOfRects: .constant(20))
+                        .frame(width: 30, height: 200)
+                }
+                .padding()
                 Spacer()
-                VolumeControl(volume: self.$noise.outputAmplitude,amplitudeControl: self.$noise.masterAmplitude, isRightHanded: .constant(true), numberOfRects: .constant(20))
-                    .frame(width: 30, height: 200)
             }
             .padding()
             
