@@ -6,15 +6,26 @@ import Foundation
 public class RepeatingTimer {
 
     let timeInterval: TimeInterval
+    let leftoverTime: TimeInterval
     
     init(timeInterval: TimeInterval) {
         self.timeInterval = timeInterval
+        self.leftoverTime = 0.0
+    }
+    
+    init(timeInterval: TimeInterval, leftoverTime: TimeInterval) {
+        self.timeInterval = timeInterval
+        self.leftoverTime = leftoverTime
     }
     
     private lazy var timer: DispatchSourceTimer = {
         let t = DispatchSource.makeTimerSource()
-        //t.schedule(deadline: .now() + self.timeInterval, repeating: self.timeInterval)
-        t.schedule(deadline: .now(), repeating: self.timeInterval)
+        if(self.timeInterval > self.leftoverTime){
+            t.schedule(deadline: .now() + self.timeInterval - self.leftoverTime, repeating: self.timeInterval)
+        }
+        else{
+            t.schedule(deadline: .now(), repeating: self.timeInterval)
+        }
         t.setEventHandler(handler: { [weak self] in
             self?.eventHandler?()
         })

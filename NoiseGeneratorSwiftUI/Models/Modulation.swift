@@ -15,11 +15,23 @@ public class Modulation : Identifiable, ObservableObject{
     // Can only be between 0 and 1 (in the future, may allow -1 to 1 [bi-directional] )
     var modulationValue = 0.0
     
-    var numberOfSteps = 500.0
+    var numberOfSteps = 200.0
+    
+    var timeOfLastTimerAction: Double = 0.0
     
     @Published var timeInterval = 0.01{
     didSet {
-        setTimeInterval(timeInterval: timeInterval)
+        var leftoverTime = 0.0
+        if(!(timeOfLastTimerAction == 0)){
+            leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - timeOfLastTimerAction) / 1_000_000_000
+        }
+        if(leftoverTime > 0)
+        {
+            setTimeInterval(timeInterval: timeInterval, leftoverTime: leftoverTime)
+        }
+        else{
+            setTimeInterval(timeInterval: timeInterval)
+        }
         }
     }
     
@@ -64,7 +76,7 @@ public class Modulation : Identifiable, ObservableObject{
         
         
         timingControl.name = "Rate"
-        timingControl.range = 0.0099
+        timingControl.range = 0.099
         timingControl.unit = " Hz"
         timingControl.percentRotated = 0.0
         
@@ -115,12 +127,19 @@ public class Modulation : Identifiable, ObservableObject{
     }
     
     func setTimeInterval(){
-        timeInterval = 0.0001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range
-        timingControl.display = String(format: "%.3f", ((1/(0.0001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range)))/numberOfSteps) + timingControl.unit
+        timeInterval = 0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range
+        timingControl.display = String(format: "%.3f", ((1/(0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range)))/numberOfSteps) + timingControl.unit
     }
     
     func setTimeInterval(timeInterval: Double){
         timer = RepeatingTimer(timeInterval: timeInterval)
+        timer.eventHandler = {self.timerAction()}
+        timer.resume()
+        self.delegate?.modulationUpdateUI(self)
+    }
+    
+    func setTimeInterval(timeInterval: Double, leftoverTime: Double){
+        timer = RepeatingTimer(timeInterval: timeInterval, leftoverTime: leftoverTime)
         timer.eventHandler = {self.timerAction()}
         timer.resume()
         self.delegate?.modulationUpdateUI(self)
@@ -157,6 +176,8 @@ public class Modulation : Identifiable, ObservableObject{
         DispatchQueue.main.async {
             self.delegate?.modulationUpdateUI(self)
         }
+        
+        timeOfLastTimerAction = Double(DispatchTime.now().uptimeNanoseconds)
     }
 }
 
