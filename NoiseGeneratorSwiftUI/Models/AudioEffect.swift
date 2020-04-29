@@ -98,6 +98,9 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
         handoffDelegate?.KnobModelAssignToModulation(sender)
     }
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelRemoveModulation(sender)
+    }
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
         handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
     }
@@ -520,14 +523,24 @@ public class ListedEffect{
     @Published var id: Int
     @Published var display: String
     @Published var symbol: Image
+    @Published var description: String = ""
+    @Published var parameters: [String] = []
     init(id: Int, display: String, symbol: Image){
         self.id = id
         self.display = display
         self.symbol = symbol
     }
+    init(id: Int, display: String, symbol: Image, description: String, parameters: [String]){
+        self.id = id
+        self.display = display
+        self.symbol = symbol
+        self.description = description
+        self.parameters = parameters
+    }
 }
 
 protocol AudioEffectKnobHandoff{
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

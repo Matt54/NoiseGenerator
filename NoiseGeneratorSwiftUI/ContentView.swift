@@ -23,6 +23,7 @@ struct ContentView: View {
                         Spacer()
                     }
                 }
+            .padding()
             }
             
             // Noise Triangle
@@ -46,6 +47,7 @@ struct ContentView: View {
                       knobModel2: self.$noise.twoControlEffects[i].control2,
                       knobModColor: self.$noise.knobModColor,
                       modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                      modulationBeingDeleted: self.$noise.modulationBeingDeleted,
                       inputAmplitude: self.$noise.twoControlEffects[i].inputAmplitude,
                       inputVolume: self.$noise.twoControlEffects[i].inputVolume,
                       outputAmplitude: self.$noise.twoControlEffects[i].outputAmplitude,
@@ -99,7 +101,8 @@ struct ContentView: View {
                       isBypassed: self.$noise.modulations[i].isBypassed,
                       knobModel1: self.$noise.modulations[i].timingControl,
                       knobModColor: self.noise.knobModColor,
-                      isConnectingModulation: self.$noise.modulationBeingAssigned)
+                      isConnectingModulation: self.$noise.modulationBeingAssigned,
+                      isDeletingModulation: self.$noise.modulationBeingDeleted)
                         .frame(width: 280, height: 180)
                     }
                 }
@@ -135,7 +138,9 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Button(action:{self.noise.addingEffects = true}){
+                Button(action:{
+                    self.noise.addingEffects = true
+                }){
                     Image(systemName: "plus.circle")
                         .font(.system(size: 26))
                 }
@@ -170,7 +175,8 @@ struct ContentView: View {
             .padding()
             
             if(noise.addingEffects){
-                AddEffectForm(noise: _noise)
+                //AddEffectForm(noise: _noise)
+                AddEffectForm()
             }
             
         }

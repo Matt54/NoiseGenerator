@@ -6,6 +6,7 @@ struct ModulationView: View {
     @Binding var knobModel1 : KnobCompleteModel
     @State var knobModColor: Color
     @Binding var isConnectingModulation: Bool
+    @Binding var isDeletingModulation: Bool
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -23,14 +24,56 @@ struct ModulationView: View {
                     {
                         
                     Spacer()
-                        
-                    Button(action: {
-                        self.isConnectingModulation.toggle()
-                    }){
-                        Image(systemName: "plus.rectangle.fill")
-                            .foregroundColor(self.knobModColor)
-                            .font(.system(size: 36))
-                    }
+                    
+                        VStack{
+                            Text("Add/Remove")
+                                .font(.system(size: 14))
+                            Text("Modulation")
+                                .font(.system(size: 14))
+                            HStack{
+                                
+                                //Spacer()
+                                
+                                Button(action: {
+                                    self.isConnectingModulation.toggle()
+                                }){
+                                    VStack{
+                                        if(self.isConnectingModulation){
+                                            Image(systemName: "plus.rectangle.fill")
+                                                .foregroundColor(self.knobModColor)
+                                                .font(.system(size: 32))
+                                        }
+                                        else{
+                                            Image(systemName: "plus.rectangle")
+                                            .foregroundColor(self.knobModColor)
+                                            .font(.system(size: 32))
+                                        }
+                                    }
+                                }
+                                //Spacer()
+                                    
+                                Button(action: {
+                                    self.isDeletingModulation.toggle()
+                                }){
+                                    VStack{
+                                        if(self.isDeletingModulation){
+                                            Image(systemName: "minus.rectangle.fill")
+                                                .foregroundColor(self.knobModColor)
+                                                .font(.system(size: 32))
+                                        }
+                                        else{
+                                            Image(systemName: "minus.rectangle")
+                                            .foregroundColor(self.knobModColor)
+                                            .font(.system(size: 32))
+                                        }
+                                    }
+                                }
+                                
+                                //Spacer()
+                                
+                            }
+                            
+                        }
                         
                     //Knob 1
                     Spacer()
@@ -38,10 +81,10 @@ struct ModulationView: View {
                         {
                         Text(self.knobModel1.display)
                             .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: .constant(false))
-                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
-                                   minHeight:geometry.size.width * 0.275,
-                                   maxHeight: geometry.size.width * 0.275)
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: .constant(false), modulationBeingDeleted: .constant(false))
+                            .frame(minWidth:geometry.size.width * 0.25,                           maxWidth:geometry.size.width * 0.25,
+                                   minHeight:geometry.size.width * 0.25,
+                                   maxHeight: geometry.size.width * 0.25)
                             .overlay(
                                 Color.clear
                                     .onAppear{
@@ -54,7 +97,7 @@ struct ModulationView: View {
                             .bold()
                             //.foregroundColor(Color.black)
                         }
-                        .frame(width:geometry.size.width * 0.35)
+                        .frame(width:geometry.size.width * 0.25)
                         
                     Spacer()
                     }
@@ -119,8 +162,9 @@ struct ModulationView_Previews: PreviewProvider {
         ModulationView(isBypassed: .constant(false),
         knobModel1: .constant(KnobCompleteModel()),
         knobModColor: Color.yellow,
-        isConnectingModulation: .constant(false))
-        .previewLayout(.fixed(width: 280, height: 180))
+        isConnectingModulation: .constant(false),
+        isDeletingModulation: .constant(false))
+        .previewLayout(.fixed(width: 300, height: 180))
     }
 }
 

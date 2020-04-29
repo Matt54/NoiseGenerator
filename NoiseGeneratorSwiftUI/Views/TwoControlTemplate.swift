@@ -7,6 +7,7 @@ struct TwoControlTemplate: View {
     @Binding var knobModel2 : KnobCompleteModel
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
+    @Binding var modulationBeingDeleted: Bool
     
     @Binding var inputAmplitude: Double
     @Binding var inputVolume: Double
@@ -24,27 +25,43 @@ struct TwoControlTemplate: View {
         ZStack
             {
             //Everything else
-            VStack
+            VStack(spacing: 0)
                 {
                 Spacer()
-                HStack
+                HStack(spacing: 0)
                     {
-                    Spacer()
+                    //Spacer()
                         
                     //Input Volume
-                        VolumeControl(volume: self.$inputAmplitude, amplitudeControl: self.$inputVolume, isRightHanded: .constant(false), numberOfRects: .constant(20))
+                        //VStack(spacing: 5)
+                        /*
+                        VStack(alignment: .trailing, spacing: 5)
+                        {
+                            Text(String(format: "%.1f", self.inputVolume))
+                                .font(.system(size: 12))
+                                .padding(.trailing, 2)
+                            VolumeControl(volume: self.$inputAmplitude, amplitudeControl: self.$inputVolume, isRightHanded: .constant(false), numberOfRects: .constant(10))
+                            Text("IN")
+                                .font(.system(size: 12))
+                                .bold()
+                                .padding(.trailing, 4)
+                        }
+                        
+                        */
+                        VolumeComplete(volume: self.$inputAmplitude, amplitudeControl: self.$inputVolume, isRightHanded: .constant(false), numberOfRects: .constant(10),title: "IN")
                         .frame(width: 30)
+                        .padding(.horizontal, 7)
                         
                     //Knob 1
                     Spacer()
                     VStack
                         {
                         Text(self.knobModel1.display)
-                            .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
-                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
-                                   minHeight:geometry.size.width * 0.275,
-                                   maxHeight: geometry.size.width * 0.275)
+                            .font(.system(size: 12))
+                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: self.$modulationBeingDeleted)
+                            .frame(minWidth:geometry.size.width * 0.25,                       maxWidth:geometry.size.width * 0.25,
+                                   minHeight:geometry.size.width * 0.25,
+                                   maxHeight: geometry.size.width * 0.25)
                             .overlay(
                                 Color.clear
                                     .onAppear{
@@ -53,35 +70,50 @@ struct TwoControlTemplate: View {
                             )
                             
                         Text(self.knobModel1.name)
-                            .font(.system(size: 14))
+                            .font(.system(size: 12))
                             .bold()
                             //.foregroundColor(Color.black)
                         }
-                        .frame(width:geometry.size.width * 0.3)
+                        .frame(width:geometry.size.width * 0.25)
                         
                     //Knob 2
                     Spacer()
                     VStack
                         {
                         Text(self.knobModel2.display)
-                            .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
-                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
-                                    minHeight:geometry.size.width * 0.275,
-                                    maxHeight: geometry.size.width * 0.275)
+                            .font(.system(size: 12))
+                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: self.$modulationBeingDeleted)
+                            .frame(minWidth:geometry.size.width * 0.25,                           maxWidth:geometry.size.width * 0.25,
+                                    minHeight:geometry.size.width * 0.25,
+                                    maxHeight: geometry.size.width * 0.25)
                         Text(self.knobModel2.name)
-                            .font(.system(size: 14))
+                            .font(.system(size: 12))
                             .bold()
                             //.foregroundColor(Color.black)
                         }
-                        .frame(width:geometry.size.width * 0.3)
+                        .frame(width:geometry.size.width * 0.25)
                     Spacer()
                         
                     //Output Volume
-                    VolumeControl(volume: self.$outputAmplitude, amplitudeControl: self.$outputVolume, isRightHanded: .constant(true), numberOfRects: .constant(20))
-                        .frame(width: 30)
                         
-                    Spacer()
+                        //VStack(spacing: 5)
+                        /*
+                        VStack(alignment: .leading, spacing: 5)
+                        {
+                            Text(String(format: "%.1f", self.outputVolume))
+                                .font(.system(size: 12))
+                                .padding(.leading, 2)
+                            VolumeControl(volume: self.$outputAmplitude, amplitudeControl: self.$outputVolume, isRightHanded: .constant(true), numberOfRects: .constant(10))
+                            Text("OUT")
+                                .font(.system(size: 12))
+                                .bold()
+                        }
+                        */
+                        VolumeComplete(volume: self.$outputAmplitude, amplitudeControl: self.$outputVolume, isRightHanded: .constant(true), numberOfRects: .constant(10),title: "OUT")
+                        .frame(width: 30)
+                        .padding(.horizontal, 7)
+                        
+                    //Spacer()
                         
                     }
                     
@@ -130,7 +162,7 @@ struct TwoControlTemplate: View {
                     }
                     
                 }
-                .padding(EdgeInsets(top: 0, leading: 3, bottom: 6, trailing: 0))
+                .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 0))
                 //.padding(EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0))
                 
                 }//zstack
@@ -149,8 +181,9 @@ struct TwoControlTemplate_Previews: PreviewProvider {
                            knobModel2: .constant(KnobCompleteModel()),
                            knobModColor: .constant(Color.yellow),
                            modulationBeingAssigned: .constant(false),
+                           modulationBeingDeleted: .constant(false),
                            inputAmplitude: .constant(1.0),
-                           inputVolume: .constant(1.0),
+                           inputVolume: .constant(0.8999999),
                            outputAmplitude: .constant(0.0),
                            outputVolume: .constant(0.5))
         .previewLayout(.fixed(width: 300, height: 180))

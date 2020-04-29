@@ -30,7 +30,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel1.display)
                                 .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
+                                KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
                                        maxHeight: geometry.size.width * 0.175)
@@ -47,7 +47,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel2.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
+                            KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)
@@ -64,7 +64,7 @@ struct FourControlTemplate: View {
                             {
                             Text(self.knobModel3.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel3, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
+                            KnobComplete(knobModel: self.$knobModel3, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)
@@ -82,7 +82,7 @@ struct FourControlTemplate: View {
 
                             Text(self.knobModel4.display)
                                 .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$knobModel4, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
+                                KnobComplete(knobModel: self.$knobModel4, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
                                 minHeight:geometry.size.width * 0.175,
                                 maxHeight: geometry.size.width * 0.175)

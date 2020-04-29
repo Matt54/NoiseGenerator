@@ -22,24 +22,26 @@ struct VolumeControl: View {
                     VStack(spacing: 0) {
                         SlidingTriangle(amplitudeControl: self.$amplitudeControl, isRightHanded: self.$isRightHanded)
                     }
+                    .frame(width: geometry.size.width * 0.3)
                 }
                 VStack(spacing: 0) {
                     
                     Rectangle()
                         .fill(Color.clear)
-                        .frame(height: (geometry.size.width * 0.25 - geometry.size.height / CGFloat(self.numberOfRects) * 0.25))
+                        .frame(height: (geometry.size.width * 0.15 - geometry.size.height / CGFloat(self.numberOfRects) * 0.25))
                     
                     VolumeDisplay(volume: self.$volume, numberOfRects: .constant(self.numberOfRects))
                     
                     Rectangle()
                     .fill(Color.clear)
-                        .frame(height: (geometry.size.width * 0.25 - geometry.size.height / CGFloat(self.numberOfRects) * 0.25 * 2))
+                        .frame(height: (geometry.size.width * 0.15 - geometry.size.height / CGFloat(self.numberOfRects) * 0.25 * 2))
                     
                 }
                 if(self.isRightHanded){
                     VStack(spacing: 0) {
                         SlidingTriangle(amplitudeControl: self.$amplitudeControl, isRightHanded: self.$isRightHanded)
                     }
+                    .frame(width: geometry.size.width * 0.3)
                 }
             }
         }

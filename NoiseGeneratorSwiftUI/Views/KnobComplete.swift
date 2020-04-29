@@ -6,6 +6,7 @@ struct KnobComplete: View {
     @Binding var knobModel : KnobCompleteModel
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
+    @Binding var modulationBeingDeleted: Bool
     
     var sensitivity: Double = 0.01;
     
@@ -110,7 +111,23 @@ struct KnobComplete: View {
                         }
                     }
                 }
-                
+                if(self.modulationBeingDeleted){
+                    VStack{
+                        if(self.knobModel.modSelected){
+                            ZStack{
+                                Color(red: 1.0, green: 0, blue: 0.0, opacity: 0.2)
+                                .gesture(DragGesture(minimumDistance: 0)
+                                    .onChanged{ value in
+                                    print("touch began")
+                                    self.knobModel.removeKnobModel()
+                                })
+                                Image(systemName: "minus.circle.fill").resizable()
+                                .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
+                                .foregroundColor(Color.white)
+                            }
+                        }
+                    }
+                }
             }//ZStack            
         }
     }
@@ -118,7 +135,7 @@ struct KnobComplete: View {
 
 struct KnobComplete_Previews: PreviewProvider {
     static var previews: some View {
-        KnobComplete(knobModel: .constant(KnobCompleteModel()), knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(true))
+        KnobComplete(knobModel: .constant(KnobCompleteModel()), knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false), modulationBeingDeleted: .constant(true))
         .previewLayout(.fixed(width: 400, height: 400))
     }
 }

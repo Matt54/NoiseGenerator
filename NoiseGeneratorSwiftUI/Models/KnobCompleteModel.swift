@@ -34,7 +34,7 @@ public class KnobCompleteModel : ObservableObject{
             realModulationRange = (1.0 - percentRotated)
         }
         else if(percentRotated + attemptedModulationRange < 0.0){
-            realModulationRange = percentRotated
+            realModulationRange = -1 * percentRotated
         }
         else{
             realModulationRange = attemptedModulationRange
@@ -81,6 +81,11 @@ public class KnobCompleteModel : ObservableObject{
         handoffDelegate?.KnobModelAssignToModulation(self)
     }
     
+    func removeKnobModel(){
+        print("removeModulation")
+        handoffDelegate?.KnobModelRemoveModulation(self)
+    }
+    
     func adjustModulationRange(adjust: Double){
         handoffDelegate?.KnobModelAdjustModulationRange(self, adjust: adjust)
     }
@@ -93,5 +98,6 @@ protocol ModulationDelegate {
 
 protocol KnobModelModulationHandoff{
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

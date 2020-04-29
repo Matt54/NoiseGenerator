@@ -93,7 +93,7 @@ struct PresetPicker: View {
                     VStack {
                         Text(self.knobModel.display)
                             .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned)
+                        KnobComplete(knobModel: self.$knobModel, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)

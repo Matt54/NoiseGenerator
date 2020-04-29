@@ -71,13 +71,47 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     // All Effects that can be added
     @Published var listedEffects = [
-        ListedEffect(id: 1, display: "Moog Filter", symbol: Image(systemName: "f.circle.fill")),
-        ListedEffect(id: 2, display: "Tremelo", symbol: Image(systemName: "t.circle.fill")),
-        ListedEffect(id: 3, display: "Reverb", symbol: Image(systemName: "r.circle.fill")),
-        ListedEffect(id: 4, display: "Delay", symbol: Image(systemName: "d.circle.fill")),
-        ListedEffect(id: 5, display: "Chorus", symbol: Image(systemName: "c.circle.fill")),
-        ListedEffect(id: 6, display: "Bit Crusher", symbol: Image(systemName: "b.circle.fill")),
-        ListedEffect(id: 7, display: "Flanger", symbol: Image(systemName: "l.circle.fill"))
+        ListedEffect(id: 1,
+                     display: "Moog Filter",
+                     symbol: Image(systemName: "f.circle.fill"),
+                     description: "Digital Implementation of the Moog Ladder Filter",
+                     parameters: ["Cutoff", "Resonance"]
+        ),
+        ListedEffect(id: 2,
+                     display: "Tremelo",
+                     symbol: Image(systemName: "t.circle.fill"),
+                     description: "A Variation in Amplitude",
+                     parameters: ["Depth", "Frequency"]
+        ),
+        ListedEffect(id: 3,
+                     display: "Reverb",
+                     symbol: Image(systemName: "r.circle.fill"),
+                     description: "Apple's Reverb Audio Unit",
+                     parameters: ["Preset", "Dry/Wet"]
+        ),
+        ListedEffect(id: 4,
+                     display: "Delay",
+                     symbol: Image(systemName: "d.circle.fill"),
+                     description: "Apple's Delay Audio Unit",
+                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
+        ),
+        ListedEffect(id: 5,
+                     display: "Chorus",
+                     symbol: Image(systemName: "c.circle.fill"),
+                     description: "Delays/Pitch Modulates the Signal",
+                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
+        ),
+        ListedEffect(id: 6,
+                     display: "Bit Crusher",
+                     symbol: Image(systemName: "b.circle.fill"),
+                     description: "Reduces Resolution/Bandwidth of Signal",
+                     parameters: ["Bit Depth","Sample Rate"]
+        ),
+        ListedEffect(id: 7,
+                     display: "Flanger",
+                     symbol: Image(systemName: "l.circle.fill"),
+                     description: "Swept Comb Filter Effect",
+                     parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
     
     // Used for navigation of the UI when adding a new effect
@@ -90,7 +124,22 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     @Published var modulationSelected: Bool = false
     
     // ON - modulation can be assigned and range can be adjusted
-    @Published var modulationBeingAssigned: Bool = false
+    @Published var modulationBeingAssigned: Bool = false{
+        willSet{
+            if(modulationBeingDeleted){
+                modulationBeingDeleted = false
+            }
+        }
+    }
+    
+    // ON - modulation can be removed from knobs
+    @Published var modulationBeingDeleted: Bool = false{
+        willSet{
+            if(modulationBeingAssigned){
+                modulationBeingAssigned = false
+            }
+        }
+    }
     
     // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
@@ -122,12 +171,14 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         
         //START AUDIOBUS
         Audiobus.start()
-
+        
+        /*
         if let inputs = AudioKit.inputDevices {
             for input in inputs{
                 print(input)
             }
         }
+        */
         
         createNewModulation()
     }
@@ -319,6 +370,18 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                 print("knob added")
             }
         }
+    }
+    
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
+        print("we hit noise")
+        for modulation in modulations{
+            if(modulation.isDisplayed){
+                modulation.removeModulationTarget(removeTarget: sender)
+                print("knob removed")
+            }
+        }
+        sender.modSelected = false
+        sender.modulationValue = sender.percentRotated
     }
     
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
