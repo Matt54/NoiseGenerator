@@ -9,16 +9,13 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     static let shared = NoiseModel()
     
     // Master Sound On/Off
-    @Published var isPlaying = true
+    @Published var isNoiseBypassed = true{
+        didSet { setNoiseBypass() }
+    }
     
     // Master Amplitude Control
     @Published var masterAmplitude = 0.9{
         didSet { outputMixer.volume = masterAmplitude }
-    }
-    
-    // Input Noise Amplitude Control
-    @Published var amplitude = 1.0 {
-        didSet { setAllAmplitudes() }
     }
     
     // External Sound (Disables Inputted Sound)
@@ -29,10 +26,21 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     //External Input
     let externalInput = AKStereoInput()
     
+    // Noise Generator Volume Control
+    @Published var noiseVolume = 1.0 {
+        didSet { setNoiseVolumes() }
+    }
+    
+    // Noise Amplitude Tracker
+    var noiseAmplitudeTracker = AKAmplitudeTracker()
+    @Published var noiseAmplitude: Double = 0.0
+    
     // Noise Generating Oscillators
     private let whiteNoise = AKWhiteNoise()
     private let pinkNoise = AKPinkNoise()
     private let brownNoise = AKBrownianNoise()
+    
+    var noiseMixer = AKMixer()
     
     // Mixers
     var inputMixer = AKMixer()
@@ -158,8 +166,9 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         AudioKit.output = outputAmplitudeTracker//outputMixer
         
         //SETUP DEFAULTS
-        toggleSound()
-        setAllAmplitudes()
+        //toggleSound()
+        setNoiseBypass()
+        setNoiseVolumes()
 
         //START AUDIOKIT
         do{
@@ -184,9 +193,20 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
     
     func getAllAudioInputs(){
-        addInputToAudioChain(input: whiteNoise)
-        addInputToAudioChain(input: pinkNoise)
-        addInputToAudioChain(input: brownNoise)
+        //addInputToAudioChain(input: whiteNoise)
+        //addInputToAudioChain(input: pinkNoise)
+        //addInputToAudioChain(input: brownNoise)
+        
+        
+        noiseMixer.connect(input: whiteNoise)
+        noiseMixer.connect(input: pinkNoise)
+        noiseMixer.connect(input: brownNoise)
+        
+        noiseAmplitudeTracker = AKAmplitudeTracker(noiseMixer)
+        noiseAmplitudeTracker.mode = .peak
+        
+        addInputToAudioChain(input: noiseAmplitudeTracker)
+        
         //addInputToAudioChain(input: externalInput)
     }
     
@@ -279,6 +299,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         DispatchQueue.main.async {
             //print(String(self.outputAmplitudeTracker.amplitude))
             self.outputAmplitude = self.outputAmplitudeTracker.amplitude
+            self.noiseAmplitude = self.noiseAmplitudeTracker.amplitude
             
             for i in 0..<self.allControlEffects.count {
                 if(self.allControlEffects[i].isDisplayed){
@@ -393,35 +414,34 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    func toggleSound(){
-        if isPlaying{
+    func setNoiseBypass(){
+        if isNoiseBypassed{
             stopGenerator()
         }
         else{
-            
             startGenerator()
         }
-        isPlaying = whiteNoise.isPlaying
+        //isNoiseBypassed = whiteNoise.isPlaying
     }
     
-    func setAllAmplitudes(){
+    func setNoiseVolumes(){
         setWhiteAmplitude()
         setPinkAmplitude()
         setBrownAmplitude()
     }
     
     func setWhiteAmplitude(){
-        whiteAmplitude = whiteVal * amplitude
+        whiteAmplitude = whiteVal * noiseVolume
         whiteNoise.amplitude = whiteAmplitude
     }
     
     func setPinkAmplitude(){
-        pinkAmplitude = pinkVal * amplitude
+        pinkAmplitude = pinkVal * noiseVolume
         pinkNoise.amplitude = pinkAmplitude
     }
     
     func setBrownAmplitude(){
-        brownAmplitude = brownVal * amplitude
+        brownAmplitude = brownVal * noiseVolume
         brownNoise.amplitude = brownAmplitude
     }
     

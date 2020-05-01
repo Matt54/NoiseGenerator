@@ -22,30 +22,44 @@ struct Knob: View {
     var body: some View {
         GeometryReader{ geometry in
             ZStack{
+                
+                    //Border
                     Circle()
-                        .strokeBorder(Color.init(red: 0.4, green: 0.4, blue: 0.4), lineWidth: 10)
+                        .strokeBorder(Color.init(red: 0.4, green: 0.4, blue: 0.4), lineWidth: 20)
                         .frame(width:geometry.size.width)
+                
+                    //Stationary Gradient
                     Circle()
-                        .fill(Color.init(red: 0.2, green: 0.2, blue: 0.2))
+                        .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                        .shadow(color: Color.darkEnd, radius: 1, x: 1, y: 1)
+                        .shadow(color: Color.darkStart, radius: 1, x: -1, y: -1)
+                        .frame(width:geometry.size.width * 0.90)
+                
+                    //Rotating Entity (fill is almost completely transparent - but still rotates)
+                    Circle()
+                        .fill(Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.01))
                         .onAppear{
                             self.currentAngle = self.percentRotated * self.range + self.startAngle
                         }
-                        .frame(width:geometry.size.width * 0.975)
+                        .frame(width:geometry.size.width * 0.90)
                 
                         .overlay(
-                            Rectangle()
-                                .fill(Color.white)
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(LinearGradient(Color.white, Color.offWhite))
+                                .shadow(color: Color.darkEnd, radius: 2, x: 2, y: 2)
+                                .shadow(color: Color.darkStart, radius: 2, x: -2, y: -2)
                                 .frame(width:geometry.size.width * 0.04,
                                        height: geometry.size.width * 0.42)
-                                .offset(y: -1 * geometry.size.width * 0.27)
+                                .offset(y: -1 * geometry.size.width * 0.24)
+                            
                         )
+                            
                         .rotationEffect(
                             .degrees(
                                 self.currentAngle
                             )
                         )
                 //User touches the circle and drags it to a new location
-                
                 .gesture(DragGesture()
                     
                     // event fires when there is drag translation

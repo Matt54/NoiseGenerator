@@ -28,6 +28,8 @@
 		FA6ACFBA24573ADE0009CC20 /* SlidingTriangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */; };
 		FA6ACFBC24573D720009CC20 /* VolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6ACFBB24573D710009CC20 /* VolumeControl.swift */; };
 		FA791501244D333500C45D1A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA791500244D333500C45D1A /* ColorExtension.swift */; };
+		FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DF97245C6B4500473657 /* NoiseGenerator.swift */; };
+		FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DF99245C87FF00473657 /* TitleBar.swift */; };
 		FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA83C0232442EA8700568204 /* TwoControlTemplate.swift */; };
 		FA855A822442575D0024787D /* PresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA855A812442575D0024787D /* PresetPicker.swift */; };
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
@@ -37,6 +39,7 @@
 		FAB700DF24531CCE0053F13A /* Modulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB700DE24531CCE0053F13A /* Modulation.swift */; };
 		FAB700E1245328790053F13A /* ModulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB700E0245328790053F13A /* ModulationView.swift */; };
 		FAC0BD64243934C100E24C9A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC0BD63243934C100E24C9A /* AudioToolbox.framework */; };
+		FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC1F4A5245A4F39007E1331 /* PowerButton.swift */; };
 		FAC8D75A243B758C0010078B /* Audiobus.txt in Resources */ = {isa = PBXBuildFile; fileRef = FAC8D759243B758C0010078B /* Audiobus.txt */; };
 		FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD334E6243E6410009B0DDF /* KnobControl.swift */; };
 		FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6505D245251D600B10110 /* RepeatingTimer.swift */; };
@@ -82,6 +85,8 @@
 		FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingTriangle.swift; sourceTree = "<group>"; };
 		FA6ACFBB24573D710009CC20 /* VolumeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeControl.swift; sourceTree = "<group>"; };
 		FA791500244D333500C45D1A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		FA81DF97245C6B4500473657 /* NoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseGenerator.swift; sourceTree = "<group>"; };
+		FA81DF99245C87FF00473657 /* TitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBar.swift; sourceTree = "<group>"; };
 		FA83C0232442EA8700568204 /* TwoControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoControlTemplate.swift; sourceTree = "<group>"; };
 		FA855A812442575D0024787D /* PresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPicker.swift; sourceTree = "<group>"; };
 		FA922F922448D9E100C63DAD /* FourControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourControlTemplate.swift; sourceTree = "<group>"; };
@@ -93,6 +98,7 @@
 		FAB700E0245328790053F13A /* ModulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationView.swift; sourceTree = "<group>"; };
 		FAC0BD62243934C100E24C9A /* NoiseGeneratorSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoiseGeneratorSwiftUI.entitlements; sourceTree = "<group>"; };
 		FAC0BD63243934C100E24C9A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		FAC1F4A5245A4F39007E1331 /* PowerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerButton.swift; sourceTree = "<group>"; };
 		FAC8D759243B758C0010078B /* Audiobus.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Audiobus.txt; sourceTree = "<group>"; };
 		FAD334E6243E6410009B0DDF /* KnobControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobControl.swift; sourceTree = "<group>"; };
 		FAD6505D245251D600B10110 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -138,22 +144,13 @@
 		FA220F64245484BD00AACE5B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				FA3565D02450D963004AFA8C /* AddEffectForm.swift */,
-				FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */,
-				FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */,
-				FA6ACFBB24573D710009CC20 /* VolumeControl.swift */,
-				FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */,
-				FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */,
-				FA922F922448D9E100C63DAD /* FourControlTemplate.swift */,
-				FAFC1309243CF9AB009D1169 /* Knob.swift */,
-				FA4FDC70243F7C5600325F89 /* KnobComplete.swift */,
-				FAD334E6243E6410009B0DDF /* KnobControl.swift */,
-				FAB700E0245328790053F13A /* ModulationView.swift */,
-				FA855A812442575D0024787D /* PresetPicker.swift */,
-				FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */,
-				FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */,
-				FA377A50243228DE00CBE2C4 /* TriangleControl.swift */,
-				FA83C0232442EA8700568204 /* TwoControlTemplate.swift */,
+				FA81DFA3245C973A00473657 /* ModulationBlock */,
+				FA81DFA1245C971D00473657 /* AudioEffectBlocks */,
+				FA81DFA0245C970200473657 /* TitleBarControl */,
+				FA81DF9F245C966900473657 /* AddEffectScreen */,
+				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
+				FA81DF9C245C95F500473657 /* Knob */,
+				FA81DF9B245C959200473657 /* VolumeControl */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -212,6 +209,74 @@
 				8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FA81DF9B245C959200473657 /* VolumeControl */ = {
+			isa = PBXGroup;
+			children = (
+				FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */,
+				FA6ACFBB24573D710009CC20 /* VolumeControl.swift */,
+				FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */,
+				FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */,
+			);
+			path = VolumeControl;
+			sourceTree = "<group>";
+		};
+		FA81DF9C245C95F500473657 /* Knob */ = {
+			isa = PBXGroup;
+			children = (
+				FAFC1309243CF9AB009D1169 /* Knob.swift */,
+				FA4FDC70243F7C5600325F89 /* KnobComplete.swift */,
+				FAD334E6243E6410009B0DDF /* KnobControl.swift */,
+			);
+			path = Knob;
+			sourceTree = "<group>";
+		};
+		FA81DF9E245C962500473657 /* NoiseGeneratorBlock */ = {
+			isa = PBXGroup;
+			children = (
+				FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */,
+				FA377A50243228DE00CBE2C4 /* TriangleControl.swift */,
+				FA81DF97245C6B4500473657 /* NoiseGenerator.swift */,
+			);
+			path = NoiseGeneratorBlock;
+			sourceTree = "<group>";
+		};
+		FA81DF9F245C966900473657 /* AddEffectScreen */ = {
+			isa = PBXGroup;
+			children = (
+				FA3565D02450D963004AFA8C /* AddEffectForm.swift */,
+				FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */,
+			);
+			path = AddEffectScreen;
+			sourceTree = "<group>";
+		};
+		FA81DFA0245C970200473657 /* TitleBarControl */ = {
+			isa = PBXGroup;
+			children = (
+				FAC1F4A5245A4F39007E1331 /* PowerButton.swift */,
+				FA81DF99245C87FF00473657 /* TitleBar.swift */,
+			);
+			path = TitleBarControl;
+			sourceTree = "<group>";
+		};
+		FA81DFA1245C971D00473657 /* AudioEffectBlocks */ = {
+			isa = PBXGroup;
+			children = (
+				FA922F922448D9E100C63DAD /* FourControlTemplate.swift */,
+				FA855A812442575D0024787D /* PresetPicker.swift */,
+				FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */,
+				FA83C0232442EA8700568204 /* TwoControlTemplate.swift */,
+			);
+			path = AudioEffectBlocks;
+			sourceTree = "<group>";
+		};
+		FA81DFA3245C973A00473657 /* ModulationBlock */ = {
+			isa = PBXGroup;
+			children = (
+				FAB700E0245328790053F13A /* ModulationView.swift */,
+			);
+			path = ModulationBlock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -317,14 +382,17 @@
 				FA1C4B3C2459C7D700A7E442 /* EffectRow.swift in Sources */,
 				FA4FDC71243F7C5600325F89 /* KnobComplete.swift in Sources */,
 				FAB700DF24531CCE0053F13A /* Modulation.swift in Sources */,
+				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
+				FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */,
 				FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */,
 				FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */,
 				FA855A822442575D0024787D /* PresetPicker.swift in Sources */,
 				FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */,
+				FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */,
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,

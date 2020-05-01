@@ -19,7 +19,7 @@ struct TriangleControl: View {
     
     //Reduces circle size by factor of the overall width/height
     //Higher number = smaller circle
-    @State var circleFactor: CGFloat = 8
+    @State var circleFactor: CGFloat = 10
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
@@ -34,12 +34,21 @@ struct TriangleControl: View {
                 Rectangle()
                     .fill(Color.clear)
                 Triangle()
-                    .fill(Color.WhiteBlackColor(for: self.colorScheme))
-                    .shadow(color: Color.BlackWhiteColor(for: self.colorScheme), radius: 10)
+                    .fill(LinearGradient(Color.white, Color.offWhite))
+                    .shadow(color: Color.darkStart, radius: 5, x: 2, y: 2)
+                    .shadow(color: Color.darkEnd, radius: 5, x: -2, y: -2)
+                    //.fill(Color.WhiteBlackColor(for: self.colorScheme))
+                    //.shadow(color: Color.BlackWhiteColor(for: self.colorScheme), radius: 10)
 
                 Circle()
                     .fill(Color.BlackWhiteColor(for: self.colorScheme))
-                    .shadow(color: Color.BlackWhiteColor(for: self.colorScheme),radius: 8)
+                    //.shadow(color: Color.BlackWhiteColor(for: self.colorScheme),radius: 8)
+                    
+                    //.fill(LinearGradient(Color.darkGray, Color.lightGray))
+                    .shadow(color: Color.lightStart, radius: 1, x: 0.5, y: 0.5)
+                    .shadow(color: Color.lightEnd, radius: 1, x: -0.5, y: -0.5)
+                    .shadow(color: Color.lightEnd, radius: 1, x: 0.5, y: -0.5)
+                    .shadow(color: Color.lightStart, radius: 1, x: -0.5, y: 0.5)
                     
                     // Get the initial properties of the frame
                     // and the layout of our shapes within
