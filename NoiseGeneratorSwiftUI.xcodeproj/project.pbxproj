@@ -30,8 +30,10 @@
 		FA791501244D333500C45D1A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA791500244D333500C45D1A /* ColorExtension.swift */; };
 		FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DF97245C6B4500473657 /* NoiseGenerator.swift */; };
 		FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DF99245C87FF00473657 /* TitleBar.swift */; };
+		FA81DFA5245CDAAD00473657 /* PatternGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DFA4245CDAAD00473657 /* PatternGraph.swift */; };
 		FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA83C0232442EA8700568204 /* TwoControlTemplate.swift */; };
 		FA855A822442575D0024787D /* PresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA855A812442575D0024787D /* PresetPicker.swift */; };
+		FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B61C52461C04F0029DD68 /* Pattern.swift */; };
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
 		FA986B4C243B611000700156 /* Audiobus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA986B4B243B611000700156 /* Audiobus.swift */; };
 		FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */; };
@@ -87,8 +89,10 @@
 		FA791500244D333500C45D1A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		FA81DF97245C6B4500473657 /* NoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseGenerator.swift; sourceTree = "<group>"; };
 		FA81DF99245C87FF00473657 /* TitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBar.swift; sourceTree = "<group>"; };
+		FA81DFA4245CDAAD00473657 /* PatternGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGraph.swift; sourceTree = "<group>"; };
 		FA83C0232442EA8700568204 /* TwoControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoControlTemplate.swift; sourceTree = "<group>"; };
 		FA855A812442575D0024787D /* PresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPicker.swift; sourceTree = "<group>"; };
+		FA8B61C52461C04F0029DD68 /* Pattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pattern.swift; sourceTree = "<group>"; };
 		FA922F922448D9E100C63DAD /* FourControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourControlTemplate.swift; sourceTree = "<group>"; };
 		FA986B4A243B604500700156 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		FA986B4B243B611000700156 /* Audiobus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audiobus.swift; sourceTree = "<group>"; };
@@ -137,6 +141,7 @@
 				FAB700DE24531CCE0053F13A /* Modulation.swift */,
 				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
 				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
+				FA8B61C52461C04F0029DD68 /* Pattern.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -151,6 +156,7 @@
 				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
 				FA81DF9C245C95F500473657 /* Knob */,
 				FA81DF9B245C959200473657 /* VolumeControl */,
+				FA81DFA4245CDAAD00473657 /* PatternGraph.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 				FAB700DF24531CCE0053F13A /* Modulation.swift in Sources */,
 				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
+				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
@@ -391,6 +398,7 @@
 				FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */,
 				FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */,
 				FA855A822442575D0024787D /* PresetPicker.swift in Sources */,
+				FA81DFA5245CDAAD00473657 /* PatternGraph.swift in Sources */,
 				FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */,
 				FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */,
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,

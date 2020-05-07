@@ -16,6 +16,13 @@ struct ContentView: View {
                                amplitude: $noise.noiseAmplitude,
                                isBypassed: $noise.isNoiseBypassed)
                 .frame(width:280, height: 250)
+                
+                
+                PatternGraph(pattern: $noise.modulations[0].pattern)
+                    .frame(width:200, height: 200)
+                    .border(Color.black, width: 2)
+                    .padding(50)
+                
             
                 // Add All Two Knob Effect Controls
                 ForEach(noise.twoControlEffects.indices, id: \.self){ i in
@@ -164,5 +171,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView().environmentObject(NoiseModel.shared)
+        //.previewLayout(.fixed(width: 568, height: 320))
+        //.previewLayout(.fixed(width: 2688, height: 1242))
     }
 }

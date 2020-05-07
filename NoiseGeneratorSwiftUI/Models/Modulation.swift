@@ -12,6 +12,8 @@ public class Modulation : Identifiable, ObservableObject{
     
     public var modulationColor: Color = Color.init(red: 1.0, green: 1.0, blue: 1.0)
     
+    var xValue: CGFloat = 0.0
+    
     // Can only be between 0 and 1 (in the future, may allow -1 to 1 [bi-directional] )
     var modulationValue = 0.0
     
@@ -44,6 +46,8 @@ public class Modulation : Identifiable, ObservableObject{
     
     // Is the modulation currently shown on GUI
     @Published var isBypassed = false
+    
+    @Published var pattern = Pattern()
     
     func toggleDisplayed(){
         isDisplayed.toggle()
@@ -157,13 +161,25 @@ public class Modulation : Identifiable, ObservableObject{
         
         //let previousModulationValue = modulationValue
         
-        // Calculate next value
-        modulationValue = modulationValue + 1 / numberOfSteps
+        // Calculate next x value
+        xValue = xValue + CGFloat(1.0 / numberOfSteps)
         
         // Reset if required
+        if(xValue > 1.0){
+            xValue = CGFloat(1.0 / numberOfSteps)
+        }
+        
+        // Calculate next value
+        modulationValue = Double(pattern.getValueFromX(xVal: xValue))
+        
+        //modulationValue + 1 / numberOfSteps
+        
+        // Reset if required
+        /*
         if(modulationValue > 1.0){
             modulationValue = 0.0
         }
+        */
         
         //let deltaValue = modulationValue - previousModulationValue
         

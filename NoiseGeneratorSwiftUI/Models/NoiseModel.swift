@@ -71,6 +71,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Audio Effects (The Actual Nodes)
     //var audioEffects : [AKInput] = []
     
+    @Published var pattern = Pattern()
+    
     // Control Effects (What the user interracts with)
     @Published var allControlEffects = [AudioEffect]()
     @Published var twoControlEffects = [TwoControlAudioEffect]()
