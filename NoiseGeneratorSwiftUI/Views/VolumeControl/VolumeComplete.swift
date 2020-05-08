@@ -75,7 +75,7 @@ struct VolumeComplete: View {
 
 struct VolumeComplete_Previews: PreviewProvider {
     static var previews: some View {
-        VolumeComplete(amplitude: .constant(0.5),volumeControl: .constant(1.0), isRightHanded: .constant(false), numberOfRects: .constant(20), title: "IN")
+        VolumeComplete(amplitude: .constant(0.5),volumeControl: .constant(1.0), isRightHanded: .constant(true), numberOfRects: .constant(20), title: "IN")
         .previewLayout(.fixed(width: 40, height: 200))
     }
 }

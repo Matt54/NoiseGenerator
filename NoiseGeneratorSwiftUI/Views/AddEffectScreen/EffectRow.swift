@@ -1,11 +1,3 @@
-//
-//  EffectRow.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/29/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct EffectRow: View {
@@ -43,7 +35,6 @@ struct EffectRow: View {
                             }
                         }
                     }
-                    
                 }
                 .padding(.horizontal, 0)
             }
@@ -63,7 +54,6 @@ struct EffectRow_Previews: PreviewProvider {
 }
 
 struct CategoryPill: View {
-    
     var categoryName: String
     var fontSize: CGFloat = 12.0
     

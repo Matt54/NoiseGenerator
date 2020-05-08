@@ -96,13 +96,13 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         //START AUDIOBUS
         Audiobus.start()
         
-        /*
+        
         if let inputs = AudioKit.inputDevices {
             for input in inputs{
                 print(input)
             }
         }
-        */
+        
         
         createNewModulation()
     }

@@ -48,6 +48,9 @@
 		FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD334E6243E6410009B0DDF /* KnobControl.swift */; };
 		FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6505D245251D600B10110 /* RepeatingTimer.swift */; };
 		FAE707D62465DC3500F27B31 /* AudioSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D52465DC3500F27B31 /* AudioSource.swift */; };
+		FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D72465F80C00F27B31 /* AudioSourceView.swift */; };
+		FAE707DA2465F90200F27B31 /* AudioEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D92465F90200F27B31 /* AudioEffectView.swift */; };
+		FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */; };
 		FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFC1309243CF9AB009D1169 /* Knob.swift */; };
 /* End PBXBuildFile section */
 
@@ -112,6 +115,9 @@
 		FAD334E6243E6410009B0DDF /* KnobControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobControl.swift; sourceTree = "<group>"; };
 		FAD6505D245251D600B10110 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
 		FAE707D52465DC3500F27B31 /* AudioSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSource.swift; sourceTree = "<group>"; };
+		FAE707D72465F80C00F27B31 /* AudioSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSourceView.swift; sourceTree = "<group>"; };
+		FAE707D92465F90200F27B31 /* AudioEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffectView.swift; sourceTree = "<group>"; };
+		FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationSourceView.swift; sourceTree = "<group>"; };
 		FAFC1309243CF9AB009D1169 /* Knob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +169,9 @@
 				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
 				FA81DF9C245C95F500473657 /* Knob */,
 				FA81DF9B245C959200473657 /* VolumeControl */,
+				FAE707D72465F80C00F27B31 /* AudioSourceView.swift */,
+				FAE707D92465F90200F27B31 /* AudioEffectView.swift */,
+				FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -425,6 +434,7 @@
 				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
+				FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */,
 				FA33B4492465953E00387F0B /* Styles.swift in Sources */,
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
@@ -434,9 +444,11 @@
 				FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */,
 				FA855A822442575D0024787D /* PresetPicker.swift in Sources */,
 				FA81DFA5245CDAAD00473657 /* PatternGraph.swift in Sources */,
+				FAE707DA2465F90200F27B31 /* AudioEffectView.swift in Sources */,
 				FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */,
 				FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */,
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,
+				FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,
 				FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */,

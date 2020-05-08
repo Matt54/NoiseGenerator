@@ -22,7 +22,11 @@ struct NoiseGenerator: View {
                         TriangleDrag(lVal: self.$whiteVal,
                                      tVal: self.$pinkVal,
                                      rVal: self.$brownVal)
-                            .frame(width:geometry.size.width * 0.65)
+                            .aspectRatio(1.0, contentMode: .fit)
+                            /*
+                            .frame(width: geometry.size.height * 0.65,
+                                   height: geometry.size.height * 0.65)
+                            */
                         
                         VolumeComplete(amplitude: self.$amplitude,
                                        volumeControl: self.$volumeControl,
@@ -45,6 +49,6 @@ struct NoiseGenerator: View {
 struct NoiseGenerator_Previews: PreviewProvider {
     static var previews: some View {
         NoiseGenerator(whiteVal: .constant(1.0),pinkVal: .constant(0.0),brownVal: .constant(0.0), volumeControl: .constant(1.0), amplitude: .constant(0.5), isBypassed: .constant(false))
-        .previewLayout(.fixed(width: 250, height: 250))
+        .previewLayout(.fixed(width: 250, height: 150))
     }
 }

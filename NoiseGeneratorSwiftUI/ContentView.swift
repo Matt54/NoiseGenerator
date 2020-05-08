@@ -10,131 +10,19 @@ struct ContentView: View {
         GeometryReader{ geometry in
             ZStack{
                 VStack{
-                    HStack(spacing:0){
+                    HStack(spacing: geometry.size.width * 0.01){
                         
-                        // Noise Generator
-                        /*
-                        NoiseGenerator(whiteVal: self.$noise.whiteVal,
-                                       pinkVal: self.$noise.pinkVal,
-                                       brownVal: self.$noise.brownVal,
-                                       volumeControl: self.$noise.noiseVolume,
-                                       amplitude: self.$noise.noiseAmplitude,
-                                       isBypassed: self.$noise.isNoiseBypassed)
+                        AudioSourceView()
                             .frame(width:geometry.size.width * 0.3,
                                    height: geometry.size.width * 0.3 * (250/280))
-                            .padding()
-                        */
                         
-                        ForEach(self.noise.noiseControlSources.indices, id: \.self){ i in
-                            VStack(spacing: 0){
-                                if(self.noise.noiseControlSources[i].isDisplayed){
-                                    NoiseGenerator(whiteVal: self.$noise.noiseControlSources[i].whiteVal,
-                                               pinkVal: self.$noise.noiseControlSources[i].pinkVal,
-                                               brownVal: self.$noise.noiseControlSources[i].brownVal,
-                                               volumeControl: self.$noise.noiseControlSources[i].outputVolume,
-                                               amplitude: self.$noise.noiseControlSources[i].outputAmplitude,
-                                               isBypassed: self.$noise.noiseControlSources[i].isBypassed)
-                                    .frame(width:geometry.size.width * 0.3,
-                                           height: geometry.size.width * 0.3 * (250/280))
-                                    .padding()
-                                }
-                            }
-                            .padding()
-                        }
+                        AudioEffectView()
+                            .frame(width:geometry.size.width * 0.3,
+                                   height: geometry.size.width * 0.3 * (180/210))
                         
-                        /*
-                        NoiseGenerator(whiteVal: self.$noise.noiseSource.whiteVal,
-                                   pinkVal: self.$noise.noiseSource.pinkVal,
-                                   brownVal: self.$noise.noiseSource.brownVal,
-                                   volumeControl: self.$noise.noiseSource.outputVolume,
-                                   amplitude: self.$noise.noiseSource.outputAmplitude,
-                                   isBypassed: self.$noise.noiseSource.isBypassed)
-                        .frame(width:geometry.size.width * 0.3,
-                               height: geometry.size.width * 0.3 * (250/280))
-                        .padding()
-                        */
-
-                    
-                        // Add All Two Knob Effect Controls
-                        ForEach(self.noise.twoControlEffects.indices, id: \.self){ i in
-                            VStack(spacing: 0){
-                                if(self.noise.twoControlEffects[i].isDisplayed){
-                                    TwoControlTemplate(title: self.noise.twoControlEffects[i].name,
-                                                       isBypassed: self.$noise.twoControlEffects[i].isBypassed,
-                                                       knobModel1: self.$noise.twoControlEffects[i].control1,
-                                                       knobModel2: self.$noise.twoControlEffects[i].control2,
-                                                       knobModColor: self.$noise.knobModColor,
-                                                       modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                                                       modulationBeingDeleted: self.$noise.modulationBeingDeleted,
-                                                       inputAmplitude: self.$noise.twoControlEffects[i].inputAmplitude,
-                                                       inputVolume: self.$noise.twoControlEffects[i].inputVolume,
-                                                       outputAmplitude: self.$noise.twoControlEffects[i].outputAmplitude,
-                                                       outputVolume: self.$noise.twoControlEffects[i].outputVolume)
-                                        .frame(width:geometry.size.width * 0.3,
-                                               height: geometry.size.width * 0.3 * (180/280))
-                                }
-                            }
-                            .padding()
-                        }
-                    
-                        // Add All Four Knob Effect Controls
-                        ForEach(self.noise.fourControlEffects.indices, id: \.self){ i in
-                            VStack{
-                                if(self.noise.fourControlEffects[i].isDisplayed){
-                                    Spacer()
-                                    FourControlTemplate(title: self.noise.fourControlEffects[i].name,
-                                      isBypassed: self.$noise.fourControlEffects[i].isBypassed,
-                                      knobModel1: self.$noise.fourControlEffects[i].control1,
-                                      knobModel2: self.$noise.fourControlEffects[i].control2,
-                                      knobModel3: self.$noise.fourControlEffects[i].control3,
-                                      knobModel4: self.$noise.fourControlEffects[i].control4,
-                                      knobModColor: self.$noise.knobModColor,
-                                      modulationBeingAssigned: self.$noise.modulationBeingAssigned)
-                                        .frame(width: 400, height: 180)
-                                }
-                            }
-                        }
-                    
-                        // Add All One Knob With Presets Effect Controls
-                        ForEach(self.noise.oneControlWithPresetsEffects.indices, id: \.self){ i in
-                            VStack{
-                                if(self.noise.oneControlWithPresetsEffects[i].isDisplayed){
-                                    Spacer()
-                                    PresetPicker(title: self.noise.oneControlWithPresetsEffects[i].name,
-                                    isBypassed: self.$noise.oneControlWithPresetsEffects[i].isBypassed,
-                                    presetIndex: self.$noise.oneControlWithPresetsEffects[i].presetIndex,
-                                    knobModel: self.$noise.oneControlWithPresetsEffects[i].control1,
-                                    presets: self.$noise.oneControlWithPresetsEffects[i].presets,
-                                    knobModColor: self.$noise.knobModColor,
-                                    modulationBeingAssigned: self.$noise.modulationBeingAssigned)
-                                        .frame(width: 280, height: 220)
-                                }
-                            }
-                        }
-                        
-                        /*
-                        PatternGraph(pattern: self.$noise.modulations[0].pattern)
-                            .frame(width:200, height: 200)
-                            .border(Color.black, width: 2)
-                            .padding(50)
-                        */
-                    
-                        // Add All Modulations
-                        ForEach(self.noise.modulations.indices, id: \.self){ i in
-                            VStack{
-                                if(self.noise.modulations[i].isDisplayed){
-                                ModulationView(title: self.noise.modulations[i].name,
-                                  isBypassed: self.$noise.modulations[i].isBypassed,
-                                  knobModel1: self.$noise.modulations[i].timingControl,
-                                  knobModColor: self.noise.knobModColor,
-                                  isConnectingModulation: self.$noise.modulationBeingAssigned,
-                                  isDeletingModulation: self.$noise.modulationBeingDeleted,
-                                  pattern: self.$noise.modulations[i].pattern)
-                                    .frame(width:geometry.size.width * 0.3,
-                                           height: geometry.size.width * 0.3 * (180/280))
-                                }
-                            }
-                        }
+                        ModulationSourceView()
+                            .frame(width:geometry.size.width * 0.3,
+                                   height: geometry.size.width * 0.3 * (180/280))
                         
                         //Master Volume Control
                         VolumeControl(volume: self.$noise.outputAmplitude,
@@ -146,6 +34,7 @@ struct ContentView: View {
                         
                     }
                 
+                    /*
                     // Bottom Display Toggle Buttons
                     HStack {
                         
@@ -196,11 +85,11 @@ struct ContentView: View {
                     .frame(height: geometry.size.height * 0.2)
                     
                     
-                    
+                    */
                 }
-                .padding(.leading,30)
-                .padding(.trailing,30)
-                .padding(.bottom,10)
+                //.padding(.leading,30)
+                //.padding(.trailing,30)
+                //.padding(.bottom,10)
                 
 
                 // OVERLAYED SCREENS GO HERE
@@ -209,6 +98,13 @@ struct ContentView: View {
                     AddEffectForm()
                         .animation(.easeInOut(duration: 0.5))
                 }
+                
+                /*
+                PatternGraph(pattern: self.$noise.modulations[0].pattern)
+                    .frame(width:200, height: 200)
+                    .border(Color.black, width: 2)
+                    .padding(50)
+                */
             
             }
         }

@@ -77,13 +77,14 @@ public class Modulation : Identifiable, ObservableObject{
         modulationColor = self.getColorForModulation(num: id)
         timer.eventHandler = {self.timerAction()}
         
-        
         timingControl.name = "Rate"
         timingControl.range = 0.099
         timingControl.unit = " Hz"
         timingControl.percentRotated = 0.0
         
         setTimeInterval()
+        
+        toggleDisplayed()
     }
     
     func getColorForModulation(num: Int) -> Color{
@@ -157,9 +158,7 @@ public class Modulation : Identifiable, ObservableObject{
     }
 
     @objc func timerAction(){
-        
-        //let previousModulationValue = modulationValue
-        
+
         // Calculate next x value
         xValue = xValue + CGFloat(1.0 / numberOfSteps)
         
@@ -170,17 +169,6 @@ public class Modulation : Identifiable, ObservableObject{
         
         // Calculate next value
         modulationValue = Double(pattern.getValueFromX(xVal: xValue))
-        
-        //modulationValue + 1 / numberOfSteps
-        
-        // Reset if required
-        /*
-        if(modulationValue > 1.0){
-            modulationValue = 0.0
-        }
-        */
-        
-        //let deltaValue = modulationValue - previousModulationValue
         
         // Relay the value to the targets
         for target in modulationTargets{
