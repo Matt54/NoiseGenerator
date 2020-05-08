@@ -47,6 +47,7 @@
 		FAC8D75A243B758C0010078B /* Audiobus.txt in Resources */ = {isa = PBXBuildFile; fileRef = FAC8D759243B758C0010078B /* Audiobus.txt */; };
 		FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD334E6243E6410009B0DDF /* KnobControl.swift */; };
 		FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6505D245251D600B10110 /* RepeatingTimer.swift */; };
+		FAE707D62465DC3500F27B31 /* AudioSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D52465DC3500F27B31 /* AudioSource.swift */; };
 		FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFC1309243CF9AB009D1169 /* Knob.swift */; };
 /* End PBXBuildFile section */
 
@@ -110,6 +111,7 @@
 		FAC8D759243B758C0010078B /* Audiobus.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Audiobus.txt; sourceTree = "<group>"; };
 		FAD334E6243E6410009B0DDF /* KnobControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobControl.swift; sourceTree = "<group>"; };
 		FAD6505D245251D600B10110 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
+		FAE707D52465DC3500F27B31 /* AudioSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSource.swift; sourceTree = "<group>"; };
 		FAFC1309243CF9AB009D1169 /* Knob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -142,6 +144,7 @@
 				FA33B44D2465964B00387F0B /* Modulation */,
 				FA33B44A2465958F00387F0B /* Extensions */,
 				FA093A352448A94A00BCD16C /* AudioEffect.swift */,
+				FAE707D52465DC3500F27B31 /* AudioSource.swift */,
 				FA220F61245483C700AACE5B /* KnobCompleteModel.swift */,
 				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
 				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
@@ -443,6 +446,7 @@
 				FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */,
 				FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */,
 				FA6ACFBC24573D720009CC20 /* VolumeControl.swift in Sources */,
+				FAE707D62465DC3500F27B31 /* AudioSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

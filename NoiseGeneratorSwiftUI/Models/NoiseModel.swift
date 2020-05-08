@@ -8,116 +8,41 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Single shared data model
     static let shared = NoiseModel()
     
-    // Master Sound On/Off
-    @Published var isNoiseBypassed = true{
-        didSet { setNoiseBypass() }
-    }
-    
     // Master Amplitude Control
     @Published var masterAmplitude = 0.9{
         didSet { outputMixer.volume = masterAmplitude }
     }
+    
+    // Master Ouput Amplitude Tracker
+    var outputAmplitudeTracker = AKAmplitudeTracker()
+    @Published var outputAmplitude: Double = 0.0
     
     // External Sound (Disables Inputted Sound)
     @Published var enabledExternalInput = false {
         didSet { setExternalSource() }
     }
     
-    //External Input
+    //External Input (Currently Unused)
     let externalInput = AKStereoInput()
     
-    // Noise Generator Volume Control
-    @Published var noiseVolume = 1.0 {
-        didSet { setNoiseVolumes() }
-    }
+    // Audio Sources
+    @Published var allControlSources = [AudioSource]()
+    @Published var noiseControlSources = [NoiseSource]()
     
-    // Noise Amplitude Tracker
-    var noiseAmplitudeTracker = AKAmplitudeTracker()
-    @Published var noiseAmplitude: Double = 0.0
+    @Published var noiseSource = NoiseSource()
     
-    // Noise Generating Oscillators
-    private let whiteNoise = AKWhiteNoise()
-    private let pinkNoise = AKPinkNoise()
-    private let brownNoise = AKBrownianNoise()
-    
-    var noiseMixer = AKMixer()
+    var audioInputs : [AKNode] = []
     
     // Mixers
     var inputMixer = AKMixer()
     var effectMixer = AKMixer()
     var outputMixer = AKMixer()
     
-    // Ouput Amplitude Tracker
-    var outputAmplitudeTracker = AKAmplitudeTracker()
-    @Published var outputAmplitude: Double = 0.0
-    
-    // Amplitude of Noise Oscillators
-    private var whiteAmplitude = 0.33
-    @Published var whiteVal = 1.0 {
-        didSet { setWhiteAmplitude() }
-    }
-    private var pinkAmplitude = 0.33
-    @Published var pinkVal = 1.0 {
-        didSet { setPinkAmplitude() }
-    }
-    private var brownAmplitude = 0.33
-    @Published var brownVal = 1.0 {
-        didSet { setBrownAmplitude() }
-    }
-    
-    // Audio Inputs
-    var audioInputs : [AKNode] = []
-    
     // Control Effects (What the user interracts with)
     @Published var allControlEffects = [AudioEffect]()
     @Published var twoControlEffects = [TwoControlAudioEffect]()
     @Published var fourControlEffects = [FourControlAudioEffect]()
     @Published var oneControlWithPresetsEffects = [OneControlWithPresetsAudioEffect]()
-    
-    // All Effects that can be added
-    @Published var listedEffects = [
-        ListedEffect(id: 1,
-                     display: "Moog Filter",
-                     symbol: Image(systemName: "f.circle.fill"),
-                     description: "Digital Implementation of the Moog Ladder Filter",
-                     parameters: ["Cutoff", "Resonance"]
-        ),
-        ListedEffect(id: 2,
-                     display: "Tremelo",
-                     symbol: Image(systemName: "t.circle.fill"),
-                     description: "A Variation in Amplitude",
-                     parameters: ["Depth", "Frequency"]
-        ),
-        ListedEffect(id: 3,
-                     display: "Reverb",
-                     symbol: Image(systemName: "r.circle.fill"),
-                     description: "Apple's Reverb Audio Unit",
-                     parameters: ["Preset", "Dry/Wet"]
-        ),
-        ListedEffect(id: 4,
-                     display: "Delay",
-                     symbol: Image(systemName: "d.circle.fill"),
-                     description: "Apple's Delay Audio Unit",
-                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
-        ),
-        ListedEffect(id: 5,
-                     display: "Chorus",
-                     symbol: Image(systemName: "c.circle.fill"),
-                     description: "Delays/Pitch Modulates the Signal",
-                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
-        ),
-        ListedEffect(id: 6,
-                     display: "Bit Crusher",
-                     symbol: Image(systemName: "b.circle.fill"),
-                     description: "Reduces Resolution/Bandwidth of Signal",
-                     parameters: ["Bit Depth","Sample Rate"]
-        ),
-        ListedEffect(id: 7,
-                     display: "Flanger",
-                     symbol: Image(systemName: "l.circle.fill"),
-                     description: "Swept Comb Filter Effect",
-                     parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
-    ]
     
     // Used for navigation of the UI when adding a new effect
     @Published var addingEffects: Bool = false
@@ -150,19 +75,15 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
     init(){
-        getAllAudioInputs()
-        setupInputAudioChain()
-        connectInputToEffectChain()
+        
+        //create a noise generator to play with
+        createNewSource(sourceNumber: 1)
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
 
         setupOutputChain()
         AudioKit.output = outputAmplitudeTracker//outputMixer
-        
-        //SETUP DEFAULTS
-        setNoiseBypass()
-        setNoiseVolumes()
 
         //START AUDIOKIT
         do{
@@ -186,26 +107,19 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         createNewModulation()
     }
     
-    func getAllAudioInputs(){
-        noiseMixer.connect(input: whiteNoise)
-        noiseMixer.connect(input: pinkNoise)
-        noiseMixer.connect(input: brownNoise)
+    func setupSourceAudioChain(){
         
-        noiseAmplitudeTracker = AKAmplitudeTracker(noiseMixer)
-        noiseAmplitudeTracker.mode = .peak
-        
-        addInputToAudioChain(input: noiseAmplitudeTracker)
-
-    }
-    
-    func addInputToAudioChain(input: AKNode){
-        audioInputs.append(input)
-    }
-    
-    func setupInputAudioChain(){
-        for audioInput in audioInputs{
-            inputMixer.connect(input: audioInput)
+        /*
+        for i in 0..<allControlSources.count {
+            allControlSources[i].output.disconnectOutput()
         }
+        */
+        
+        // Route each audio effect to the next in line
+        for i in 0..<allControlSources.count {
+            allControlSources[i].output.setOutput(to: inputMixer)
+        }
+        
     }
     
     func setExternalSource(){
@@ -217,7 +131,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    func connectInputToEffectChain(){
+    func connectSourceToEffectChain(){
         
         // Disconnect input mixer from all outputs
         // if there are audio effects, connect to the first in chain
@@ -234,12 +148,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func setupEffectAudioChain(){
         
         // Connect input
-        connectInputToEffectChain()
+        connectSourceToEffectChain()
         
+        // Break all current connections
         for i in 0..<allControlEffects.count {
             allControlEffects[i].output.disconnectOutput()
         }
-        
         
         // Route each audio effect to the next in line
         for i in 0..<allControlEffects.count - 1  {
@@ -262,21 +176,54 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     var outputAmplitudeTimer = RepeatingTimer(timeInterval: 0.03)
     @objc func getOutputAmplitude(){
         DispatchQueue.main.async {
-            //print(String(self.outputAmplitudeTracker.amplitude))
-            self.outputAmplitude = self.outputAmplitudeTracker.amplitude
-            self.noiseAmplitude = self.noiseAmplitudeTracker.amplitude
             
+            //Read amplitude coming out of the master
+            self.outputAmplitude = self.outputAmplitudeTracker.amplitude
+            
+            //Read amplitude of any audio source that is displayed
+            for i in 0..<self.allControlSources.count {
+                if(self.allControlSources[i].isDisplayed){
+                    self.allControlSources[i].readAmplitudes()
+                }
+            }
+            
+            // Read the amplitudes of any audio effects that are displayed
             for i in 0..<self.allControlEffects.count {
                 if(self.allControlEffects[i].isDisplayed){
                     self.allControlEffects[i].readAmplitudes()
                 }
             }
+            
         }
     }
     
+    public func createNewSource(sourceNumber: Int){
+        let audioSource = getSourceType(sourceNumber: sourceNumber)
+        addSourceToControlArray(source: audioSource)
+        allControlSources.append(audioSource)
+        setupSourceAudioChain()
+        //audioSource.handoffDelegate = self
+    }
+    
+    func getSourceType(sourceNumber: Int) -> AudioSource{
+        switch sourceNumber{
+        case 1:
+            return NoiseSource()
+        default:
+            print("I have an unexpected case.")
+            return NoiseSource()
+        }
+    }
+    
+    func addSourceToControlArray(source: AudioSource){
+        if let mySource = source as? NoiseSource {
+            noiseControlSources.append(mySource)
+        }
+    }
+    
+    
     public func createNewEffect(pos: Int, effectNumber: Int){
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
-        //addEffectToAudioChain(effect: audioEffect.effect)
         addEffectToControlArray(effect: audioEffect)
         allControlEffects.append(audioEffect)
         setupEffectAudioChain()
@@ -371,46 +318,49 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    func setNoiseBypass(){
-        if isNoiseBypassed{
-            stopGenerator()
-        }
-        else{
-            startGenerator()
-        }
-    }
-    
-    func setNoiseVolumes(){
-        setWhiteAmplitude()
-        setPinkAmplitude()
-        setBrownAmplitude()
-    }
-    
-    func setWhiteAmplitude(){
-        whiteAmplitude = whiteVal * noiseVolume
-        whiteNoise.amplitude = whiteAmplitude
-    }
-    
-    func setPinkAmplitude(){
-        pinkAmplitude = pinkVal * noiseVolume
-        pinkNoise.amplitude = pinkAmplitude
-    }
-    
-    func setBrownAmplitude(){
-        brownAmplitude = brownVal * noiseVolume
-        brownNoise.amplitude = brownAmplitude
-    }
-    
-    func stopGenerator(){
-        whiteNoise.stop()
-        pinkNoise.stop()
-        brownNoise.stop()
-    }
-    
-    func startGenerator(){
-        whiteNoise.start()
-        pinkNoise.start()
-        brownNoise.start()
-    }
+    // All Effects that can be added
+    @Published var listedEffects = [
+        ListedEffect(id: 1,
+                     display: "Moog Filter",
+                     symbol: Image(systemName: "f.circle.fill"),
+                     description: "Digital Implementation of the Moog Ladder Filter",
+                     parameters: ["Cutoff", "Resonance"]
+        ),
+        ListedEffect(id: 2,
+                     display: "Tremelo",
+                     symbol: Image(systemName: "t.circle.fill"),
+                     description: "A Variation in Amplitude",
+                     parameters: ["Depth", "Frequency"]
+        ),
+        ListedEffect(id: 3,
+                     display: "Reverb",
+                     symbol: Image(systemName: "r.circle.fill"),
+                     description: "Apple's Reverb Audio Unit",
+                     parameters: ["Preset", "Dry/Wet"]
+        ),
+        ListedEffect(id: 4,
+                     display: "Delay",
+                     symbol: Image(systemName: "d.circle.fill"),
+                     description: "Apple's Delay Audio Unit",
+                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
+        ),
+        ListedEffect(id: 5,
+                     display: "Chorus",
+                     symbol: Image(systemName: "c.circle.fill"),
+                     description: "Delays/Pitch Modulates the Signal",
+                     parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
+        ),
+        ListedEffect(id: 6,
+                     display: "Bit Crusher",
+                     symbol: Image(systemName: "b.circle.fill"),
+                     description: "Reduces Resolution/Bandwidth of Signal",
+                     parameters: ["Bit Depth","Sample Rate"]
+        ),
+        ListedEffect(id: 7,
+                     display: "Flanger",
+                     symbol: Image(systemName: "l.circle.fill"),
+                     description: "Swept Comb Filter Effect",
+                     parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
+    ]
 
 }

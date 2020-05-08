@@ -13,6 +13,7 @@ struct ContentView: View {
                     HStack(spacing:0){
                         
                         // Noise Generator
+                        /*
                         NoiseGenerator(whiteVal: self.$noise.whiteVal,
                                        pinkVal: self.$noise.pinkVal,
                                        brownVal: self.$noise.brownVal,
@@ -22,6 +23,36 @@ struct ContentView: View {
                             .frame(width:geometry.size.width * 0.3,
                                    height: geometry.size.width * 0.3 * (250/280))
                             .padding()
+                        */
+                        
+                        ForEach(self.noise.noiseControlSources.indices, id: \.self){ i in
+                            VStack(spacing: 0){
+                                if(self.noise.noiseControlSources[i].isDisplayed){
+                                    NoiseGenerator(whiteVal: self.$noise.noiseControlSources[i].whiteVal,
+                                               pinkVal: self.$noise.noiseControlSources[i].pinkVal,
+                                               brownVal: self.$noise.noiseControlSources[i].brownVal,
+                                               volumeControl: self.$noise.noiseControlSources[i].outputVolume,
+                                               amplitude: self.$noise.noiseControlSources[i].outputAmplitude,
+                                               isBypassed: self.$noise.noiseControlSources[i].isBypassed)
+                                    .frame(width:geometry.size.width * 0.3,
+                                           height: geometry.size.width * 0.3 * (250/280))
+                                    .padding()
+                                }
+                            }
+                            .padding()
+                        }
+                        
+                        /*
+                        NoiseGenerator(whiteVal: self.$noise.noiseSource.whiteVal,
+                                   pinkVal: self.$noise.noiseSource.pinkVal,
+                                   brownVal: self.$noise.noiseSource.brownVal,
+                                   volumeControl: self.$noise.noiseSource.outputVolume,
+                                   amplitude: self.$noise.noiseSource.outputAmplitude,
+                                   isBypassed: self.$noise.noiseSource.isBypassed)
+                        .frame(width:geometry.size.width * 0.3,
+                               height: geometry.size.width * 0.3 * (250/280))
+                        .padding()
+                        */
 
                     
                         // Add All Two Knob Effect Controls
