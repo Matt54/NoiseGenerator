@@ -25,17 +25,6 @@ struct ModulationView: View {
                 HStack(spacing: 0)
                     {
                         
-                    //Spacer()
-                    /*
-                        VStack(spacing: 0){
-                            
-                            
-                                
-                            }
-                            .frame(width: geometry.size.width * 0.35,
-                                   height:geometry.size.height * 0.4)
-                            */
-                        
                         VStack(spacing: 0){
                             
                             Text("Add/Remove")

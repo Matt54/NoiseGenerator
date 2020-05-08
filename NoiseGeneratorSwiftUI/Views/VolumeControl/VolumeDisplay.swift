@@ -4,11 +4,8 @@ import SwiftUI
 struct VolumeDisplay: View {
     
     @Binding var volume: Double
-    //@Binding var amplitudeControl: Double
-    //var totalRange = 31
-    @Binding var numberOfRects: Int// = 30
+    @Binding var numberOfRects: Int
     var maxAmplitude = 1.1
-    //@State var spacing: CGFloat = 4
     
     var body: some View {
         GeometryReader { geometry in
@@ -42,7 +39,6 @@ struct VolumeDisplay: View {
                     }
                 }
             }
-            //.padding(geometry.size.height / CGFloat(self.numberOfRects) * 0.25 )
         }
     }
 }

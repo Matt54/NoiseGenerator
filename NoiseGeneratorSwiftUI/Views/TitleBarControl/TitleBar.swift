@@ -9,22 +9,22 @@ struct TitleBar: View {
         { geometry in
             ZStack
                 {
-                    Rectangle()
-                        .fill(LinearGradient(Color.darkStart,Color.darkGray))
-                    Text(self.title)
-                        .bold()
-                        .textStyle(ShrinkTextStyle())
-                        .foregroundColor(Color.white)
-                        .frame(width: geometry.size.width * 0.6)
+                Rectangle()
+                    .fill(LinearGradient(Color.darkStart,Color.darkGray))
+                Text(self.title)
+                    .bold()
+                    .textStyle(ShrinkTextStyle())
+                    .foregroundColor(Color.white)
+                    .frame(width: geometry.size.width * 0.6)
                     
-                    // Power Button
-                    VStack(alignment: .leading) {
-                        //Spacer()
-                        HStack {
+                // Power Button
+                VStack(alignment: .leading) {
+                    //Spacer()
+                    HStack {
                             
-                            Button(action: {self.isBypassed.toggle()}){
-                                if(!self.isBypassed){
-                                    ZStack{
+                        Button(action: {self.isBypassed.toggle()}){
+                            if(!self.isBypassed){
+                                ZStack{
                                             Circle()
                                                 .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
                                                 .frame(width: geometry.size.height * 0.8,
@@ -36,16 +36,7 @@ struct TitleBar: View {
                                                 .foregroundColor(Color.yellow)
                                         }
                                     .padding(geometry.size.height * 0.1)
-                                    /*
-                                    Circle()
-                                        .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                        .frame(height:geometry.size.height * 0.9)
-                                        .overlay(
-                                        Image(systemName: "power")
-                                            //.font(.system(size: 18))
-                                            .foregroundColor(Color.yellow)
-                                        )
-                                    */
+
                                     }
                                 else{
                                     ZStack{
@@ -63,16 +54,10 @@ struct TitleBar: View {
                                     
                                 }
                             }
-                            /*
-                            PowerButton(isBypassed: self.$isBypassed)
-                                .padding(.leading, 5)
-                            */
+
                             Spacer()
                         }
-                        //.frame(height:geometry.size.height)
-                        //Spacer()
                     }
-                    //.frame(height:geometry.size.height)
                 }
         }
     }

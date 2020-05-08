@@ -13,9 +13,7 @@ struct TwoControlTemplate: View {
     @Binding var inputVolume: Double
     @Binding var outputAmplitude: Double
     @Binding var outputVolume: Double
-    
-    //@State var isTargeted = false
-    
+
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View

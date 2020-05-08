@@ -1,11 +1,3 @@
-//
-//  VolumeControl.swift
-//  NoiseGeneratorSwiftUI
-//
-//  Created by Macbook on 4/27/20.
-//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
-//
-
 import SwiftUI
 
 struct VolumeControl: View {

@@ -24,26 +24,8 @@ struct PatternGraph: View {
                         
                         // Curve Line through the interior Points
                         self.pattern.points.forEach{
-                            
-                            /*
-                            path.addLine(
-                                to: .init(
-                                    x: $0.coordinate.x * geometry.size.width,
-                                    y: $0.coordinate.y * geometry.size.height)
-                                )
-                            */
+
                             if($0.controlPoint1 != nil){
-                                /*
-                                path.addQuadCurve(
-                                    to: .init(
-                                        x: $0.coordinate.x * geometry.size.width,
-                                        y: $0.coordinate.y * geometry.size.height)
-                                    ,
-                                    control: .init(
-                                        x: $0.controlPoint!.coordinate.x * geometry.size.width,
-                                        y: $0.controlPoint!.coordinate.y * geometry.size.height)
-                                    )
-                                */
                                 path.addCurve(
                                     to: .init(
                                         x: $0.coordinate.x * geometry.size.width,
@@ -109,19 +91,6 @@ struct PatternGraph: View {
                     .position(CGPoint(x: self.pattern.displayValuePoint.x * geometry.size.width,
                                       y: self.pattern.displayValuePoint.y * geometry.size.height))
                 
-                
-                /*
-                VStack{
-                    Group{
-                        self.pattern.points.forEach{
-                            Circle()
-                                .fill(Color.black)
-                                .frame(width: geometry.size.width * 0.05)
-                                .position(CGPoint(x: $0.coordinate.x * geometry.size.width, y: $0.coordinate.y * geometry.size.height))
-                        }
-                    }
-                }
-                */
                 
                 //Draw All Control Points
                 ForEach(self.pattern.intersectionPoints){ p in

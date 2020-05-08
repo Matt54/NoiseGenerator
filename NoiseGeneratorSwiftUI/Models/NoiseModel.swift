@@ -68,8 +68,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Audio Inputs
     var audioInputs : [AKNode] = []
     
-    //@Published var pattern = Pattern()
-    
     // Control Effects (What the user interracts with)
     @Published var allControlEffects = [AudioEffect]()
     @Published var twoControlEffects = [TwoControlAudioEffect]()
@@ -155,8 +153,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         getAllAudioInputs()
         setupInputAudioChain()
         connectInputToEffectChain()
-
-        //setupEffectAudioChain()
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
@@ -165,7 +161,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         AudioKit.output = outputAmplitudeTracker//outputMixer
         
         //SETUP DEFAULTS
-        //toggleSound()
         setNoiseBypass()
         setNoiseVolumes()
 
