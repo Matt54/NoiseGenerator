@@ -14,28 +14,31 @@ struct NoiseGenerator: View {
     
     var body: some View {
         GeometryReader
-        { geometry in
-            VStack(spacing: 0){
-                HStack{
-                    TriangleDrag(lVal: self.$whiteVal,
-                                 tVal: self.$pinkVal,
-                                 rVal: self.$brownVal)
-                        .frame(width:geometry.size.width * 0.65)
-                    
-                    VolumeComplete(amplitude: self.$amplitude,
-                                   volumeControl: self.$volumeControl,
-                                   isRightHanded: .constant(true),
-                                   numberOfRects: .constant(10),
-                                   title: "VOL")
-                        .padding(20)
-                        .frame(width: geometry.size.width * 0.27,height:geometry.size.height * 0.8)
+        { geometryOut in
+            GeometryReader
+            { geometry in
+                VStack(spacing: 0){
+                    HStack(spacing: 0){
+                        TriangleDrag(lVal: self.$whiteVal,
+                                     tVal: self.$pinkVal,
+                                     rVal: self.$brownVal)
+                            .frame(width:geometry.size.width * 0.65)
+                        
+                        VolumeComplete(amplitude: self.$amplitude,
+                                       volumeControl: self.$volumeControl,
+                                       isRightHanded: .constant(true),
+                                       numberOfRects: .constant(10),
+                                       title: "VOL")
+                            .padding(geometry.size.width * 0.08)
+                            .frame(width: geometry.size.width * 0.27,height:geometry.size.height * 0.8)
+                    }
+                    TitleBar(title: .constant("Noise Generator"), isBypassed: self.$isBypassed)
+                        .frame(height:geometry.size.height * 0.15)
                 }
-                TitleBar(title: .constant("Noise Generator"), isBypassed: self.$isBypassed)
-                    .frame(height:geometry.size.height * 0.15)
             }
+            .padding(geometryOut.size.height * 0.02)
+            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.02)
         }
-        .padding(5)
-        .border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
     }
 }
 

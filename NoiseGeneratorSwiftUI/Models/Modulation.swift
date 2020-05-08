@@ -14,7 +14,6 @@ public class Modulation : Identifiable, ObservableObject{
     
     var xValue: CGFloat = 0.0
     
-    // Can only be between 0 and 1 (in the future, may allow -1 to 1 [bi-directional] )
     var modulationValue = 0.0
     
     var numberOfSteps = 200.0

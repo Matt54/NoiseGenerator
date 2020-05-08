@@ -9,9 +9,23 @@ struct TriangleDrag: View {
     
     var body: some View {
         GeometryReader{ geometry in
-            VStack{
+            VStack(spacing: 0){
+                
+                /*
                 Text("Pink: \(String(format: "%.0f",(self.tVal*100)))%")
-                .modifier(SmallBoldTextModifier())
+                    .textStyle(ShrinkTextStyle())
+                */
+                //.modifier(SmallBoldTextModifier())
+                VStack(spacing: 0){
+                    Text("Pink:")
+                        .textStyle(ShrinkTextStyle())
+                    Text("\(String(format: "%.0f",(self.tVal*100)))%")
+                        .textStyle(ShrinkTextStyle())
+                }
+                .frame(width: geometry.size.width * 0.2,
+                       height: geometry.size.height * 0.15)
+                
+                
                 ZStack{
                     Triangle()
                         .fill(Color.clear)
@@ -23,26 +37,39 @@ struct TriangleDrag: View {
                                     tVal: self.$tVal,
                                     rVal: self.$rVal,
                                     circleFactor: 8)
-                        .frame(width: geometry.size.width * 0.8, height: geometry.size.width * 0.8 * 0.866)
+                        .padding(geometry.size.width * 0.03)
+                        .frame(width: geometry.size.width * 0.8,
+                               height: geometry.size.width * 0.6928)
                 }
                 HStack{
                     //Spacer()
 
                     VStack (alignment: .leading) {
+                        
                         Text("White:")
-                            .modifier(SmallBoldTextModifier())
+                            //.modifier(SmallBoldTextModifier())
+                            //.fontWeight(.heavy)
+                            .textStyle(ShrinkTextStyle())
                         Text("\(String(format: "%.0f",(self.lVal*100)))%")
-                            .modifier(SmallBoldTextModifier())
+                            //.modifier(SmallBoldTextModifier())
+                            .textStyle(ShrinkTextStyle())
                     }
+                    .frame(width: geometry.size.width * 0.2,
+                           height: geometry.size.height * 0.15)
                     
                         
                     Spacer()
                     VStack(alignment: .trailing) {
-                        Text("Brownian:")
-                        .modifier(SmallBoldTextModifier())
+                        Text("Brown:")
+                            //.fontWeight(.heavy)
+                            .textStyle(ShrinkTextStyle())
+                        //.modifier(SmallBoldTextModifier())
                         Text("\(String(format: "%.0f",(self.rVal*100)))%")
-                        .modifier(SmallBoldTextModifier())
+                        .textStyle(ShrinkTextStyle())
+                        //.modifier(SmallBoldTextModifier())
                     }
+                    .frame(width: geometry.size.width * 0.2,
+                           height: geometry.size.height * 0.15)
                     //Spacer()
                 }
                 .frame(width: geometry.size.width * 0.8)

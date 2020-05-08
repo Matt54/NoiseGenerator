@@ -8,40 +8,41 @@ struct VolumeDisplay: View {
     //var totalRange = 31
     @Binding var numberOfRects: Int// = 30
     var maxAmplitude = 1.1
-    @State var spacing: CGFloat = 4
+    //@State var spacing: CGFloat = 4
     
     var body: some View {
         GeometryReader { geometry in
 
-            VStack(spacing: (geometry.size.height / CGFloat(self.numberOfRects) * 0.25 ) ){
+            VStack(spacing: (geometry.size.height / CGFloat(self.numberOfRects) * 0.25 ) )
+            {
             
-            // Red Rectangle
-            VStack{
-                if( self.volume > 1.0 ){
-                    Rectangle()
-                        .fill(Color(red: 0.9, green: 0, blue: 0))
-                }
-                else{
-                    Rectangle()
-                        .fill(Color(red: 0.1, green: 0, blue: 0))
-                }
-            }
-            
-            // Green Rectangles
-            ForEach((1...self.numberOfRects).reversed(), id: \.self) {index in
+                // Red Rectangle
                 VStack{
-                    if( self.volume >= (Double(index)/Double(self.numberOfRects)) ){
+                    if( self.volume > 1.0 ){
                         Rectangle()
-                            .fill(Color(red: 0, green: 0.6, blue: 0))
+                            .fill(Color(red: 0.9, green: 0, blue: 0))
                     }
                     else{
                         Rectangle()
-                            .fill(Color(red: 0, green: 0.1, blue: 0))
+                            .fill(Color(red: 0.1, green: 0, blue: 0))
+                    }
+                }
+                
+                // Green Rectangles
+                ForEach((1...self.numberOfRects).reversed(), id: \.self) {index in
+                    VStack{
+                        if( self.volume >= (Double(index)/Double(self.numberOfRects)) ){
+                            Rectangle()
+                                .fill(Color(red: 0, green: 0.6, blue: 0))
+                        }
+                        else{
+                            Rectangle()
+                                .fill(Color(red: 0, green: 0.1, blue: 0))
+                        }
                     }
                 }
             }
-        }
-        .padding(geometry.size.height / CGFloat(self.numberOfRects) * 0.25 )
+            //.padding(geometry.size.height / CGFloat(self.numberOfRects) * 0.25 )
         }
     }
 }

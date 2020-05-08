@@ -20,114 +20,110 @@ struct TwoControlTemplate: View {
     
     var body: some View
     {
-    GeometryReader
-        { geometry in
-        ZStack
-            {
-            //Everything else
-            VStack(spacing: 0)
+        GeometryReader
+        { geometryOut in
+            GeometryReader
+            { geometry in
+                //Entire View
+                VStack(spacing: 0)
                 {
-                //Spacer()
-                HStack(spacing: 0)
+                    //Controls - Volumes and Knobs
+                    HStack(spacing: 0)
                     {
-                    //Input Volume
-                    ZStack{
-                        //LinearGradient(Color.white, Color.darkStart)
-                        //.frame(maxWidth:geometry.size.width * 0.15,
-                        //minHeight:geometry.size.width * 0.25)
-                        VolumeComplete(amplitude: self.$inputAmplitude, volumeControl: self.$inputVolume, isRightHanded: .constant(false), numberOfRects: .constant(10),title: "IN")
-                        .frame(width: 30)
-                        .padding(7)
-                    }
-                        
-                    //Knob 1
-                    Spacer()
-                    VStack
-                        {
-                        Text(self.knobModel1.display)
-                            .font(.system(size: 12))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: self.$modulationBeingDeleted)
-                            .frame(minWidth:geometry.size.width * 0.25,                       maxWidth:geometry.size.width * 0.25,
-                                   minHeight:geometry.size.width * 0.25,
-                                   maxHeight: geometry.size.width * 0.25)
-                            .overlay(
-                                Color.clear
-                                    .onAppear{
-                                        print("Hello World")
-                                }
-                            )
+                        //Input Volume
+                        VStack{
+                            VolumeComplete(amplitude: self.$inputAmplitude,
+                                           volumeControl: self.$inputVolume,
+                                           isRightHanded: .constant(false),
+                                           numberOfRects: .constant(10),
+                                           title: "IN")
+                                .padding(geometry.size.width * 0.01)
+                                .frame(width:geometry.size.width * 0.1)
+                        }
+                        .frame(width:geometry.size.width * 0.15)
                             
-                        Text(self.knobModel1.name)
-                            .font(.system(size: 12))
-                            .bold()
+                        // Knobs
+                        HStack(spacing: 0){
+                            
+                            //Knob 1
+                            VStack(spacing: 0)
+                            {
+                                // Text - Value Display
+                                Text(self.knobModel1.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
+                                
+                                // Knob Controller
+                                KnobComplete(knobModel: self.$knobModel1,
+                                             knobModColor: self.$knobModColor,
+                                             modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             modulationBeingDeleted: self.$modulationBeingDeleted)
+                                    .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                    
+                                // Text - Parameter
+                                Text(self.knobModel1.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
+                                
+                            }
+                            .padding(geometry.size.width * 0.05)
+                            .frame(width:geometry.size.width * 0.35, height: geometry.size.height * 0.85)
+                            
+                            //Knob 2
+                            VStack(spacing: 0)
+                            {
+                                
+                                // Text - Value Display
+                                Text(self.knobModel2.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
+                                
+                                // Knob Controller
+                                KnobComplete(knobModel: self.$knobModel2,
+                                             knobModColor: self.$knobModColor,
+                                             modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             modulationBeingDeleted: self.$modulationBeingDeleted)
+                                    .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                
+                                // Text - Parameter
+                                Text(self.knobModel2.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
+                                
+                            }//VStack - Knob 2
+                            .padding(geometry.size.width * 0.05)
+                            .frame(width:geometry.size.width * 0.35, height: geometry.size.height * 0.85)
+                            
+                        }// HStack - Knobs
+
+                        //Output Volume
+                        VStack{
+                            VolumeComplete(amplitude: self.$outputAmplitude,
+                                           volumeControl: self.$outputVolume,
+                                           isRightHanded: .constant(true),
+                                           numberOfRects: .constant(10),
+                                           title: "OUT")
+                                .padding(geometry.size.width * 0.01)
+                                .frame(width:geometry.size.width * 0.1)
                         }
-                        .frame(width:geometry.size.width * 0.25)
-                        
-                    //Knob 2
-                    Spacer()
-                    VStack
-                        {
-                        Text(self.knobModel2.display)
-                            .font(.system(size: 12))
-                        KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: self.$modulationBeingDeleted)
-                            .frame(minWidth:geometry.size.width * 0.25,                           maxWidth:geometry.size.width * 0.25,
-                                    minHeight:geometry.size.width * 0.25,
-                                    maxHeight: geometry.size.width * 0.25)
-                        Text(self.knobModel2.name)
-                            .font(.system(size: 12))
-                            .bold()
-                        }
-                        .frame(width:geometry.size.width * 0.25)
-                    Spacer()
-                        
-                    //Output Volume
-                        ZStack{
-                        //LinearGradient(Color.white, Color.darkStart)
-                        //.frame(maxWidth:geometry.size.width * 0.15,
-                        //minHeight:geometry.size.width * 0.25)
-                        VolumeComplete(amplitude: self.$outputAmplitude, volumeControl: self.$outputVolume, isRightHanded: .constant(true), numberOfRects: .constant(10),title: "OUT")
-                        .frame(width: 30)
-                        .padding(7)
-                        }
+                        .frame(width:geometry.size.width * 0.15)
                     }
                     
+                    // Title Bar
                     TitleBar(title: self.$title, isBypassed: self.$isBypassed)
-                        .frame(height:geometry.size.height * 0.2)
-                    
-                    //Buttom Bar
-                    //Spacer()
-                    /*
-                    HStack
-                        {
-                        Text(self.title)
-                            .font(.system(size: 16))
-                            .bold()
-                            .foregroundColor(Color.white)
-                        }
-                        .frame(minWidth: 0,maxWidth: .infinity, minHeight: geometry.size.height * 0.15 + 10)
-                        .background(LinearGradient(Color.darkStart,Color.darkGray))
-                    */
-                    
-                    
-                    }//VStack
-                    .background(LinearGradient(Color.white, Color.lightGray))
+                        .frame(height:geometry.size.height * 0.15)
+
+                }// VStack - Entire View
+                .background(LinearGradient(Color.white, Color.lightGray))
                 
-                    // Power Button
-                    /*
-                    VStack(alignment: .leading) {
-                        Spacer()
-                        HStack {
-                            PowerButton(isBypassed: self.$isBypassed)
-                                .frame(width:geometry.size.height * 0.15, height:geometry.size.height * 0.15)
-                            Spacer()
-                        }
-                    }
-                    .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 0))
-                    */
-                }//zstack
-        }//georeader
-        .padding(5)
-        .border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
+            }// georeader - inner
+            .padding(geometryOut.size.height * 0.02)
+            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.02)
+        }// outer georeader (so we can make the border)
     }//view
 }//struct
 

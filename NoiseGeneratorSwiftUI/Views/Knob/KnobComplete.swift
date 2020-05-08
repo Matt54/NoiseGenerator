@@ -69,7 +69,7 @@ struct KnobComplete: View {
                             Color(red: 0.0, green: 0, blue: 1.0, opacity: 0.2)
                             .gesture(DragGesture(minimumDistance: 0)
                                 .onChanged{ value in
-                                    print("touch began")
+                                    //print("touch began")
                                     
                                     if (self.currentX != 0.0 && self.currentY != 0.0){
                                         self.deltaX = Double(self.currentX - value.location.x)
@@ -84,7 +84,7 @@ struct KnobComplete: View {
                                     
                                 }
                                 .onEnded{ value in
-                                    print("touch ended")
+                                    //print("touch ended")
                                     self.currentX = 0.0
                                     self.currentY = 0.0
                                 }
@@ -100,7 +100,7 @@ struct KnobComplete: View {
                                 Color(red: 1.0, green: 0, blue: 1.0, opacity: 0.2)
                                 .gesture(DragGesture(minimumDistance: 0)
                                     .onChanged{ value in
-                                    print("touch began")
+                                    //print("touch began")
                                     self.knobModel.handoffKnobModel()
                                 }
                                 )
@@ -118,7 +118,7 @@ struct KnobComplete: View {
                                 Color(red: 1.0, green: 0, blue: 0.0, opacity: 0.2)
                                 .gesture(DragGesture(minimumDistance: 0)
                                     .onChanged{ value in
-                                    print("touch began")
+                                    //print("touch began")
                                     self.knobModel.removeKnobModel()
                                 })
                                 Image(systemName: "minus.circle.fill").resizable()

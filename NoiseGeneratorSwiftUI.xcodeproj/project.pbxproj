@@ -221,9 +221,9 @@
 			isa = PBXGroup;
 			children = (
 				FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */,
+				FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */,
 				FA6ACFBB24573D710009CC20 /* VolumeControl.swift */,
 				FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */,
-				FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */,
 			);
 			path = VolumeControl;
 			sourceTree = "<group>";

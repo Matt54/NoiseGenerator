@@ -37,7 +37,12 @@ var radius: CGFloat
         var path = Path()
 
         let cgPath = CGMutablePath()
-        cgPath.addArc(center: CGPoint(x: rect.midX, y: rect.midY), radius: radius, startAngle: CGFloat(startAngle), endAngle: CGFloat(endAngle), clockwise: false)
+        
+        cgPath.addArc(center: CGPoint(x: rect.midX, y: rect.midY),
+                      radius: radius,
+                      startAngle: CGFloat(startAngle),
+                      endAngle: CGFloat(endAngle),
+                      clockwise: false)
 
         path = Path(cgPath)
 
@@ -47,6 +52,8 @@ var radius: CGFloat
 
 struct KnobControl_Previews: PreviewProvider {
     static var previews: some View {
-        KnobControl(percentRotated: .constant(0.5), realModValue: .constant(0.5), knobModColor: .constant(Color.yellow))
+        KnobControl(percentRotated: .constant(0.5),
+                    realModValue: .constant(0.5),
+                    knobModColor: .constant(Color.yellow))
     }
 }

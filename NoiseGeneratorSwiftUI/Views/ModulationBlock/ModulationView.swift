@@ -7,32 +7,43 @@ struct ModulationView: View {
     @State var knobModColor: Color
     @Binding var isConnectingModulation: Bool
     @Binding var isDeletingModulation: Bool
+    @Binding var pattern: Pattern
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var body: some View
     {
     GeometryReader
+    { geometryOuter in
+    GeometryReader
         { geometry in
         ZStack
             {
             //Everything else
-            VStack
+            VStack(spacing: 0)
                 {
-                Spacer()
-                HStack
+                HStack(spacing: 0)
                     {
                         
-                    Spacer()
-                    
-                        VStack{
-                            Text("Add/Remove")
-                                .font(.system(size: 14))
-                            Text("Modulation")
-                                .font(.system(size: 14))
-                            HStack{
+                    //Spacer()
+                    /*
+                        VStack(spacing: 0){
+                            
+                            
                                 
-                                //Spacer()
+                            }
+                            .frame(width: geometry.size.width * 0.35,
+                                   height:geometry.size.height * 0.4)
+                            */
+                        
+                        VStack(spacing: 0){
+                            
+                            Text("Add/Remove")
+                                .textStyle(ShrinkTextStyle())
+                            .frame(width: geometry.size.width * 0.35,
+                                   height: geometry.size.height * 0.20)
+                            
+                            HStack(){
                                 
                                 Button(action: {
                                     self.isConnectingModulation.toggle()
@@ -40,120 +51,96 @@ struct ModulationView: View {
                                     VStack{
                                         if(self.isConnectingModulation){
                                             Image(systemName: "plus.rectangle.fill")
+                                                .resizable()
+                                                .frame(width: geometry.size.width * 0.15,
+                                                       height:geometry.size.height * 0.2)
                                                 .foregroundColor(self.knobModColor)
-                                                .font(.system(size: 32))
                                         }
                                         else{
                                             Image(systemName: "plus.rectangle")
-                                            .foregroundColor(self.knobModColor)
-                                            .font(.system(size: 32))
+                                                .resizable()
+                                                .frame(width: geometry.size.width * 0.15,
+                                                       height:geometry.size.height * 0.2)
+                                                .foregroundColor(self.knobModColor)
                                         }
                                     }
                                 }
-                                //Spacer()
-                                    
                                 Button(action: {
                                     self.isDeletingModulation.toggle()
                                 }){
                                     VStack{
                                         if(self.isDeletingModulation){
                                             Image(systemName: "minus.rectangle.fill")
+                                                .resizable()
+                                                .frame(width: geometry.size.width * 0.15,
+                                                       height:geometry.size.height * 0.2)
                                                 .foregroundColor(self.knobModColor)
-                                                .font(.system(size: 32))
                                         }
                                         else{
                                             Image(systemName: "minus.rectangle")
-                                            .foregroundColor(self.knobModColor)
-                                            .font(.system(size: 32))
+                                                .resizable()
+                                                .frame(width: geometry.size.width * 0.15,
+                                                       height:geometry.size.height * 0.2)
+                                                .foregroundColor(self.knobModColor)
+                                            
                                         }
                                     }
                                 }
-                                
-                                //Spacer()
-                                
                             }
                             
+                            Text("Modulation")
+                                .textStyle(ShrinkTextStyle())
+                            .frame(width: geometry.size.width * 0.30,
+                                   height: geometry.size.height * 0.20)
+                            
                         }
+                        .frame(width: geometry.size.width * 0.35,
+                               height: geometry.size.height * 0.85)
                         
                     //Knob 1
-                    Spacer()
-                    VStack
+                        VStack(spacing: 0)
                         {
-                        Text(self.knobModel1.display)
-                            .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: .constant(false), modulationBeingDeleted: .constant(false))
-                            .frame(minWidth:geometry.size.width * 0.25,                           maxWidth:geometry.size.width * 0.25,
-                                   minHeight:geometry.size.width * 0.25,
-                                   maxHeight: geometry.size.width * 0.25)
-                            .overlay(
-                                Color.clear
-                                    .onAppear{
-                                        print("Hello World")
-                                }
-                            )
+                            Text(self.knobModel1.display)
+                            .textStyle(ShrinkTextStyle())
+                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
                             
-                        Text(self.knobModel1.name)
-                            .font(.system(size: 14))
-                            .bold()
-                            //.foregroundColor(Color.black)
+                            // Knob Controller
+                            KnobComplete(knobModel: self.$knobModel1,
+                                         knobModColor: self.$knobModColor,
+                                         modulationBeingAssigned: .constant(false),
+                                         modulationBeingDeleted: .constant(false))
+                                .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
+                                .padding(.vertical, geometry.size.height * 0.05)
+                            
+                            Text(self.knobModel1.name)
+                                .bold()
+                                .textStyle(ShrinkTextStyle())
+                                .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
                         }
-                        .frame(width:geometry.size.width * 0.25)
+                    .frame(width: geometry.size.width * 0.35,
+                           height: geometry.size.height * 0.85)
                         
-                    Spacer()
+                        VStack{
+                            PatternGraph(pattern: self.$pattern)
+                                .frame(width: geometry.size.width * 0.25,
+                                       height: geometry.size.width * 0.25)
+                        }
+                        .frame(width: geometry.size.width * 0.25,
+                               height: geometry.size.height * 0.85)
                     }
                     
-                    //Buttom Bar
-                    Spacer()
-                    HStack
-                        {
-                        Text(self.title)
-                            .font(.system(size: 16))
-                            .bold()
-                            .foregroundColor(Color.white)
-                        }
-                        .frame(minWidth: 0,maxWidth: .infinity, minHeight: geometry.size.height * 0.15 + 10)
-                        .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
-                    }
-                
-                // Power Button
-                VStack {
-                    Spacer()
-                    HStack {
-                        Button(action: {self.isBypassed.toggle()}){
-                            if(!self.isBypassed){
-                            Circle()
-                                .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                .frame(width:geometry.size.height * 0.15,
-                                       height:geometry.size.height * 0.15)
-                                .overlay(
-                                Image(systemName: "power")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(Color.yellow)
-                                )
-                            }
-                            else{
-                                Circle()
-                                .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                .frame(width:geometry.size.height * 0.15,
-                                       height:geometry.size.height * 0.15)
-                                .overlay(
-                                Image(systemName: "power")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(Color.gray)
-                                )
-                            }
-                        }
-                        Spacer()
-                    }
-                    
+                    // Title Bar
+                    TitleBar(title: self.$title, isBypassed: self.$isBypassed)
+                        .frame(height:geometry.size.height * 0.15)
                 }
-                .padding(EdgeInsets(top: 0, leading: 3, bottom: 6, trailing: 0))
-                //.padding(EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0))
-                
+
                 }//zstack
         }//georeader
-        .padding(5)
-        .border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
+        .padding(geometryOuter.size.height * 0.02)
+        .border(Color.BlackWhiteColor(for: self.colorScheme),
+                width: geometryOuter.size.height * 0.02)
+        }
+        
     }//view
 }//struct
 
@@ -163,7 +150,8 @@ struct ModulationView_Previews: PreviewProvider {
         knobModel1: .constant(KnobCompleteModel()),
         knobModColor: Color.yellow,
         isConnectingModulation: .constant(false),
-        isDeletingModulation: .constant(false))
+        isDeletingModulation: .constant(false),
+        pattern: .constant(Pattern()))
         .previewLayout(.fixed(width: 300, height: 180))
     }
 }

@@ -68,10 +68,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Audio Inputs
     var audioInputs : [AKNode] = []
     
-    // Audio Effects (The Actual Nodes)
-    //var audioEffects : [AKInput] = []
-    
-    @Published var pattern = Pattern()
+    //@Published var pattern = Pattern()
     
     // Control Effects (What the user interracts with)
     @Published var allControlEffects = [AudioEffect]()
@@ -195,11 +192,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
     
     func getAllAudioInputs(){
-        //addInputToAudioChain(input: whiteNoise)
-        //addInputToAudioChain(input: pinkNoise)
-        //addInputToAudioChain(input: brownNoise)
-        
-        
         noiseMixer.connect(input: whiteNoise)
         noiseMixer.connect(input: pinkNoise)
         noiseMixer.connect(input: brownNoise)
@@ -208,8 +200,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         noiseAmplitudeTracker.mode = .peak
         
         addInputToAudioChain(input: noiseAmplitudeTracker)
-        
-        //addInputToAudioChain(input: externalInput)
+
     }
     
     func addInputToAudioChain(input: AKNode){
@@ -231,12 +222,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    //TODO: FIND A WAY TO REPLACE audioEffects with allControlEffects.effect
     func connectInputToEffectChain(){
-        /*
-        addEffectToAudioChain(effect: effectMixer)
-        inputMixer.connect(to: audioEffects[0])
-        */
         
         // Disconnect input mixer from all outputs
         // if there are audio effects, connect to the first in chain
@@ -250,40 +236,22 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    /*
-    func addEffectToAudioChain(effect: AKInput){
-        audioEffects.append(effect)
-    }
-    */
-    
     func setupEffectAudioChain(){
         
         // Connect input
         connectInputToEffectChain()
         
-        // Disconnect all audio effect outputs
-        /*
-        for i in 0..<audioEffects.count {
-            audioEffects[i].disconnectOutput()
-        }
-        */
         for i in 0..<allControlEffects.count {
             allControlEffects[i].output.disconnectOutput()
         }
         
         
         // Route each audio effect to the next in line
-        /*
-        for i in 0..<audioEffects.count - 1 {
-            audioEffects[i].setOutput(to: audioEffects[i+1])
-        }
-        */
         for i in 0..<allControlEffects.count - 1  {
             allControlEffects[i].output.setOutput(to: allControlEffects[i+1].input)
         }
         
         //set the output of the last effect to our output mixer
-        //audioEffects[audioEffects.count - 1].setOutput(to: outputMixer)
         allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
     }
 
@@ -308,11 +276,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                     self.allControlEffects[i].readAmplitudes()
                 }
             }
-            
-            /*
-            print(String(20 * log10(self.outputAmplitudeTracker.amplitude)))
-            self.outputAmplitude = 20 * log10(self.outputAmplitudeTracker.amplitude) // Convert to DBFS
-             */
         }
     }
     
@@ -349,15 +312,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     func addEffectToControlArray(effect: AudioEffect){
         if let myEffect = effect as? TwoControlAudioEffect {
-            // obj is a string array. Do something with stringArray
             twoControlEffects.append(myEffect)
         }
         else if let myEffect = effect as? OneControlWithPresetsAudioEffect {
-            // obj is a string array. Do something with stringArray
             oneControlWithPresetsEffects.append(myEffect)
         }
         else if let myEffect = effect as? FourControlAudioEffect {
-            // obj is a string array. Do something with stringArray
             fourControlEffects.append(myEffect)
         }
     }
@@ -423,7 +383,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         else{
             startGenerator()
         }
-        //isNoiseBypassed = whiteNoise.isPlaying
     }
     
     func setNoiseVolumes(){
