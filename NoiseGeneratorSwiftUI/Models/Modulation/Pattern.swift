@@ -33,32 +33,18 @@ public class Pattern : ObservableObject{
     
     func getValueFromX(xVal: CGFloat) -> CGFloat{
         
-        print("-----")
-        print("xVal provided:")
-        print(xVal)
-        
         let rightHandIndex = binarySearchForRightHandIndex(xVal: xVal)
-        //print("Element found on index: \(searchIndex)");
         
         let xRange:CGFloat = points[rightHandIndex].coordinate.x - points[rightHandIndex - 1].coordinate.x
         
         let normalizedX:CGFloat = (xVal - points[rightHandIndex - 1].coordinate.x) / xRange
-        
-        print("-----")
-        print("normalizedX:")
-        print(normalizedX)
+
         
         let yInt = determineIntersectionY(x: normalizedX,
                                           y1: points[rightHandIndex - 1].coordinate.y,
                                           y2: points[rightHandIndex].controlPoint1!.coordinate.y,
                                           y3: points[rightHandIndex].controlPoint2!.coordinate.y,
                                           y4: points[rightHandIndex].coordinate.y)
-        
-        let printY_Value = 1.0 - yInt
-        
-        print("yInt calculated:")
-        print(printY_Value)
-        print("-----")
         
         displayValuePoint.x = xVal
         displayValuePoint.y = yInt
@@ -89,8 +75,6 @@ public class Pattern : ObservableObject{
             }
         }
     }
-    
-    
     
     func analyzeTouch(graphCoordinate: CGPoint, graphSize: CGSize, touchState: TouchState){
         print(touchState)

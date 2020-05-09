@@ -51,6 +51,8 @@
 		FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D72465F80C00F27B31 /* AudioSourceView.swift */; };
 		FAE707DA2465F90200F27B31 /* AudioEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D92465F90200F27B31 /* AudioEffectView.swift */; };
 		FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */; };
+		FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */; };
+		FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707E22466188900F27B31 /* InputDeviceRow.swift */; };
 		FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFC1309243CF9AB009D1169 /* Knob.swift */; };
 /* End PBXBuildFile section */
 
@@ -118,6 +120,8 @@
 		FAE707D72465F80C00F27B31 /* AudioSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSourceView.swift; sourceTree = "<group>"; };
 		FAE707D92465F90200F27B31 /* AudioEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffectView.swift; sourceTree = "<group>"; };
 		FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationSourceView.swift; sourceTree = "<group>"; };
+		FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInputDeviceForm.swift; sourceTree = "<group>"; };
+		FAE707E22466188900F27B31 /* InputDeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputDeviceRow.swift; sourceTree = "<group>"; };
 		FAFC1309243CF9AB009D1169 /* Knob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,6 +176,7 @@
 				FAE707D72465F80C00F27B31 /* AudioSourceView.swift */,
 				FAE707D92465F90200F27B31 /* AudioEffectView.swift */,
 				FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */,
+				FAE707E12466186500F27B31 /* AddInputDeviceScreen */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,8 +287,8 @@
 		FA81DF9E245C962500473657 /* NoiseGeneratorBlock */ = {
 			isa = PBXGroup;
 			children = (
-				FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */,
 				FA377A50243228DE00CBE2C4 /* TriangleControl.swift */,
+				FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */,
 				FA81DF97245C6B4500473657 /* NoiseGenerator.swift */,
 			);
 			path = NoiseGeneratorBlock;
@@ -325,6 +330,15 @@
 				FA81DFA4245CDAAD00473657 /* PatternGraph.swift */,
 			);
 			path = ModulationBlock;
+			sourceTree = "<group>";
+		};
+		FAE707E12466186500F27B31 /* AddInputDeviceScreen */ = {
+			isa = PBXGroup;
+			children = (
+				FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */,
+				FAE707E22466188900F27B31 /* InputDeviceRow.swift */,
+			);
+			path = AddInputDeviceScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -434,6 +448,7 @@
 				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
+				FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */,
 				FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */,
 				FA33B4492465953E00387F0B /* Styles.swift in Sources */,
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
@@ -451,6 +466,7 @@
 				FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,
+				FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */,
 				FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */,
 				FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */,
 				FA377A4F24317CAB00CBE2C4 /* NoiseModel.swift in Sources */,

@@ -49,7 +49,9 @@ struct TwoControlTemplate: View {
                                 // Text - Value Display
                                 Text(self.knobModel1.display)
                                     .textStyle(ShrinkTextStyle())
-                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
+                                    .frame(width: geometry.size.width * 0.3,
+                                           height: geometry.size.height * 0.1)
+                                    .scaledToFit()
                                 
                                 // Knob Controller
                                 KnobComplete(knobModel: self.$knobModel1,
@@ -139,6 +141,6 @@ struct TwoControlTemplate_Previews: PreviewProvider {
                            inputVolume: .constant(0.8999999),
                            outputAmplitude: .constant(0.0),
                            outputVolume: .constant(0.5))
-        .previewLayout(.fixed(width: 300, height: 180))
+        .previewLayout(.fixed(width: 500, height: 300))
     }
 }

@@ -6,7 +6,7 @@ struct AudioEffectView: View {
     
     var body: some View {
         GeometryReader{ geometry in
-        VStack{
+        VStack(spacing: 0){
             // Add All Two Knob Effect Controls
             ForEach(self.noise.twoControlEffects.indices, id: \.self){ i in
                 VStack(spacing: 0){
@@ -25,14 +25,14 @@ struct AudioEffectView: View {
                             //.frame(width:geometry.size.width * 0.3,height: geometry.size.width * 0.3 * (180/280))
                     }
                 }
-                .padding()
+                //.padding()
             }
         
             // Add All Four Knob Effect Controls
             ForEach(self.noise.fourControlEffects.indices, id: \.self){ i in
-                VStack{
+                VStack(spacing: 0){
                     if(self.noise.fourControlEffects[i].isDisplayed){
-                        Spacer()
+                        //Spacer()
                         FourControlTemplate(title: self.noise.fourControlEffects[i].name,
                           isBypassed: self.$noise.fourControlEffects[i].isBypassed,
                           knobModel1: self.$noise.fourControlEffects[i].control1,
@@ -48,9 +48,9 @@ struct AudioEffectView: View {
         
             // Add All One Knob With Presets Effect Controls
             ForEach(self.noise.oneControlWithPresetsEffects.indices, id: \.self){ i in
-                VStack{
+                VStack(spacing: 0){
                     if(self.noise.oneControlWithPresetsEffects[i].isDisplayed){
-                        Spacer()
+                        //Spacer()
                         PresetPicker(title: self.noise.oneControlWithPresetsEffects[i].name,
                         isBypassed: self.$noise.oneControlWithPresetsEffects[i].isBypassed,
                         presetIndex: self.$noise.oneControlWithPresetsEffects[i].presetIndex,
@@ -67,8 +67,8 @@ struct AudioEffectView: View {
             ForEach(self.noise.allControlEffects , id: \.id){ effect in
                     effect.displayImage
                         .resizable()
-                        .frame(width: geometry.size.height * 0.1,
-                               height: geometry.size.height * 0.1)
+                        .frame(width: geometry.size.height * 0.05,
+                               height: geometry.size.height * 0.05)
                         
                         .onTapGesture(count: 1) {
                             self.noise.objectWillChange.send()
@@ -79,17 +79,17 @@ struct AudioEffectView: View {
                         }
                 }
                 Button(action:{
-                    self.noise.addingEffects = true
+                    self.noise.selectedScreen = SelectedScreen.addEffect
                 }){
                     Image(systemName: "plus.circle")
                         .resizable()
-                        .frame(width: geometry.size.height * 0.1,
-                               height: geometry.size.height * 0.1)
+                        .frame(width: geometry.size.height * 0.05,
+                               height: geometry.size.height * 0.05)
                         .foregroundColor(Color.black)
                 }
                 Spacer()
             }
-            .frame(height: geometry.size.height * 0.2)
+            .frame(height: geometry.size.height * 0.1)
             
             }
         }

@@ -8,39 +8,51 @@ struct EffectRow: View {
     var parameters: [String]
     
     var body: some View {
-        ZStack(alignment: .leading){
-            Color.init(red: 0.9, green: 0.9, blue: 0.9)
-            HStack{
-                image
-                    .font(.system(size: 40))
-                    .foregroundColor(Color.black)
-                    .frame(width: 50, height: 50, alignment: .center)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(title)
-                        .font(.headline)
+        GeometryReader{ geometry in
+            ZStack(){
+                Color.init(red: 0.9, green: 0.9, blue: 0.9)
+                HStack(spacing: 0){
+                    self.image
+                        .resizable()
+                        .frame(width: geometry.size.height * 0.7,
+                               height: geometry.size.height * 0.7,
+                               alignment: .center)
+                        .padding(geometry.size.height * 0.15)
                         .foregroundColor(Color.black)
-                        .fontWeight(.bold)
-                        .lineLimit(2)
-                        .padding(.bottom, 5)
-                    
-                    Text(description)
-                        .font(.footnote)
-                        .foregroundColor(Color.black)
-                        .padding(.bottom, 5)
-                    .padding(.bottom, 5)
-                    ScrollView(.horizontal) {
+                    VStack(alignment: .leading,spacing: 0) {
+                        Text(self.title)
+                            .fontWeight(.heavy)
+                            .textStyle(ShrinkTextStyle())
+                            .frame(height: geometry.size.height * 0.35)
+                            .foregroundColor(Color.black)
+                        
+                        Text(self.description)
+                            .textStyle(ShrinkTextStyle())
+                            .foregroundColor(Color.black)
+                            .padding(.bottom, geometry.size.height * 0.02)
+                        
                         HStack {
-                            ForEach(parameters, id: \.self) { category in
-                                CategoryPill(categoryName: category)
+                            ForEach(self.parameters, id: \.self) { parameter in
+                                ZStack {
+                                    Text(parameter)
+                                        .textStyle(ShrinkTextStyle())
+                                        .lineLimit(1)
+                                        .foregroundColor(.white)
+                                        
+                                        .frame(height: geometry.size.height * 0.2)
+                                        .padding(geometry.size.height * 0.02)
+                                        .background(Color.green)
+                                        .cornerRadius(geometry.size.height * 0.02)
+                                }
                             }
+                            .padding(.bottom, geometry.size.height * 0.1)
                         }
                     }
+                    Spacer()
                 }
-                .padding(.horizontal, 0)
             }
-            .padding(10)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
         }
-        .clipShape(RoundedRectangle(cornerRadius: 15))
     }
 }
 
@@ -50,6 +62,8 @@ struct EffectRow_Previews: PreviewProvider {
                   image: Image(systemName: "l.circle.fill"),
                   description: "Swept Comb Filter Effect.",
                   parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
+        //.previewLayout(.fixed(width: 2688, height: 600))
+        .previewLayout(.fixed(width: 500, height: 90))
     }
 }
 

@@ -8,6 +8,9 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Single shared data model
     static let shared = NoiseModel()
     
+    // Enum that changes to a different screen
+    @Published var selectedScreen = SelectedScreen.main
+    
     // Master Amplitude Control
     @Published var masterAmplitude = 0.9{
         didSet { outputMixer.volume = masterAmplitude }
@@ -31,7 +34,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     @Published var noiseSource = NoiseSource()
     
-    var audioInputs : [AKNode] = []
+    var inputDevicesAvailable : [AKDevice] = []
     
     // Mixers
     var inputMixer = AKMixer()
@@ -96,15 +99,28 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         //START AUDIOBUS
         Audiobus.start()
         
-        
+        /*
         if let inputs = AudioKit.inputDevices {
             for input in inputs{
                 print(input)
             }
         }
+        */
         
+        getInputDevicesAvailable()
         
         createNewModulation()
+    }
+    
+    func getInputDevicesAvailable(){
+        inputDevicesAvailable = AudioKit.inputDevices ?? []
+        
+        for input in inputDevicesAvailable{
+            //print(input.name) // iPhone Microphone
+            print(input.deviceID) //Built-In Microphone Bottom
+            print(input.description) //<Device: iPhone Microphone (Built-In Microphone Bottom)>
+            
+        }
     }
     
     func setupSourceAudioChain(){
@@ -363,4 +379,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
 
+}
+
+public enum SelectedScreen{
+    case main, addEffect
+    var name: String {
+        return "\(self)"
+    }
 }

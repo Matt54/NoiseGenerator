@@ -10,34 +10,47 @@ struct AddEffectForm: View {
     }
     
     var body: some View {
+        GeometryReader{ geometry in
         VStack(spacing: 0){
             ZStack{
                 HStack{
                     
                     Button(action: {
                         print("cancel pressed")
-                        self.noise.addingEffects = false
+                        self.noise.selectedScreen = SelectedScreen.main
                         
                     })
                     {
                         Text("Cancel")
+                        .textStyle(ShrinkTextStyle())
+                        .frame(width: geometry.size.width * 0.15,
+                        height: geometry.size.height * 0.1,
+                        alignment: .leading)
                     }
                     Spacer()
                 }
-                .padding(.leading, 10)
+                .padding(.leading, geometry.size.width * 0.015)
                 
                 Text("Add Audio Effect")
-                    .font(.title)
-                .fontWeight(.bold)
+                    //.font(.title)
+                    .fontWeight(.bold)
+                    .textStyle(ShrinkTextStyle())
+                    .frame(width: geometry.size.width * 0.3,
+                           height: geometry.size.height * 0.1)
+                   //.frame(width: geometry.size.width * 0.1,
+                    //height: geometry.size.height * 0.4)
             }
-            .padding(.top, 50)
+            .frame(width: geometry.size.width,
+                   height: geometry.size.height * 0.1)
+            //.padding(.top, geometry.size.width * 0.025)
+            //.padding(.bottom, geometry.size.height * 0.05)
             
         ScrollView {
-            VStack(spacing: 20){
-                ForEach(noise.listedEffects , id: \.id){ i in
+            VStack(spacing: geometry.size.height * 0.05){
+                ForEach(self.noise.listedEffects , id: \.id){ i in
                     Button(action: {
                         print("You pressed: " + String(i.id))
-                        self.noise.addingEffects = false
+                        self.noise.selectedScreen = SelectedScreen.main
                         self.noise.createNewEffect(pos: self.noise.allControlEffects.count, effectNumber: i.id)
                     })
                     {
@@ -45,20 +58,24 @@ struct AddEffectForm: View {
                                   image: i.symbol,
                                   description: i.description,
                                   parameters: i.parameters)
+                        .frame(height: geometry.size.height * 0.25)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, geometry.size.width * 0.01)
                     }
                 }
             }
-            .padding(.top, 10)
+            //.padding(.horizontal, geometry.size.width * 0.005)
         }
         .edgesIgnoringSafeArea(.top)
         .background(Color.white)
+        }
     }
 }
 
 struct AddEffectForm_Previews: PreviewProvider {
     static var previews: some View {
         AddEffectForm().environmentObject(NoiseModel.shared)
+        //.previewLayout(.fixed(width: 2688, height: 1242))
+        .previewLayout(.fixed(width: 568, height: 320))
     }
 }

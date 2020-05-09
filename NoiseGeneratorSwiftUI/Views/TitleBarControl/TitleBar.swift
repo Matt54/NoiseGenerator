@@ -27,12 +27,12 @@ struct TitleBar: View {
                                 ZStack{
                                             Circle()
                                                 .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                                .frame(width: geometry.size.height * 0.8,
-                                                       height:geometry.size.height * 0.8)
+                                                .frame(width: geometry.size.height * 0.7,
+                                                       height:geometry.size.height * 0.7)
                                            Image(systemName: "power")
                                                 .resizable()
-                                                .frame(width: geometry.size.height * 0.6,
-                                                    height:geometry.size.height * 0.6)
+                                                .frame(width: geometry.size.height * 0.45,
+                                                    height:geometry.size.height * 0.45)
                                                 .foregroundColor(Color.yellow)
                                         }
                                     .padding(geometry.size.height * 0.1)
@@ -46,8 +46,8 @@ struct TitleBar: View {
                                                    height:geometry.size.height * 0.7)
                                        Image(systemName: "power")
                                             .resizable()
-                                            .frame(width: geometry.size.height * 0.5,
-                                                height:geometry.size.height * 0.5)
+                                            .frame(width: geometry.size.height * 0.45,
+                                                height:geometry.size.height * 0.45)
                                             .foregroundColor(Color.gray)
                                     }
                                 .padding(geometry.size.height * 0.15)
