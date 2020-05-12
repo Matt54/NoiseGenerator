@@ -4,10 +4,11 @@ struct ModulationView: View {
     @State var title = "EFFECT TITLE"
     @Binding var isBypassed : Bool
     @Binding var knobModel1 : KnobCompleteModel
-    @State var knobModColor: Color
+    @Binding var knobModColor: Color
     @Binding var isConnectingModulation: Bool
     @Binding var isDeletingModulation: Bool
     @Binding var pattern: Pattern
+    @Binding var screen: SelectedScreen
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -110,9 +111,24 @@ struct ModulationView: View {
                            height: geometry.size.height * 0.85)
                         
                         VStack{
+                            Button(action: {
+                                self.screen = SelectedScreen.adjustPattern
+                                //self.isConnectingModulation.toggle()
+                            }){
+                                //Text("Click Me")
+                                MiniPattern(pattern: self.$pattern)
+                                    .padding(geometry.size.width * 0.02)
+                                    .border(Color.black,
+                                            width: geometry.size.width * 0.01)
+                                    .frame(width: geometry.size.width * 0.25,
+                                           height: geometry.size.width * 0.25)
+                            }
+                            
+                            /*
                             PatternGraph(pattern: self.$pattern)
                                 .frame(width: geometry.size.width * 0.25,
                                        height: geometry.size.width * 0.25)
+                            */
                         }
                         .frame(width: geometry.size.width * 0.25,
                                height: geometry.size.height * 0.85)
@@ -122,7 +138,7 @@ struct ModulationView: View {
                     TitleBar(title: self.$title, isBypassed: self.$isBypassed)
                         .frame(height:geometry.size.height * 0.15)
                 }
-
+                .background(LinearGradient(Color.white, Color.lightGray))
                 }//zstack
         }//georeader
         .padding(geometryOuter.size.height * 0.02)
@@ -137,10 +153,11 @@ struct ModulationView_Previews: PreviewProvider {
     static var previews: some View {
         ModulationView(isBypassed: .constant(false),
         knobModel1: .constant(KnobCompleteModel()),
-        knobModColor: Color.yellow,
+        knobModColor: .constant(Color.yellow),
         isConnectingModulation: .constant(false),
         isDeletingModulation: .constant(false),
-        pattern: .constant(Pattern()))
+        pattern: .constant(Pattern(color: Color.yellow)),
+        screen: .constant(SelectedScreen.main))
         .previewLayout(.fixed(width: 300, height: 180))
     }
 }

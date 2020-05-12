@@ -12,6 +12,8 @@ struct NoiseGenerator: View {
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
+    @State var triangleConstraint: CGFloat = 100.0
+    
     var body: some View {
         GeometryReader
         { geometryOut in
@@ -23,7 +25,18 @@ struct NoiseGenerator: View {
                                      tVal: self.$pinkVal,
                                      rVal: self.$brownVal)
                             .aspectRatio(1.0, contentMode: .fit)
+                            .frame(width: geometry.size.width * 0.8,
+                                   height: geometry.size.height * 0.8)
                             /*
+                            .onAppear(){
+                                if(geometry.size.height > geometry.size.width){
+                                    self.triangleConstraint = geometry.size.width
+                                }
+                                else{
+                                    self.triangleConstraint = geometry.size.height
+                                }
+                            }
+                            
                             .frame(width: geometry.size.height * 0.65,
                                    height: geometry.size.height * 0.65)
                             */
@@ -33,15 +46,18 @@ struct NoiseGenerator: View {
                                        isRightHanded: .constant(true),
                                        numberOfRects: .constant(10),
                                        title: "VOL")
-                            .padding(geometry.size.width * 0.08)
-                            .frame(width: geometry.size.width * 0.27,height:geometry.size.height * 0.8)
+                            .padding(geometry.size.width * 0.05)
+                            .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                     }
+                    
                     TitleBar(title: .constant("Noise Generator"), isBypassed: self.$isBypassed)
                         .frame(height:geometry.size.height * 0.15)
                 }
+                .background(LinearGradient(Color.white, Color.lightGray))
             }
             .padding(geometryOut.size.height * 0.02)
             .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.02)
+            
         }
     }
 }
@@ -49,6 +65,6 @@ struct NoiseGenerator: View {
 struct NoiseGenerator_Previews: PreviewProvider {
     static var previews: some View {
         NoiseGenerator(whiteVal: .constant(1.0),pinkVal: .constant(0.0),brownVal: .constant(0.0), volumeControl: .constant(1.0), amplitude: .constant(0.5), isBypassed: .constant(false))
-        .previewLayout(.fixed(width: 250, height: 150))
+        .previewLayout(.fixed(width: 250, height: 250))
     }
 }

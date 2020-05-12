@@ -42,7 +42,11 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     @Published var position: Int
     
     // Is the effect currently shown on GUI
-    @Published var isDisplayed = true
+    @Published var isDisplayed = true{
+        didSet{
+            setDisplayImage()
+        }
+    }
     
     init(pos: Int, toggle: AKToggleable, node: AKInput ){
         position = pos

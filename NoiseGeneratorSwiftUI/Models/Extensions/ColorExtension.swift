@@ -5,6 +5,8 @@ import SwiftUI
 // This allows us to define our own Color to reuse
 public extension Color {
     
+    static let almostWhite = Color(red: 250 / 255, green: 250 / 255, blue: 252 / 255)
+    
     static let offWhite = Color(red: 225 / 255, green: 225 / 255, blue: 235 / 255)
     
     static let offBlack = Color(red: (255-225) / 255, green: (255-225) / 255, blue: (255-235) / 255)

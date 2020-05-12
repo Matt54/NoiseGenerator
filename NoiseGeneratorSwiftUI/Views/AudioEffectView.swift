@@ -7,6 +7,21 @@ struct AudioEffectView: View {
     var body: some View {
         GeometryReader{ geometry in
         VStack(spacing: 0){
+            
+            
+            ZStack{
+                Rectangle()
+                .fill(LinearGradient(Color.darkStart,Color.darkGray))
+                    Text("AUDIO EFFECTS")
+                        .bold()
+                        .textStyle(ShrinkTextStyle())
+                        .foregroundColor(Color.white)
+            }
+            .padding(geometry.size.height * 0.02)
+            .border(Color.black, width: geometry.size.height * 0.02)
+            .frame(height: geometry.size.height * 0.15)
+            
+            
             // Add All Two Knob Effect Controls
             ForEach(self.noise.twoControlEffects.indices, id: \.self){ i in
                 VStack(spacing: 0){
@@ -63,33 +78,46 @@ struct AudioEffectView: View {
                 }
             }
             
-            HStack{
-            ForEach(self.noise.allControlEffects , id: \.id){ effect in
-                    effect.displayImage
-                        .resizable()
-                        .frame(width: geometry.size.height * 0.05,
-                               height: geometry.size.height * 0.05)
-                        
-                        .onTapGesture(count: 1) {
-                            self.noise.objectWillChange.send()
-                            effect.toggleDisplayed()
-                        }
-                        .onLongPressGesture(minimumDuration: 0.5) {
-                            print("Long Press")
-                        }
-                }
-                Button(action:{
-                    self.noise.selectedScreen = SelectedScreen.addEffect
-                }){
-                    Image(systemName: "plus.circle")
-                        .resizable()
-                        .frame(width: geometry.size.height * 0.05,
-                               height: geometry.size.height * 0.05)
-                        .foregroundColor(Color.black)
-                }
-                Spacer()
+            
+            
+            ZStack{
+                Color.white
+                //Rectangle().fill(LinearGradient(Color.darkStart,Color.darkGray))
+                HStack(spacing: 0){
+                ForEach(self.noise.allControlEffects , id: \.id){ effect in
+                        effect.displayImage
+                            .resizable()
+                            .padding(geometry.size.height * 0.01)
+                            .frame(width: geometry.size.height * 0.1,
+                                   height: geometry.size.height * 0.1)
+                            
+                            .onTapGesture(count: 1) {
+                                self.noise.objectWillChange.send()
+                                //effect.toggleDisplayed()
+                                let current = effect.isDisplayed
+                                self.noise.hideEffects()
+                                effect.isDisplayed = !current
+                            }
+                            .onLongPressGesture(minimumDuration: 0.5) {
+                                print("Long Press")
+                            }
+                    }
+                    Button(action:{
+                        self.noise.selectedScreen = SelectedScreen.addEffect
+                    }){
+                        Image(systemName: "plus.circle")
+                            .resizable()
+                            .padding(geometry.size.height * 0.01)
+                            .frame(width: geometry.size.height * 0.1,
+                                   height: geometry.size.height * 0.1)
+                            .foregroundColor(Color.black)
+                    }
+                    Spacer()
             }
-            .frame(height: geometry.size.height * 0.1)
+            }
+            .padding(geometry.size.height * 0.02)
+            .border(Color.black, width: geometry.size.height * 0.02)
+            .frame(height: geometry.size.height * 0.15)
             
             }
         }

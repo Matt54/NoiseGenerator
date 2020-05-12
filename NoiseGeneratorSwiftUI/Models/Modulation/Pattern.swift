@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public class Pattern : ObservableObject{
     
@@ -16,11 +17,14 @@ public class Pattern : ObservableObject{
     var lockMove: Bool = false
     var lastTouchY: CGFloat = 0
     
-    var displayValuePoint = CGPoint(x: 0.0, y: 1.0)
+    var displayValuePoint = CGPoint(x: 0.0, y: 0.0)
     
-    init(){
+    var modulationColor: Color
+    
+    init(color: Color){
         // Set initial number of points
         numberOfPoints = 0
+        modulationColor = color
         
         // Add first two points
         self.addPoint(newPointCoordinate: CGPoint(x: 0.0, y: 1.0))

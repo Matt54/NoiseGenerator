@@ -9,29 +9,28 @@ struct ContentView: View {
         GeometryReader{ geometryOuter in
         GeometryReader{ geometry in
             ZStack{
-                VStack{
-                    HStack(spacing: geometry.size.width * 0.01){
+                VStack(spacing: 0){
+                    
+                    MainHeader()
+                    
+                    HStack(spacing: geometry.size.width * 0){
                         
                         AudioSourceView()
-                            .frame(width:geometry.size.width * 0.3,
-                                   height: geometry.size.width * 0.3 * (250/280))
+                            .frame(width:geometry.size.width * (1/3),
+                                   height: geometry.size.height * 0.8)
                         
                         AudioEffectView()
-                            .frame(width:geometry.size.width * 0.3,
-                                   height: geometry.size.width * 0.3 * (250/280))
+                            .frame(width:geometry.size.width * (1/3),
+                                   height: geometry.size.height * 0.8)
                         
                         ModulationSourceView()
-                            .frame(width:geometry.size.width * 0.3,
-                                   height: geometry.size.width * 0.3 * (250/280))
+                            .frame(width:geometry.size.width * (1/3),
+                                   height: geometry.size.height * 0.8)
                         
-                        //Master Volume Control
-                        VolumeControl(volume: self.$noise.outputAmplitude,
-                                      amplitudeControl: self.$noise.masterAmplitude,
-                                      isRightHanded: .constant(true),
-                                      numberOfRects: .constant(20))
-                            .frame(width:geometry.size.width * 0.03,
-                                   height: geometry.size.height * 0.5)
-                        
+                    }
+                    
+                    HStack(spacing: geometry.size.width * 0){
+                        Color.blue
                     }
                 }
 
@@ -40,6 +39,18 @@ struct ContentView: View {
                     //AddEffectForm(noise: _noise)
                     AddEffectForm()
                         .animation(.easeInOut(duration: 0.5))
+                }
+                
+                // OVERLAYED SCREENS GO HERE
+                if(self.noise.selectedScreen == .addMicrophoneInput){
+                    //AddEffectForm(noise: _noise)
+                    AddInputDeviceForm()
+                        .animation(.easeInOut(duration: 0.5))
+                }
+                
+                if(self.noise.selectedScreen == .adjustPattern){
+                    PatternAdjust(pattern: self.$noise.selectedPattern,
+                                  screen:  self.$noise.selectedScreen)
                 }
 
             }

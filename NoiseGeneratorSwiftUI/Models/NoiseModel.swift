@@ -11,14 +11,36 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Enum that changes to a different screen
     @Published var selectedScreen = SelectedScreen.main
     
-    // Master Amplitude Control
-    @Published var masterAmplitude = 0.9{
-        didSet { outputMixer.volume = masterAmplitude }
+    // Master Toggle Control
+    @Published var masterBypass = false{
+        didSet{
+            setMasterBypass()
+        }
     }
+    func setMasterBypass(){
+        if(masterBypass){
+            outputMixer.stop()
+        }
+        else{
+            outputMixer.start()
+        }
+    }
+    
+    // Master Volume Control
+    @Published var masterVolume = 1.0{
+        didSet { outputMixer.volume = masterVolume }
+    }
+    @Published var masterVolumeControl = KnobCompleteModel(){
+        didSet{ outputMixer.volume = masterVolumeControl.realModValue}
+    }
+    
+    @Published var tempo = Tempo(bpm: 120)
+    
     
     // Master Ouput Amplitude Tracker
     var outputAmplitudeTracker = AKAmplitudeTracker()
-    @Published var outputAmplitude: Double = 0.0
+    @Published var outputAmplitudeLeft: Double = 0.0
+    @Published var outputAmplitudeRight: Double = 0.0
     
     // External Sound (Disables Inputted Sound)
     @Published var enabledExternalInput = false {
@@ -31,10 +53,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // Audio Sources
     @Published var allControlSources = [AudioSource]()
     @Published var noiseControlSources = [NoiseSource]()
+    @Published var microphoneSources = [MicrophoneSource]()
     
     @Published var noiseSource = NoiseSource()
     
-    var inputDevicesAvailable : [AKDevice] = []
+    var availableInputSources : [AvailableInputSource] = []
     
     // Mixers
     var inputMixer = AKMixer()
@@ -52,9 +75,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     // Modulations
     var modulations : [Modulation] = []
+    
+    @Published var selectedPattern = Pattern(color: Color.init(red: 0.9, green: 0.9, blue: 0.9))
 
     // ON - modulation range and color is shown on knobs
-    @Published var modulationSelected: Bool = false
+    @Published var modulationSelected: Bool = true
     
     // ON - modulation can be assigned and range can be adjusted
     @Published var modulationBeingAssigned: Bool = false{
@@ -79,14 +104,26 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     init(){
         
-        //create a noise generator to play with
-        createNewSource(sourceNumber: 1)
+        masterVolumeControl.percentRotated = 0.7
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
-
+        
+        AKSettings.audioInputEnabled = true
+        
+        getInputDevicesAvailable()
+        
+        createMicrophoneInput(id: 1)
+        
+        //create a noise generator to play with
+        createNewSource(sourceNumber: 1)
+        
+        connectSourceToEffectChain()
+        
         setupOutputChain()
-        AudioKit.output = outputAmplitudeTracker//outputMixer
+        
+        
+        AudioKit.output = outputAmplitudeTracker //mic //outputAmplitudeTracker//outputMixer
 
         //START AUDIOKIT
         do{
@@ -99,37 +136,80 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         //START AUDIOBUS
         Audiobus.start()
         
-        /*
-        if let inputs = AudioKit.inputDevices {
-            for input in inputs{
-                print(input)
-            }
-        }
-        */
-        
-        getInputDevicesAvailable()
         
         createNewModulation()
     }
     
+    func hideSources(){
+        for source in allControlSources{
+            source.isDisplayed = false
+        }
+    }
+    func hideEffects(){
+        for effect in allControlEffects{
+            effect.isDisplayed = false
+        }
+    }
+    func hideModulations(){
+        for modulation in modulations{
+            modulation.isDisplayed = false
+        }
+    }
+    
     func getInputDevicesAvailable(){
-        inputDevicesAvailable = AudioKit.inputDevices ?? []
+        let inputDevicesAvailable = AudioKit.inputDevices ?? []
         
         for input in inputDevicesAvailable{
             //print(input.name) // iPhone Microphone
             print(input.deviceID) //Built-In Microphone Bottom
             print(input.description) //<Device: iPhone Microphone (Built-In Microphone Bottom)>
+            let availableInputDevice = AvailableInputSource(device: input)
+            availableInputSources.append(availableInputDevice)
+        }
+    }
+    
+    func createMicrophoneInput(id: Int){
+        
+        if(microphoneSources.count == 0){
+            for availableInput in availableInputSources{
+                if(availableInput.id == id){
+                    
+                    for source in allControlSources{
+                        source.isDisplayed = false
+                    }
+                    
+                    let mic = MicrophoneSource(device: availableInput.device)
+
+                    addSourceToControlArray(source: mic)
+                    allControlSources.append(mic)
+                    setupSourceAudioChain()
+                    print("we added the mic!")
+                    microphoneSources[0].isDisplayed = false
+                }
+            }
+        }
+        else{
+            setMicrophoneDevice(id: id)
+        }
+    }
+    
+    func setMicrophoneDevice(id: Int){
+        for availableInput in availableInputSources{
+            if(availableInput.id == id){
+                microphoneSources[0].setDevice(device: availableInput.device)
+            }
             
         }
     }
     
+    
     func setupSourceAudioChain(){
         
-        /*
+        
         for i in 0..<allControlSources.count {
             allControlSources[i].output.disconnectOutput()
         }
-        */
+        
         
         // Route each audio effect to the next in line
         for i in 0..<allControlSources.count {
@@ -182,7 +262,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
 
     
     func setupOutputChain(){
-        outputMixer.volume = masterAmplitude
+        outputMixer.volume = masterVolume
         outputAmplitudeTracker = AKAmplitudeTracker(outputMixer)
         outputAmplitudeTracker.mode = .peak
         outputAmplitudeTimer.eventHandler = {self.getOutputAmplitude()}
@@ -194,7 +274,10 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         DispatchQueue.main.async {
             
             //Read amplitude coming out of the master
-            self.outputAmplitude = self.outputAmplitudeTracker.amplitude
+            self.outputAmplitudeLeft = self.outputAmplitudeTracker.leftAmplitude
+            self.outputAmplitudeRight = self.outputAmplitudeTracker.rightAmplitude
+            
+            //print(self.outputAmplitude)
             
             //Read amplitude of any audio source that is displayed
             for i in 0..<self.allControlSources.count {
@@ -235,10 +318,14 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         if let mySource = source as? NoiseSource {
             noiseControlSources.append(mySource)
         }
+        if let mySource = source as? MicrophoneSource {
+            microphoneSources.append(mySource)
+        }
     }
     
     
     public func createNewEffect(pos: Int, effectNumber: Int){
+        hideEffects()
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
         addEffectToControlArray(effect: audioEffect)
         allControlEffects.append(audioEffect)
@@ -295,6 +382,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func modulationDisplayChange(_ sender: Modulation) {
         if(sender.isDisplayed){
             knobModColor = sender.modulationColor
+            selectedPattern = sender.pattern
         }
         else{
             knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
@@ -382,7 +470,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
 }
 
 public enum SelectedScreen{
-    case main, addEffect
+    case main, addEffect, addMicrophoneInput, adjustPattern
     var name: String {
         return "\(self)"
     }

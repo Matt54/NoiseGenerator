@@ -8,3 +8,9 @@ public extension Text {
         ModifiedContent(content: self, modifier: style)
     }
 }
+
+public extension TextField {
+    func textStyle<Style: ViewModifier>(_ style: Style) -> some View {
+        ModifiedContent(content: self, modifier: style)
+    }
+}

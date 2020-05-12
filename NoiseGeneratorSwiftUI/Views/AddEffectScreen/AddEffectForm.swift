@@ -37,13 +37,9 @@ struct AddEffectForm: View {
                     .textStyle(ShrinkTextStyle())
                     .frame(width: geometry.size.width * 0.3,
                            height: geometry.size.height * 0.1)
-                   //.frame(width: geometry.size.width * 0.1,
-                    //height: geometry.size.height * 0.4)
             }
             .frame(width: geometry.size.width,
                    height: geometry.size.height * 0.1)
-            //.padding(.top, geometry.size.width * 0.025)
-            //.padding(.bottom, geometry.size.height * 0.05)
             
         ScrollView {
             VStack(spacing: geometry.size.height * 0.05){
@@ -64,7 +60,6 @@ struct AddEffectForm: View {
                     }
                 }
             }
-            //.padding(.horizontal, geometry.size.width * 0.005)
         }
         .edgesIgnoringSafeArea(.top)
         .background(Color.white)

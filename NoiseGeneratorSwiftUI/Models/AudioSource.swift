@@ -36,7 +36,11 @@ public class AudioSource: Identifiable, ObservableObject{
     }
     
     // Is the effect currently shown on GUI
-    @Published var isDisplayed = true
+    @Published var isDisplayed = true{
+        didSet{
+            setDisplayImage()
+        }
+    }
     
     init(toggle: AKToggleable){
         toggleControls = toggle
@@ -72,6 +76,7 @@ public class AudioSource: Identifiable, ObservableObject{
     func readAmplitudes(){
         //inputAmplitude = inputTracker.amplitude
         outputAmplitude = output.amplitude
+        //print(outputAmplitude)
     }
     
 }
@@ -89,10 +94,61 @@ public class MonoAudioSource: AudioSource{
 public class StereoAudioSource: AudioSource{
     var input: AKStereoInput
     
-    init(toggle: AKToggleable, node: AKStereoInput ){
-        input = node
-        super.init(toggle: toggle)
+    init(){
+        //input = node
+        input = AKStereoInput()
+        super.init(toggle: input)
         input.setOutput(to: outputMixer)
+    }
+}
+
+public class MicrophoneSource: AudioSource{
+    
+    var input: AKMicrophone! = AKMicrophone()
+    
+    init(device: AKDevice){
+        super.init(toggle: input)
+
+        do{
+            try input.setDevice(device)
+        }
+        catch{
+            assert(false, error.localizedDescription)
+        }
+        isBypassed = true
+        
+        self.name = device.deviceID
+        
+        let stereoFieldLimiter = AKStereoFieldLimiter(input)
+        stereoFieldLimiter.setOutput(to: outputMixer)
+        
+        displayOnImage = Image(systemName: "mic.circle.fill")
+        displayOffImage = Image(systemName: "mic.circle")
+        setDisplayImage()
+    }
+    
+    func setDevice(device: AKDevice){
+        do{
+            try input.setDevice(device)
+            input.start()
+        }
+        catch{
+            assert(false, error.localizedDescription)
+        }
+        self.name = device.deviceID
+    }
+    
+}
+
+public class AvailableInputSource{
+    public var id: Int
+    static var numberOfInputs = 0
+    public var device: AKDevice
+    
+    init(device: AKDevice){
+        self.device = device
+        AvailableInputSource.numberOfInputs = AvailableInputSource.numberOfInputs + 1
+        id = AvailableInputSource.numberOfInputs
     }
 }
 

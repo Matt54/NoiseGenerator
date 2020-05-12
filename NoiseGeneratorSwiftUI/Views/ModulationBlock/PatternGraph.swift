@@ -6,6 +6,8 @@ struct PatternGraph: View {
     
     @State var touchPoint = CGPoint(x: 0, y: 0)
     @State var touchState = TouchState.none
+    
+    @State var numberOfGridLines = 8
 
     var body: some View {
         GeometryReader
@@ -13,6 +15,8 @@ struct PatternGraph: View {
             
             ZStack{
                 Color.white
+                
+                GridLines(numberOfGridLines: self.numberOfGridLines)
                 
                 //Draw the Area Under the curve
                 VStack{
@@ -53,14 +57,16 @@ struct PatternGraph: View {
                         path.move(to: CGPoint(x: 0,
                                               y: self.pattern.points[0].coordinate.y * geometry.size.height))
                     }
-                    .fill(Color.gray)
+                    .fill(Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.5))
                 }
+                
+                
                 
                 //Draw All Points
                 ForEach(self.pattern.points){ p in
                     Circle()
-                        .fill(Color.black)
-                        .frame(width: geometry.size.width * 0.05)
+                        .fill(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+                        .frame(width: geometry.size.width * 0.015)
                         .position(CGPoint(x: p.coordinate.x * geometry.size.width, y: p.coordinate.y * geometry.size.height))
                 }
                 
@@ -69,34 +75,47 @@ struct PatternGraph: View {
                     VStack{
                         if(p.intersectionPoint != nil){
                             Circle()
-                                .fill(Color.green)
-                                .frame(width: geometry.size.width * 0.025)
+                                .fill(Color(red: 0.2, green: 0.2, blue: 1.0, opacity: 0.5))
+                                .frame(width: geometry.size.width * 0.01)
                                 .position(CGPoint(x: p.intersectionPoint!.coordinate.x * geometry.size.width, y: p.intersectionPoint!.coordinate.y * geometry.size.height))
                         }
                     }
                 }
                 
-                //Draw All Points
+                //Draw All Control Points
                 ForEach(self.pattern.controlPoints){ p in
                     Circle()
-                        .fill(Color.red)
-                        .frame(width: geometry.size.width * 0.025)
+                        .fill(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.5))
+                        .frame(width: geometry.size.width * 0.01)
                         .position(CGPoint(x: p.coordinate.x * geometry.size.width, y: p.coordinate.y * geometry.size.height))
                 }
                 
-                //Draw Display Value Point
+                //Draw Display Value Line
+                VStack{
+                    Path{ path in
+                        path.move(to: CGPoint(x: self.pattern.displayValuePoint.x * geometry.size.width,
+                        y: self.pattern.displayValuePoint.y * geometry.size.height) )
+                        path.addLine(to: CGPoint(x: self.pattern.displayValuePoint.x * geometry.size.width,
+                                                 y: geometry.size.height))
+                    }
+                    .stroke(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.5))
+                }
+                
+                //Draw Display Value Points
+                /*
                 Circle()
-                    .fill(Color.green)
-                    .frame(width: geometry.size.width * 0.05)
+                    .fill(self.pattern.modulationColor)
+                    .frame(width: geometry.size.width * 0.025)
                     .position(CGPoint(x: self.pattern.displayValuePoint.x * geometry.size.width,
                                       y: self.pattern.displayValuePoint.y * geometry.size.height))
+                */
+ 
                 
-                
-                //Draw All Control Points
+                //Draw All Intersection Points
                 ForEach(self.pattern.intersectionPoints){ p in
                     Circle()
-                        .fill(Color.black)
-                        .frame(width: geometry.size.width * 0.025)
+                        .fill(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.5))
+                        .frame(width: geometry.size.width * 0.01)
                         .position(CGPoint(x: p.coordinate.x * geometry.size.width, y: p.coordinate.y * geometry.size.height))
                 }
                 
@@ -105,7 +124,7 @@ struct PatternGraph: View {
                 if(self.pattern.selectedPoint != nil){
                     Circle()
                         .fill(Color(red: 0.0, green: 0.0, blue: 0.0, opacity: 0.2))
-                        .frame(width: geometry.size.width * 0.1)
+                        .frame(width: geometry.size.width * 0.02)
                         .position(CGPoint(x: (self.pattern.selectedPoint?.coordinate.x)! * geometry.size.width, y: (self.pattern.selectedPoint?.coordinate.y)! * geometry.size.height))
                 }
                 
@@ -142,8 +161,9 @@ struct PatternGraph: View {
 
 struct PatternGraph_Previews: PreviewProvider {
     static var previews: some View {
-        PatternGraph(pattern: .constant(Pattern()))
-        .previewLayout(.fixed(width: 300, height: 300))
+        PatternGraph(pattern: .constant(Pattern(color: Color.green)))
+        //.previewLayout(.fixed(width: 300, height: 300))
+        .previewLayout(.fixed(width: 568, height: 320))
     }
 }
 
@@ -153,3 +173,4 @@ public enum TouchState {
         return "\(self)"
     }
 }
+

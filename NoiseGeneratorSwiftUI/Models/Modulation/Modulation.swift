@@ -46,7 +46,7 @@ public class Modulation : Identifiable, ObservableObject{
     // Is the modulation currently shown on GUI
     @Published var isBypassed = false
     
-    @Published var pattern = Pattern()
+    @Published var pattern: Pattern
     
     func toggleDisplayed(){
         isDisplayed.toggle()
@@ -73,8 +73,13 @@ public class Modulation : Identifiable, ObservableObject{
     init(){
         Modulation.numberOfModulations = Modulation.numberOfModulations + 1
         id = Modulation.numberOfModulations
-        name = "Modulation " + String(id)
+        name = "LFO " + String(id)
+        
+        pattern = Pattern(color: Color.black)
+        
         modulationColor = self.getColorForModulation(num: id)
+        pattern.modulationColor = modulationColor
+        
         timer.eventHandler = {self.timerAction()}
         
         timingControl.name = "Rate"

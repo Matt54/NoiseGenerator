@@ -51,7 +51,7 @@ struct EffectRow: View {
                     Spacer()
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .clipShape(RoundedRectangle(cornerRadius: geometry.size.height * 0.2))
         }
     }
 }

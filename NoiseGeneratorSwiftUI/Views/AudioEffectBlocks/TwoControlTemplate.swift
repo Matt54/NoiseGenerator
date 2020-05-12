@@ -35,10 +35,10 @@ struct TwoControlTemplate: View {
                                            isRightHanded: .constant(false),
                                            numberOfRects: .constant(10),
                                            title: "IN")
-                                .padding(geometry.size.width * 0.01)
-                                .frame(width:geometry.size.width * 0.1)
+                                .padding(geometry.size.width * 0.05)
+                                .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                         }
-                        .frame(width:geometry.size.width * 0.15)
+                        .frame(width:geometry.size.width * 0.2)
                             
                         // Knobs
                         HStack(spacing: 0){
@@ -69,7 +69,7 @@ struct TwoControlTemplate: View {
                                 
                             }
                             .padding(geometry.size.width * 0.05)
-                            .frame(width:geometry.size.width * 0.35, height: geometry.size.height * 0.85)
+                            .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.85)
                             
                             //Knob 2
                             VStack(spacing: 0)
@@ -96,7 +96,8 @@ struct TwoControlTemplate: View {
                                 
                             }//VStack - Knob 2
                             .padding(geometry.size.width * 0.05)
-                            .frame(width:geometry.size.width * 0.35, height: geometry.size.height * 0.85)
+                            .frame(width:geometry.size.width * 0.3,
+                                   height: geometry.size.height * 0.85)
                             
                         }// HStack - Knobs
 
@@ -107,10 +108,13 @@ struct TwoControlTemplate: View {
                                            isRightHanded: .constant(true),
                                            numberOfRects: .constant(10),
                                            title: "OUT")
-                                .padding(geometry.size.width * 0.01)
-                                .frame(width:geometry.size.width * 0.1)
+                                //.padding(geometry.size.width * 0.01)
+                                //.frame(width:geometry.size.width * 0.1)
+                            .padding(geometry.size.width * 0.05)
+                            .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
+                            
                         }
-                        .frame(width:geometry.size.width * 0.15)
+                        .frame(width:geometry.size.width * 0.2)
                     }
                     
                     // Title Bar

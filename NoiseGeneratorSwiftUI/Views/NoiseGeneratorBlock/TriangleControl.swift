@@ -34,7 +34,7 @@ struct TriangleControl: View {
                 Rectangle()
                     .fill(Color.clear)
                 Triangle()
-                    .fill(LinearGradient(Color.white, Color.offWhite))
+                    .fill(LinearGradient(Color.white, Color.almostWhite))
                     .shadow(color: Color.darkStart, radius: 5, x: 2, y: 2)
                     .shadow(color: Color.darkEnd, radius: 5, x: -2, y: -2)
                     //.fill(Color.WhiteBlackColor(for: self.colorScheme))
