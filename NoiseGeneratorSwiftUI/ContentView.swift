@@ -9,10 +9,16 @@ struct ContentView: View {
         GeometryReader{ geometryOuter in
         GeometryReader{ geometry in
             ZStack{
+                
+                Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.01)
+                    .onTapGesture {
+                        UIApplication.shared.endEditing()
+                    }
+                
                 VStack(spacing: 0){
                     
                     MainHeader()
-                    
+
                     HStack(spacing: geometry.size.width * 0){
                         
                         AudioSourceView()
@@ -52,11 +58,10 @@ struct ContentView: View {
                     PatternAdjust(pattern: self.$noise.selectedPattern,
                                   screen:  self.$noise.selectedScreen)
                 }
-
             }
         }
             .padding(geometryOuter.size.height * 0.08)
-            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOuter.size.height * 0.08)
+        .border(Color.black, width: geometryOuter.size.height * 0.08)
         }
         .edgesIgnoringSafeArea(.all)
     }
@@ -65,7 +70,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView().environmentObject(NoiseModel.shared)
-        .previewLayout(.fixed(width: 568, height: 320))
+        .previewLayout(.fixed(width: 568, height: 320)) //This one looks like a phone
         //.previewLayout(.fixed(width: 2688, height: 1242))
     }
 }

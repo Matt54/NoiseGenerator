@@ -368,10 +368,28 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
     
     func createNewModulation(){
-        let modulation = Modulation()
+        let modulation = Modulation(tempo: tempo)
         modulation.delegate = self
         modulation.start()
         modulations.append(modulation)
+    }
+    
+    func stopModulations(){
+        for modulation in modulations{
+            modulation.stop()
+        }
+    }
+    
+    func startModulations(){
+        for modulation in modulations{
+            modulation.start()
+        }
+    }
+    
+    func updateModulations(){
+        for modulation in modulations{
+            modulation.setTimeInterval()
+        }
     }
     
     // Updates UI when modulation timer triggers

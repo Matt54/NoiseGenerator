@@ -12,35 +12,6 @@ public class KnobCompleteModel : ObservableObject{
         }
     }
     
-    // sets the realModValue from the position + modulationValue logic
-    // doesn't allow it to go below 0 or above 1.0
-    func calculateRealValue(){
-        if(percentRotated + modulationValue > 1.0){
-            realModValue = 1.0
-        }
-        else if(percentRotated + modulationValue < 0.0){
-            realModValue = 0.0
-        }
-        else{
-            realModValue = modulationValue + percentRotated
-        }
-        delegate?.modulationValueWasChanged(self)
-    }
-    
-    // sets the realModulationRange from the position + attemptedModulationRange logic
-    // doesn't allow the position + range to go above 1.0 or below 0
-    func calculateRealRange(){
-        if(percentRotated + attemptedModulationRange > 1.0){
-            realModulationRange = (1.0 - percentRotated)
-        }
-        else if(percentRotated + attemptedModulationRange < 0.0){
-            realModulationRange = -1 * percentRotated
-        }
-        else{
-            realModulationRange = attemptedModulationRange
-        }
-    }
-
     // This controls the display of the modulation amount
     // When a mod is selected that targets this knob
     @Published var modSelected = false
@@ -70,12 +41,43 @@ public class KnobCompleteModel : ObservableObject{
     @Published var range = 1.0
     @Published var unit = ""
     @Published var display = "Display"
-
+    
+    public var isTempoSynced: Bool = false
+    
     init(){
         calculateRealValue()
         calculateRealRange()
     }
     
+    // sets the realModValue from the position + modulationValue logic
+    // doesn't allow it to go below 0 or above 1.0
+    func calculateRealValue(){
+        if(percentRotated + modulationValue > 1.0){
+            realModValue = 1.0
+        }
+        else if(percentRotated + modulationValue < 0.0){
+            realModValue = 0.0
+        }
+        else{
+            realModValue = modulationValue + percentRotated
+        }
+        delegate?.modulationValueWasChanged(self)
+    }
+    
+    // sets the realModulationRange from the position + attemptedModulationRange logic
+    // doesn't allow the position + range to go above 1.0 or below 0
+    func calculateRealRange(){
+        if(percentRotated + attemptedModulationRange > 1.0){
+            realModulationRange = (1.0 - percentRotated)
+        }
+        else if(percentRotated + attemptedModulationRange < 0.0){
+            realModulationRange = -1 * percentRotated
+        }
+        else{
+            realModulationRange = attemptedModulationRange
+        }
+    }
+
     func handoffKnobModel(){
         print("handoffKnobModel")
         handoffDelegate?.KnobModelAssignToModulation(self)

@@ -24,9 +24,7 @@ struct ModulationSourceView: View {
                 ForEach(self.noise.modulations.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.modulations[i].isDisplayed){
-                        ModulationView(title: self.noise.modulations[i].name,
-                          isBypassed: self.$noise.modulations[i].isBypassed,
-                          knobModel1: self.$noise.modulations[i].timingControl,
+                        ModulationView(modulation: self.$noise.modulations[i],
                           knobModColor: self.$noise.knobModColor,
                           isConnectingModulation: self.$noise.modulationBeingAssigned,
                           isDeletingModulation: self.$noise.modulationBeingDeleted,
@@ -52,8 +50,8 @@ struct ModulationSourceView: View {
                                     .padding(geometry.size.height * 0.01)
                                     .frame(width: geometry.size.height * 0.1,
                                            height: geometry.size.height * 0.1)
-                                    .foregroundColor(mod.modulationColor)
-                                
+                                    //.foregroundColor(mod.modulationColor)
+                                    .foregroundColor(Color.black)
                             }
                             else{
                                 Image(systemName: "m.circle")
@@ -61,7 +59,8 @@ struct ModulationSourceView: View {
                                     .padding(geometry.size.height * 0.01)
                                     .frame(width: geometry.size.height * 0.1,
                                            height: geometry.size.height * 0.1)
-                                    .foregroundColor(mod.modulationColor)
+                                    //.foregroundColor(mod.modulationColor)
+                                    .foregroundColor(Color.black)
                             }
                         }
                     }

@@ -3,6 +3,10 @@ import SwiftUI
 
 public class Modulation : Identifiable, ObservableObject{
     
+    //@EnvironmentObject var noise: NoiseModel
+    
+    var tempo: Tempo
+    
     var delegate:ModulationDelegateUI?
     
     static var numberOfModulations = 0
@@ -19,6 +23,10 @@ public class Modulation : Identifiable, ObservableObject{
     var numberOfSteps = 200.0
     
     var timeOfLastTimerAction: Double = 0.0
+    
+    var isTempoSynced: Bool = false{
+        didSet{ setTimeInterval() }
+    }
     
     @Published var timeInterval = 0.01{
     didSet {
@@ -70,7 +78,10 @@ public class Modulation : Identifiable, ObservableObject{
     
     var timer = RepeatingTimer(timeInterval: 0.01)
     
-    init(){
+    init(tempo: Tempo){
+        
+        self.tempo = tempo
+        
         Modulation.numberOfModulations = Modulation.numberOfModulations + 1
         id = Modulation.numberOfModulations
         name = "LFO " + String(id)
@@ -86,6 +97,7 @@ public class Modulation : Identifiable, ObservableObject{
         timingControl.range = 0.099
         timingControl.unit = " Hz"
         timingControl.percentRotated = 0.0
+        //timingControl.isTempoSynced = true
         
         setTimeInterval()
         
@@ -136,8 +148,27 @@ public class Modulation : Identifiable, ObservableObject{
     }
     
     func setTimeInterval(){
-        timeInterval = 0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range
-        timingControl.display = String(format: "%.3f", ((1/(0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range)))/numberOfSteps) + timingControl.unit
+        
+        if(isTempoSynced){
+            
+            //Determine the number of tempo selection segments
+            let numberOfSegments = tempo.regularIntervals.count
+            
+            //Determine which segment we are rotated into
+            let segment = Int(timingControl.percentRotated * Double(numberOfSegments - 1))
+            
+            //get the time interval while accounting for how many steps we need to take
+            timeInterval = tempo.getTimeWithSteps(intNumber: segment, numberOfSteps: numberOfSteps)
+            
+            // display the time interval (may need this adjusted)
+            timingControl.display = tempo.regularIntervalStrings[segment]
+            
+        }
+        else{
+            timeInterval = 0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range
+            
+            timingControl.display = String(format: "%.3f", ((1/(0.001 + (1.0 - pow(timingControl.percentRotated, 0.2)) * timingControl.range)))/numberOfSteps) + timingControl.unit
+        }
     }
     
     func setTimeInterval(timeInterval: Double){

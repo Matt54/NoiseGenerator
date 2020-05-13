@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DFEC090B9E0B6E83F8AE647D /* Pods_NoiseGeneratorSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */; };
+		FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */; };
+		FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */; };
 		FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA093A352448A94A00BCD16C /* AudioEffect.swift */; };
 		FA0A68672469FF590016534A /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A68662469FF590016534A /* Tempo.swift */; };
 		FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A6868246A01ED0016534A /* MainHeader.swift */; };
@@ -83,6 +85,8 @@
 		16CC8F7AF3524D0BF47ECD41 /* Pods-NoiseGeneratorSwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoiseGeneratorSwiftUI.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NoiseGeneratorSwiftUI/Pods-NoiseGeneratorSwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
 		40AC8FF3BF7BDAF2A0BEA9BC /* Pods-NoiseGeneratorSwiftUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoiseGeneratorSwiftUI.release.xcconfig"; path = "Pods/Target Support Files/Pods-NoiseGeneratorSwiftUI/Pods-NoiseGeneratorSwiftUI.release.xcconfig"; sourceTree = "<group>"; };
 		8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoiseGeneratorSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardExtensions.swift; sourceTree = "<group>"; };
+		FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyGestureRecognizer.swift; sourceTree = "<group>"; };
 		FA093A352448A94A00BCD16C /* AudioEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffect.swift; sourceTree = "<group>"; };
 		FA0A68662469FF590016534A /* Tempo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		FA0A6868246A01ED0016534A /* MainHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHeader.swift; sourceTree = "<group>"; };
@@ -177,6 +181,7 @@
 				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
 				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
 				FA0A68662469FF590016534A /* Tempo.swift */,
+				FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 			children = (
 				FA791500244D333500C45D1A /* ColorExtension.swift */,
 				FA33B44B246595C100387F0B /* TextExtension.swift */,
+				FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -485,6 +491,7 @@
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
+				FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */,
 				FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */,
 				FA7DA85D2469874600822786 /* MasterOutputView.swift in Sources */,
 				FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */,
@@ -506,6 +513,7 @@
 				FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */,
 				FA377A4F24317CAB00CBE2C4 /* NoiseModel.swift in Sources */,
 				FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */,
+				FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */,
 				FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */,
 				FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */,
 				FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */,

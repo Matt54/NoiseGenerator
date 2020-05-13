@@ -12,46 +12,24 @@ import Combine
 struct MainHeader: View {
     
     @EnvironmentObject var noise: NoiseModel
+    @State private var textRemember: String = ""
+    
+    private var decimalFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        return f
+    }()
     
     var body: some View {
+        GeometryReader{ geometryOut in
         GeometryReader{ geometry in
             ZStack{
                 
                 LinearGradient(Color.white, Color.lightGray)
                 
                 // Master Volume
-                HStack(spacing: geometry.size.width * 0){
-                    
-                    VStack() {
-                        DecimalTextField("0", value: self.$noise.tempo.bpmDecimal)
-                    }
-                    
-                    //VStack(alignment: .leading) {
-                    //Group{
-                    //    NumberEntryField(value: self.$noise.tempo.bpmString)
-                    //}
-                    //.keyboardType(.decimalPad)
-                        /*
-                    .onReceive(Just(self.noise.tempo.bpmString)) { newValue in
-                        let filtered = newValue.filter { "0123456789.".contains($0) }
-                        if filtered != newValue {
-                            self.noise.tempo.bpm = Double(filtered)!
-                        }
-                    }
-                    */
-                        //Text("Your username: \(self.noise.tempo.bpmString)")
-                    //}
-                    
-                    //.padding()
-                    
-                    /*
-                    TextField("BPM", text: self.$noise.tempo.bpmString)
-                        .font(.system(size: geometry.size.height * 0.5))
-                        //.minimumScaleFactor(0.0001)
-                        .lineLimit(1)
-                        //.scaledToFit()
-                    .frame(width:geometry.size.width * (1/10))
-                    */
+                HStack(spacing: 0){
+
                     
                     ZStack{
                         //Rectangle()
@@ -62,6 +40,44 @@ struct MainHeader: View {
                     }
                     .frame(width:geometry.size.width * (1/10))
                     
+                        TextField("",
+                                  text: self.$noise.tempo.bpmString,
+                                  onEditingChanged: { (editing) in
+                                    // Deletes old entry
+                                    if editing {
+                                        print("editing")
+                                        self.textRemember = self.noise.tempo.bpmString
+                                        self.noise.tempo.bpmString = ""
+                                        self.noise.stopModulations()
+                                    }
+                                    else{
+                                        print("changed")
+                                        if( !self.noise.tempo.validateTempo(tempoString: self.noise.tempo.bpmString) )
+                                        {
+                                            self.noise.tempo.bpmString = self.textRemember
+                                        }
+                                        
+                                        self.noise.tempo.bpm = Double(self.noise.tempo.bpmString)!
+                                        self.noise.updateModulations()
+                                        self.noise.startModulations()
+                                    }
+                                    })
+                        /*,
+                                  onCommit: {
+                                    print("Commited")
+                                    //self.output = "You typed: " + self.input
+                                })*/
+                            .font(.system(size: geometry.size.height * 0.5))
+                            .keyboardType(.decimalPad)
+                            .background(Color.white)
+                            .cornerRadius(geometry.size.height * 0.2)
+                            .multilineTextAlignment(.center)
+                            .frame(width: geometry.size.width * (1/10),
+                                   height: geometry.size.height * 0.7)
+                    
+                    
+                    
+                    /*
                     ZStack{
                         //Rectangle()
                         Text(String(self.noise.tempo.bpm))
@@ -70,6 +86,7 @@ struct MainHeader: View {
                             //.foregroundColor(Color.white)
                     }
                     .frame(width:geometry.size.width * (1/10))
+                    */
                     
                     Spacer()
                     
@@ -85,8 +102,12 @@ struct MainHeader: View {
                                         numberOfRects: .constant(8))
                     .padding(geometry.size.height * 0.1)
                     .frame(width:geometry.size.width * (1/15))
+                    
                 }
             }
+        }
+        .padding(geometryOut.size.height * 0)
+        .border(Color.black, width: geometryOut.size.height * 0)
         }
     }
 }
