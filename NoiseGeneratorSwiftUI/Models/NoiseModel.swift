@@ -1,4 +1,5 @@
 import AudioKit
+import AudioKitUI
 import Combine
 import SwiftUI
 import Foundation
@@ -102,7 +103,13 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
+    var bank: AKOscillatorBank!
+    @Published var firstOctave: Int = 2
+    
     init(){
+        
+        bank = AKOscillatorBank(waveform: AKTable(.sawtooth))
+        bank.setOutput(to: inputMixer)
         
         masterVolumeControl.percentRotated = 0.7
         
@@ -485,6 +492,29 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
 
+    func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity){
+        print("got something!")
+        print(note)
+        print(velocity)
+        bank.play(noteNumber: note, velocity: velocity)
+    }
+    
+    
+}
+
+// Keyboard protocol conformance
+extension NoiseModel: AKKeyboardDelegate {
+    
+    func noteOn(note: MIDINoteNumber) {
+      //bank.play(noteNumber: note, velocity: 80)
+        handleMidiNote(note: note, velocity: 80)
+    }
+      
+    func noteOff(note: MIDINoteNumber) {
+      //bank.stop(noteNumber: note)
+        handleMidiNote(note: note, velocity: 0)
+    }
+    
 }
 
 public enum SelectedScreen{

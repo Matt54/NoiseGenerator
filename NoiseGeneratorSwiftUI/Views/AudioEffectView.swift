@@ -19,7 +19,7 @@ struct AudioEffectView: View {
             }
             .padding(geometry.size.height * 0.02)
             .border(Color.black, width: geometry.size.height * 0.02)
-            .frame(height: geometry.size.height * 0.15)
+            .frame(height: geometry.size.height * 0.1)
             
             
             // Add All Two Knob Effect Controls
@@ -88,8 +88,8 @@ struct AudioEffectView: View {
                         effect.displayImage
                             .resizable()
                             .padding(geometry.size.height * 0.01)
-                            .frame(width: geometry.size.height * 0.1,
-                                   height: geometry.size.height * 0.1)
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .frame(height: geometry.size.height * 0.1)
                             
                             .onTapGesture(count: 1) {
                                 self.noise.objectWillChange.send()
@@ -108,8 +108,8 @@ struct AudioEffectView: View {
                         Image(systemName: "plus.circle")
                             .resizable()
                             .padding(geometry.size.height * 0.01)
-                            .frame(width: geometry.size.height * 0.1,
-                                   height: geometry.size.height * 0.1)
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .frame(height: geometry.size.height * 0.1)
                             .foregroundColor(Color.black)
                     }
                     Spacer()

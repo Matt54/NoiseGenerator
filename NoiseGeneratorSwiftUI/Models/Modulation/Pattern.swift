@@ -351,6 +351,7 @@ public class Pattern : ObservableObject{
         return pow((1 - x),3) * y1 + 3 * pow((1 - x),2) * x * y2 + 3 * (1 - x) * pow(x, 2) * y3 + pow(x, 3) * y4
     }
     
+    //Got a Weird error here
     func determinePointPlacement(_ newPointCoordinate: CGPoint) -> Int {
         for n in 0...(numberOfPoints - 1) {
             if(newPointCoordinate.x < points[n].coordinate.x){

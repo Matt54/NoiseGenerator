@@ -18,7 +18,7 @@ struct ModulationSourceView: View {
                 }
                 .padding(geometry.size.height * 0.02)
                 .border(Color.black, width: geometry.size.height * 0.02)
-                .frame(height: geometry.size.height * 0.15)
+                .frame(height: geometry.size.height * 0.1)
             
                 // Add All Modulations
                 ForEach(self.noise.modulations.indices, id: \.self){ i in

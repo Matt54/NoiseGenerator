@@ -7,6 +7,16 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader{ geometryOuter in
+            
+        HStack(spacing: 0){
+            
+            Rectangle()
+            .frame(width: geometryOuter.size.height * 0.08)
+            
+            VStack(spacing: 0){
+                    
+                
+            
         GeometryReader{ geometry in
             ZStack{
                 
@@ -18,26 +28,32 @@ struct ContentView: View {
                 VStack(spacing: 0){
                     
                     MainHeader()
+                    .frame(height: geometry.size.height * 0.1)
 
                     HStack(spacing: geometry.size.width * 0){
                         
                         AudioSourceView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.8)
+                                   height: geometry.size.height * 0.7)
                         
                         AudioEffectView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.8)
+                                   height: geometry.size.height * 0.7)
                         
                         ModulationSourceView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.8)
+                                   height: geometry.size.height * 0.7)
                         
                     }
                     
+                    KeyBoard()
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height * 0.2)
+                    /*
                     HStack(spacing: geometry.size.width * 0){
                         Color.blue
                     }
+                    */
                 }
 
                 // OVERLAYED SCREENS GO HERE
@@ -60,8 +76,15 @@ struct ContentView: View {
                 }
             }
         }
-            .padding(geometryOuter.size.height * 0.08)
-        .border(Color.black, width: geometryOuter.size.height * 0.08)
+            Rectangle()
+                .frame(height: geometryOuter.size.height * 0.05)
+        }
+            Rectangle()
+            .frame(width: geometryOuter.size.height * 0.1)
+        }
+            
+        //.padding(geometryOuter.size.height * 0.08)
+        //.border(Color.black, width: geometryOuter.size.height * 0.08)
         }
         .edgesIgnoringSafeArea(.all)
     }

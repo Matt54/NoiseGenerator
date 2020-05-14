@@ -18,7 +18,7 @@ struct AudioSourceView: View {
             }
             .padding(geometry.size.height * 0.02)
             .border(Color.black, width: geometry.size.height * 0.02)
-            .frame(height: geometry.size.height * 0.15)
+            .frame(height: geometry.size.height * 0.1)
             
         
             VStack(spacing: 0){

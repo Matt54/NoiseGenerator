@@ -89,12 +89,11 @@ struct ModulationView: View {
                                         Image(systemName: "clock")
                                         .resizable()
                                         .padding(geometry.size.height * 0.05)
-
                                         .foregroundColor(Color.white)
                                     }
                                 }
                                 .aspectRatio(1.0, contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.15)
+                                .frame(width: geometry.size.height * 0.25)
                             }
                             
                             /*

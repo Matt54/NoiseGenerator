@@ -192,7 +192,7 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
         displayOffImage = Image(systemName: "f.circle")
         setDisplayImage()
         
-        filter.rampDuration = 0.0
+        filter.rampDuration = 0.02
         control1.name = "Cutoff"
         control1.range = 20992
         control1.unit = " Hz"
@@ -205,19 +205,19 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
         setEffect1()
         
         // This prevents modulation from interferring with display logic
-        let displayValue = 8 + control1.percentRotated * control1.range
+        let displayValue = 8 + pow(control1.percentRotated, 3) * control1.range
         
         if(displayValue > 1000){
             control1.unit = " kHz"
-            control1.display = String(format: "%.2f", (8 + control1.percentRotated * control1.range) / 1000) + control1.unit
+            control1.display = String(format: "%.2f", (8 + pow(control1.percentRotated, 3) * control1.range) / 1000) + control1.unit
         }
         else{
             control1.unit = " Hz"
-            control1.display = String(format: "%.0f", 8 + control1.percentRotated * control1.range) + control1.unit
+            control1.display = String(format: "%.0f", 8 + pow(control1.percentRotated, 3) * control1.range) + control1.unit
         }
     }
     override func setEffect1(){
-         filter.cutoffFrequency = 8 + control1.realModValue * control1.range
+         filter.cutoffFrequency = 8 + pow(control1.realModValue, 3) * control1.range
     }
     
     override func setControl2(){
