@@ -4,7 +4,7 @@ import Combine
 import SwiftUI
 import Foundation
 
-final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnobHandoff{
+final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnobHandoff, AKMIDIListener{
     
     // Single shared data model
     static let shared = NoiseModel()
@@ -53,6 +53,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     
     // Audio Sources
     @Published var allControlSources = [AudioSource]()
+    @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
     @Published var microphoneSources = [MicrophoneSource]()
     
@@ -103,32 +104,59 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
-    var bank: AKOscillatorBank!
+    
     @Published var firstOctave: Int = 2
+    
+    
+    
+    //var bank: AKOscillatorBank!
+    
+    enum MidiEventType: String {
+        case
+            noteNumber          = "Note Number",
+            continuousControl   = "Continuous Control",
+            programChange       = "Program Change"
+    }
+    let midi = AKMIDI()
+    var midiSignalReceived = false
+    var midiTypeReceived: MidiEventType = .noteNumber
     
     init(){
         
-        bank = AKOscillatorBank(waveform: AKTable(.sawtooth))
-        bank.setOutput(to: inputMixer)
+        //bank = AKOscillatorBank(waveform: AKTable(.sawtooth))
+        //bank.setOutput(to: inputMixer)
         
         masterVolumeControl.percentRotated = 0.7
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
         
+        AKSettings.bufferLength = .medium
         AKSettings.audioInputEnabled = true
+        AKSettings.defaultToSpeaker = true
+        
+        // Allow audio to play while the iOS device is muted.
+        AKSettings.playbackWhileMuted = true
+        
+        do {
+            try AKSettings.setSession(category: .playAndRecord, with: [.defaultToSpeaker, .allowBluetooth, .mixWithOthers])
+        } catch {
+            AKLog("Could not set session category.")
+        }
         
         getInputDevicesAvailable()
         
         createMicrophoneInput(id: 1)
         
         //create a noise generator to play with
-        createNewSource(sourceNumber: 1)
+        //createNewSource(sourceNumber: 1)
+        
+        //create a morphing oscillator to play with
+        createNewSource(sourceNumber: 2)
         
         connectSourceToEffectChain()
         
         setupOutputChain()
-        
         
         AudioKit.output = outputAmplitudeTracker //mic //outputAmplitudeTracker//outputMixer
 
@@ -145,6 +173,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         
         
         createNewModulation()
+        
+        midi.createVirtualInputPort(98909, name: "AKMidiReceiver")
+        midi.createVirtualOutputPort(97789, name: "AKMidiReceiver")
+        midi.openInput()
+        midi.openOutput()
+        midi.addListener(self)
     }
     
     func hideSources(){
@@ -175,43 +209,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
-    func createMicrophoneInput(id: Int){
-        
-        if(microphoneSources.count == 0){
-            for availableInput in availableInputSources{
-                if(availableInput.id == id){
-                    
-                    for source in allControlSources{
-                        source.isDisplayed = false
-                    }
-                    
-                    let mic = MicrophoneSource(device: availableInput.device)
-
-                    addSourceToControlArray(source: mic)
-                    allControlSources.append(mic)
-                    setupSourceAudioChain()
-                    print("we added the mic!")
-                    microphoneSources[0].isDisplayed = false
-                }
-            }
-        }
-        else{
-            setMicrophoneDevice(id: id)
-        }
-    }
-    
-    func setMicrophoneDevice(id: Int){
-        for availableInput in availableInputSources{
-            if(availableInput.id == id){
-                microphoneSources[0].setDevice(device: availableInput.device)
-            }
-            
-        }
-    }
-    
-    
     func setupSourceAudioChain(){
-        
         
         for i in 0..<allControlSources.count {
             allControlSources[i].output.disconnectOutput()
@@ -308,6 +306,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         addSourceToControlArray(source: audioSource)
         allControlSources.append(audioSource)
         setupSourceAudioChain()
+        audioSource.handoffDelegate = self
         //audioSource.handoffDelegate = self
     }
     
@@ -315,6 +314,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         switch sourceNumber{
         case 1:
             return NoiseSource()
+        case 2:
+            return MorphingOscillatorBank()
         default:
             print("I have an unexpected case.")
             return NoiseSource()
@@ -325,11 +326,47 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         if let mySource = source as? NoiseSource {
             noiseControlSources.append(mySource)
         }
+        if let mySource = source as? MorphingOscillatorBank {
+            oscillatorControlSources.append(mySource)
+        }
         if let mySource = source as? MicrophoneSource {
             microphoneSources.append(mySource)
         }
     }
     
+    func createMicrophoneInput(id: Int){
+        
+        if(microphoneSources.count == 0){
+            for availableInput in availableInputSources{
+                if(availableInput.id == id){
+                    
+                    for source in allControlSources{
+                        source.isDisplayed = false
+                    }
+                    
+                    let mic = MicrophoneSource(device: availableInput.device)
+
+                    addSourceToControlArray(source: mic)
+                    allControlSources.append(mic)
+                    setupSourceAudioChain()
+                    print("we added the mic!")
+                    microphoneSources[0].isDisplayed = false
+                }
+            }
+        }
+        else{
+            setMicrophoneDevice(id: id)
+        }
+    }
+    
+    func setMicrophoneDevice(id: Int){
+        for availableInput in availableInputSources{
+            if(availableInput.id == id){
+                microphoneSources[0].setDevice(device: availableInput.device)
+            }
+            
+        }
+    }
     
     public func createNewEffect(pos: Int, effectNumber: Int){
         hideEffects()
@@ -417,17 +454,16 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
     
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        print("we hit noise")
+        //print("we hit noise")
         for modulation in modulations{
             if(modulation.isDisplayed){
                 modulation.addModulationTarget(newTarget: sender)
-                print("knob added")
             }
         }
     }
     
     func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
-        print("we hit noise")
+        //print("we hit noise")
         for modulation in modulations{
             if(modulation.isDisplayed){
                 modulation.removeModulationTarget(removeTarget: sender)
@@ -441,7 +477,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
         for modulation in modulations{
             if(modulation.isDisplayed){
-                print("Range Should Adjust")
+                print("Range Should Adjust by " + String(adjust))
                 modulation.adjustModulationRange(target: sender, val: adjust)
             }
         }
@@ -496,7 +532,87 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         print("got something!")
         print(note)
         print(velocity)
-        bank.play(noteNumber: note, velocity: velocity)
+        //bank.play(noteNumber: note, velocity: velocity)
+        
+        for oscillator in oscillatorControlSources{
+            oscillator.play(note: note, velocity: velocity)
+        }
+    }
+    
+    // MARK: MIDI received
+
+    // Note On Number + Velocity + MIDI Channel
+    func receivedMIDINoteOn(noteNumber: MIDINoteNumber,
+                            velocity: MIDIVelocity,
+                            channel: MIDIChannel,
+                            portID: MIDIUniqueID? = nil,
+                            offset: MIDITimeStamp = 0) {
+        midiTypeReceived = .noteNumber
+        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  noteOn: \(noteNumber)  velocity: \(velocity)"
+        print(outputMIDIMessage)
+        midiSignalReceived = true
+        playNote(note: noteNumber, velocity: velocity, channel: channel)
+    }
+
+    // Note Off Number + Velocity + MIDI Channel
+    func receivedMIDINoteOff(noteNumber: MIDINoteNumber,
+                             velocity: MIDIVelocity,
+                            channel: MIDIChannel,
+                            portID: MIDIUniqueID? = nil,
+                            offset: MIDITimeStamp = 0) {
+        midiTypeReceived = .noteNumber
+        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  noteOff: \(noteNumber)  velocity: \(velocity)"
+        print(outputMIDIMessage)
+        midiSignalReceived = false
+        stopNote(note: noteNumber, channel: channel)
+    }
+
+    // Controller Number + Value + MIDI Channel
+    func receivedMIDIController(_ controller: MIDIByte, value: MIDIByte, channel: MIDIChannel) {
+        // If the controller value reaches 127 or above, then trigger the `demoSampler` note.
+        // If the controller value is less, then stop the note.
+        // This creates an on/off type of "momentary" MIDI messaging.
+        if value >= 127 {
+            playNote(note: 30 + controller, velocity: 80, channel: channel)
+        } else {
+            stopNote(note: 30 + controller, channel: channel)
+        }
+        midiTypeReceived = .continuousControl
+        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  controller: \(controller)  value: \(value)"
+        print(outputMIDIMessage)
+        midiSignalReceived = true
+    }
+
+    // Program Change Number + MIDI Channel
+    func receivedMIDIProgramChange(_ program: MIDIByte, channel: MIDIChannel) {
+        // Trigger the `demoSampler` note and release it after half a second (0.5), since program changes don't have a note off release.
+        //triggerSamplerNote(program, channel: channel)
+        midiTypeReceived = .programChange
+        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  programChange: \(program)"
+        print(outputMIDIMessage)
+        midiSignalReceived = true
+    }
+
+    func receivedMIDISetupChange() {
+        print("midi setup change")
+        print("midi.inputNames: \(midi.inputNames)")
+
+        let listInputNames = midi.inputNames
+
+        for inputNames in listInputNames {
+            print("inputNames: \(inputNames)")
+            midi.openInput(name: inputNames)
+        }
+    }
+
+    func playNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) {
+        //demoSampler.play(noteNumber: note, velocity: velocity, channel: channel)
+        handleMidiNote(note: note, velocity: velocity)
+    }
+
+    func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
+        handleMidiNote(note: note, velocity: 0)
+        //demoSampler.stop(noteNumber: note, channel: channel)
     }
     
     
@@ -518,7 +634,7 @@ extension NoiseModel: AKKeyboardDelegate {
 }
 
 public enum SelectedScreen{
-    case main, addEffect, addMicrophoneInput, adjustPattern
+    case main, addEffect, addMicrophoneInput, adjustPattern, bluetoothMIDI
     var name: String {
         return "\(self)"
     }

@@ -63,6 +63,8 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Allows for connection to bluetooth MIDI devices.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allows for external audio input.</string>
 	<key>UIApplicationSceneManifest</key>

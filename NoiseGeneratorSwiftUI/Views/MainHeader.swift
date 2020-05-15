@@ -8,6 +8,8 @@
 
 import SwiftUI
 import Combine
+import AudioKit
+import AudioKitUI
 
 struct MainHeader: View {
     
@@ -40,55 +42,57 @@ struct MainHeader: View {
                     }
                     .frame(width:geometry.size.width * (1/10))
                     
-                        TextField("",
-                                  text: self.$noise.tempo.bpmString,
-                                  onEditingChanged: { (editing) in
-                                    // Deletes old entry
-                                    if editing {
-                                        print("editing")
-                                        self.textRemember = self.noise.tempo.bpmString
-                                        self.noise.tempo.bpmString = ""
-                                        self.noise.stopModulations()
+                    TextField("",
+                              text: self.$noise.tempo.bpmString,
+                              onEditingChanged: { (editing) in
+                                // Deletes old entry
+                                if editing {
+                                    print("editing")
+                                    self.textRemember = self.noise.tempo.bpmString
+                                    self.noise.tempo.bpmString = ""
+                                    self.noise.stopModulations()
+                                }
+                                else{
+                                    print("changed")
+                                    if( !self.noise.tempo.validateTempo(tempoString: self.noise.tempo.bpmString) )
+                                    {
+                                        self.noise.tempo.bpmString = self.textRemember
                                     }
-                                    else{
-                                        print("changed")
-                                        if( !self.noise.tempo.validateTempo(tempoString: self.noise.tempo.bpmString) )
-                                        {
-                                            self.noise.tempo.bpmString = self.textRemember
-                                        }
-                                        
-                                        self.noise.tempo.bpm = Double(self.noise.tempo.bpmString)!
-                                        self.noise.updateModulations()
-                                        self.noise.startModulations()
-                                    }
-                                    })
-                        /*,
-                                  onCommit: {
-                                    print("Commited")
-                                    //self.output = "You typed: " + self.input
-                                })*/
-                            .font(.system(size: geometry.size.height * 0.5))
-                            .keyboardType(.decimalPad)
-                            .background(Color.white)
-                            .cornerRadius(geometry.size.height * 0.2)
-                            .multilineTextAlignment(.center)
-                            .frame(width: geometry.size.width * (1/10),
-                                   height: geometry.size.height * 0.7)
-                    
-                    
-                    
-                    /*
-                    ZStack{
-                        //Rectangle()
-                        Text(String(self.noise.tempo.bpm))
-                            .bold()
-                            .textStyle(ShrinkTextStyle())
-                            //.foregroundColor(Color.white)
-                    }
-                    .frame(width:geometry.size.width * (1/10))
-                    */
+                                    self.noise.tempo.bpm = Double(self.noise.tempo.bpmString)!
+                                    self.noise.updateModulations()
+                                    self.noise.startModulations()
+                                }
+                                })
+                        .font(.system(size: geometry.size.height * 0.5))
+                        .keyboardType(.decimalPad)
+                        .background(Color.white)
+                        .cornerRadius(geometry.size.height * 0.2)
+                        .multilineTextAlignment(.center)
+                        .frame(width: geometry.size.width * (1/10),
+                               height: geometry.size.height * 0.7)
                     
                     Spacer()
+                    
+                    Button(action: {
+                        self.noise.selectedScreen = .bluetoothMIDI
+                    }){
+                            Image(systemName: "b.circle.fill")
+                                .resizable()
+                                .padding(geometry.size.height * 0.05)
+                                 .foregroundColor(Color.black)
+                                 .aspectRatio(1.0, contentMode: .fit)
+                    }
+                    
+                    Spacer()
+                    
+                /*
+                    BluetoothMidiButton()
+                        .frame(width: geometry.size.width * (1/10),
+                               height: geometry.size.height * 0.7)
+                    
+                    
+                    Spacer()
+ */
                     
                     KnobComplete(knobModel: self.$noise.masterVolumeControl,
                                  knobModColor: self.$noise.knobModColor,
@@ -118,3 +122,22 @@ struct MainHeader_Previews: PreviewProvider {
         .previewLayout(.fixed(width: 1500, height: 100))
     }
 }
+
+/*
+struct BluetoothMidiButton: UIViewRepresentable {
+    typealias UIViewType = AKBluetoothMIDIButton
+
+    func makeUIView(context: UIViewRepresentableContext<BluetoothMidiButton>) -> AKBluetoothMIDIButton {
+        let view = AKBluetoothMIDIButton()
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        view.backgroundColor = .black
+        return view
+    }
+    func updateUIView(_ uiView: AKBluetoothMIDIButton, context: UIViewRepresentableContext<BluetoothMidiButton>) {
+        uiView.frame = CGRect(x:0, y:0, width: uiView.intrinsicContentSize.width, height: uiView.intrinsicContentSize.height)
+        uiView.sizeToFit()
+    }
+
+}
+ */

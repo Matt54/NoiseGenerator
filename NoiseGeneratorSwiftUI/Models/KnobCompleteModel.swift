@@ -52,6 +52,7 @@ public class KnobCompleteModel : ObservableObject{
     // sets the realModValue from the position + modulationValue logic
     // doesn't allow it to go below 0 or above 1.0
     func calculateRealValue(){
+        
         if(percentRotated + modulationValue > 1.0){
             realModValue = 1.0
         }
@@ -61,6 +62,7 @@ public class KnobCompleteModel : ObservableObject{
         else{
             realModValue = modulationValue + percentRotated
         }
+        print("calculateRealValue for " + name + " with value " + String(realModValue)) 
         delegate?.modulationValueWasChanged(self)
     }
     

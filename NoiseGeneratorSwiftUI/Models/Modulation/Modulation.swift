@@ -52,7 +52,9 @@ public class Modulation : Identifiable, ObservableObject{
     @Published var isDisplayed = false
     
     // Is the modulation currently shown on GUI
-    @Published var isBypassed = false
+    @Published var isBypassed = false{
+        didSet{setBypass()}
+    }
     
     @Published var pattern: Pattern
     
@@ -124,9 +126,16 @@ public class Modulation : Identifiable, ObservableObject{
     
     func addModulationTarget(newTarget: KnobCompleteModel){
         let modulationTarget = ModulationTarget(knobModel: newTarget)
-        modulationTargets.append(modulationTarget)
-        newTarget.modSelected = true
-        print("mod selected")
+        if(modulationTargets.contains(modulationTarget)){
+            print("Caught a double add!")
+        }
+        else{
+            modulationTargets.append(modulationTarget)
+            print("knob added")
+            newTarget.modSelected = true
+            print("mod selected")
+        }
+
     }
     
     func removeModulationTarget(removeTarget: KnobCompleteModel){
@@ -142,6 +151,7 @@ public class Modulation : Identifiable, ObservableObject{
         for i in 0..<modulationTargets.count {
             if(modulationTargets[i].knobModel === target){
                 modulationTargets[i].modulationRange = modulationTargets[i].modulationRange + val
+                print("adjusting range for " + modulationTargets[i].knobModel.name + " to " + String(modulationTargets[i].modulationRange))
                 break
             }
         }
@@ -192,6 +202,15 @@ public class Modulation : Identifiable, ObservableObject{
     func stop(){
         timer.suspend()
     }
+    
+    func setBypass(){
+        if(isBypassed){
+            stop()
+        }
+        else{
+            start()
+        }
+    }
 
     @objc func timerAction(){
 
@@ -206,8 +225,11 @@ public class Modulation : Identifiable, ObservableObject{
         // Calculate next value
         modulationValue = Double(pattern.getValueFromX(xVal: xValue))
         
+        print("There are currently " + String(modulationTargets.count) + " modulationTargets." )
+        
         // Relay the value to the targets
         for target in modulationTargets{
+            //print("Modulating knob: " + target.knobModel.name + " with value " + String(modulationValue))
             target.calculateTargetModulation(modulationValue: modulationValue)
         }
         
@@ -225,13 +247,18 @@ protocol ModulationDelegateUI {
     func modulationDisplayChange(_ sender: Modulation)
 }
 
-class ModulationTarget {
+class ModulationTarget : Equatable {
     
-    @Published var knobModel: KnobCompleteModel
+    static func == (lhs: ModulationTarget, rhs: ModulationTarget) -> Bool {
+        lhs.knobModel === rhs.knobModel
+    }
+    
+     var knobModel: KnobCompleteModel
     
     // Always between -1.0 and 1.0
-    @Published var modulationRange = 0.0{
+    var modulationRange: Double = 0.1 {
     didSet {
+        //print("didSet modulationRange for " + knobModel.name + " to " + String(self.modulationRange))
         limitRange()
         }
     }
@@ -244,13 +271,16 @@ class ModulationTarget {
         if(modulationRange > 1.0){
             modulationRange = 1.0
         }
-        if(modulationRange < -1.0){
+        else if(modulationRange < -1.0){
             modulationRange = -1.0
         }
+        //print("limitRange for " + knobModel.name + " to " + String(self.modulationRange))
         knobModel.attemptedModulationRange = modulationRange
     }
     
     public func calculateTargetModulation(modulationValue: Double){
+        //print("calculateTargetModulation range for " + knobModel.name + " was " + String(self.modulationRange))
+        //print("calculateTargetModulation for " + knobModel.name + " with value " + String(modulationValue * modulationRange))
         knobModel.modulationValue = modulationValue * modulationRange
     }
     

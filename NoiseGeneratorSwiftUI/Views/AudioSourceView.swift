@@ -22,6 +22,24 @@ struct AudioSourceView: View {
             
         
             VStack(spacing: 0){
+                
+                ForEach(self.noise.oscillatorControlSources.indices, id: \.self){ i in
+                    VStack(spacing: 0){
+                        if(self.noise.oscillatorControlSources[i].isDisplayed){
+                            MorphingOscillatorView(volumeControl: self.$noise.oscillatorControlSources[i].outputVolume,
+                                       amplitude: self.$noise.oscillatorControlSources[i].outputAmplitude,
+                                       isBypassed: self.$noise.oscillatorControlSources[i].isBypassed,
+                                       title: self.$noise.oscillatorControlSources[i].name,
+                                       node: self.noise.oscillatorControlSources[i].oscillatorMixer,
+                                       knobModel1: self.$noise.oscillatorControlSources[i].control1,
+                                       knobModColor: self.$noise.knobModColor,
+                                       modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                                       modulationBeingDeleted: self.$noise.modulationBeingDeleted)
+                        }
+                    }
+                }
+                
+                
                 ForEach(self.noise.noiseControlSources.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.noiseControlSources[i].isDisplayed){

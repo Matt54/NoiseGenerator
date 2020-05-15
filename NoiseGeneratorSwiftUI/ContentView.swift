@@ -1,6 +1,10 @@
 import SwiftUI
 import Combine
 
+//import AudioKit
+//import AudioKitUI
+import CoreAudioKit
+
 struct ContentView: View {
     @EnvironmentObject var noise: NoiseModel
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -74,6 +78,11 @@ struct ContentView: View {
                     PatternAdjust(pattern: self.$noise.selectedPattern,
                                   screen:  self.$noise.selectedScreen)
                 }
+                
+                if(self.noise.selectedScreen == .bluetoothMIDI){
+                    BluetoothMidiView()
+                }
+                
             }
         }
             Rectangle()
@@ -97,3 +106,32 @@ struct ContentView_Previews: PreviewProvider {
         //.previewLayout(.fixed(width: 2688, height: 1242))
     }
 }
+
+/*
+struct BluetoothMIDIPopup: UIViewControllerRepresentable {
+    typealias UIViewControllerType = AKBTMIDICentralViewController
+    
+    func makeUIViewController(context: Context) -> AKBTMIDICentralViewController {
+        let view = AKBTMIDICentralViewController()
+        return view
+    }
+    
+    func updateUIViewController(_ uiViewController: AKBTMIDICentralViewController, context: Context) {
+    }
+}
+
+class AKBTMIDICentralViewController: CABTMIDICentralViewController {
+    var uiViewController: UIViewController?
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
+                                                            target: self,
+                                                            action: #selector(doneAction))
+    }
+
+    @objc public func doneAction() {
+        uiViewController?.dismiss(animated: true, completion: nil)
+    }
+}
+*/

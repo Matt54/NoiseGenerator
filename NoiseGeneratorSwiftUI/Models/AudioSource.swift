@@ -2,15 +2,15 @@ import AudioKit
 import Combine
 import SwiftUI
 
-public class AudioSource: Identifiable, ObservableObject{
+public class AudioSource: Identifiable, ObservableObject, ModulationDelegate, KnobModelModulationHandoff{
     
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
     @Published var displayOffImage = Image(systemName: "heart.circle.fill")
     
-    public var name = ""
-    public var id: Int//UUID = UUID()
+    public var name = "default"
+    public var id: Int
     
     static var numberOfInputs = 0
     
@@ -19,8 +19,8 @@ public class AudioSource: Identifiable, ObservableObject{
     @Published var outputVolume = 1.0{
         didSet { outputMixer.volume = outputVolume }
     }
-    var outputMixer = AKMixer()
-    var output = AKAmplitudeTracker()
+    @Published var outputMixer = AKMixer()
+    @Published var output = AKAmplitudeTracker()
     
     var toggleControls: AKToggleable
     
@@ -79,6 +79,20 @@ public class AudioSource: Identifiable, ObservableObject{
         //print(outputAmplitude)
     }
     
+    // Called when any KnobCompleteModel notices a change
+    func modulationValueWasChanged(_ sender: KnobCompleteModel) {}
+    
+    var handoffDelegate:AudioEffectKnobHandoff?
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelAssignToModulation(sender)
+    }
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelRemoveModulation(sender)
+    }
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
+        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
+    }
+    
 }
 
 public class MonoAudioSource: AudioSource{
@@ -102,6 +116,7 @@ public class StereoAudioSource: AudioSource{
     }
 }
 
+//This is currently Mono, that should toggle based on user preference
 public class MicrophoneSource: AudioSource{
     
     var input: AKMicrophone! = AKMicrophone()
@@ -150,6 +165,59 @@ public class AvailableInputSource{
         AvailableInputSource.numberOfInputs = AvailableInputSource.numberOfInputs + 1
         id = AvailableInputSource.numberOfInputs
     }
+}
+
+class MorphingOscillatorBank: MonoAudioSource{
+    @Published var oscillatorBank = AKMorphingOscillatorBank()
+    public var oscillatorMixer = AKMixer()
+    
+    @Published var control1 = KnobCompleteModel(){
+        didSet{ setControl1() }
+    }
+    
+    init(){
+        
+        super.init(toggle: oscillatorMixer, node: oscillatorMixer)
+        
+        oscillatorBank.waveformArray = [AKTable(.sine), AKTable(.triangle), AKTable(.sawtooth),AKTable(.square)]
+        
+        
+        
+        displayOnImage = Image(systemName: "o.circle.fill")
+        displayOffImage = Image(systemName: "o.circle")
+        setDisplayImage()
+        
+        control1.name = name + " waveform"
+        control1.delegate = self
+        control1.handoffDelegate = self
+        control1.range = Double(oscillatorBank.waveformArray.count)
+        setControl1()
+
+        name = "OSC 1"
+        oscillatorMixer.connect(input: oscillatorBank)
+    }
+    
+    func play(note: MIDINoteNumber, velocity: MIDIVelocity){
+        oscillatorBank.play(noteNumber: note, velocity: velocity)
+    }
+    
+    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
+    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        if(sender === control1){
+            setControl1()
+        }
+            /*
+        else if(sender === control2){
+            setControl2()
+        }
+        */
+    }
+    
+    func setControl1(){
+        oscillatorBank.index = control1.realModValue * control1.range
+    }
+    
+    
 }
 
 public class NoiseSource: MonoAudioSource{
