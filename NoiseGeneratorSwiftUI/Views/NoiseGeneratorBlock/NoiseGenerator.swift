@@ -1,18 +1,7 @@
 import SwiftUI
 
 struct NoiseGenerator: View {
-    @Binding var whiteVal: Double
-    @Binding var pinkVal: Double
-    @Binding var brownVal: Double
-    
-    @Binding var volumeControl: Double
-    @Binding var amplitude: Double
-    
-    @Binding var isBypassed: Bool
-    
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
-    @State var triangleConstraint: CGFloat = 100.0
+    @Binding var noiseSource: NoiseSource
     
     var body: some View {
         GeometryReader
@@ -21,28 +10,15 @@ struct NoiseGenerator: View {
             { geometry in
                 VStack(spacing: 0){
                     HStack(spacing: 0){
-                        TriangleDrag(lVal: self.$whiteVal,
-                                     tVal: self.$pinkVal,
-                                     rVal: self.$brownVal)
+                        TriangleDrag(lVal: self.$noiseSource.whiteVal,
+                                     tVal: self.$noiseSource.pinkVal,
+                                     rVal: self.$noiseSource.brownVal)
                             .aspectRatio(1.0, contentMode: .fit)
                             .frame(width: geometry.size.width * 0.8,
                                    height: geometry.size.height * 0.8)
-                            /*
-                            .onAppear(){
-                                if(geometry.size.height > geometry.size.width){
-                                    self.triangleConstraint = geometry.size.width
-                                }
-                                else{
-                                    self.triangleConstraint = geometry.size.height
-                                }
-                            }
-                            
-                            .frame(width: geometry.size.height * 0.65,
-                                   height: geometry.size.height * 0.65)
-                            */
                         
-                        VolumeComplete(amplitude: self.$amplitude,
-                                       volumeControl: self.$volumeControl,
+                        VolumeComplete(amplitude: self.$noiseSource.outputAmplitude,
+                                       volumeControl: self.$noiseSource.outputVolume,
                                        isRightHanded: .constant(true),
                                        numberOfRects: .constant(10),
                                        title: "VOL")
@@ -50,13 +26,13 @@ struct NoiseGenerator: View {
                             .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                     }
                     
-                    TitleBar(title: .constant("Noise Generator"), isBypassed: self.$isBypassed)
+                    TitleBar(title: .constant("Noise Generator"), isBypassed: self.$noiseSource.isBypassed)
                         .frame(height:geometry.size.height * 0.15)
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
             }
             .padding(geometryOut.size.height * 0.02)
-            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.02)
+            .border(Color.black, width: geometryOut.size.height * 0.02)
             
         }
     }
@@ -64,7 +40,7 @@ struct NoiseGenerator: View {
 
 struct NoiseGenerator_Previews: PreviewProvider {
     static var previews: some View {
-        NoiseGenerator(whiteVal: .constant(1.0),pinkVal: .constant(0.0),brownVal: .constant(0.0), volumeControl: .constant(1.0), amplitude: .constant(0.5), isBypassed: .constant(false))
+        NoiseGenerator(noiseSource: .constant(NoiseSource()))
         .previewLayout(.fixed(width: 250, height: 250))
     }
 }

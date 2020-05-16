@@ -68,92 +68,62 @@ struct ModulationView: View {
                                 }
                                 .frame(width: geometry.size.width * 0.35,
                                        height:geometry.size.height * 0.2)
-                            
                             }
                             
-                            Button(action: {
-                                self.modulation.isTempoSynced = !self.modulation.isTempoSynced
-                            }){
-                                ZStack{
-                                    Rectangle()
-                                        .fill(LinearGradient(Color.darkEnd, Color.darkStart))
-                                        .cornerRadius(geometry.size.height * 0.05)
-                                        .padding(geometry.size.height * 0.03)
-                                    if(self.modulation.isTempoSynced){
-                                        Image(systemName: "music.note")
+                            
+                            HStack(spacing: 0){
+                                
+                                Button(action: {
+                                    self.modulation.isTriggerOnly = !self.modulation.isTriggerOnly
+                                }){
+                                    ZStack{
+                                        Rectangle()
+                                            .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                            .cornerRadius(geometry.size.height * 0.05)
+                                            .padding(geometry.size.height * 0.03)
+                                        if(self.modulation.isTriggerOnly){
+                                            Image(systemName: "arrow.up.right.circle.fill")
+                                                .resizable()
+                                                .padding(geometry.size.height * 0.06)
+                                                .foregroundColor(Color.white)
+                                        }
+                                        else{
+                                            Image(systemName: "arrow.up.right.circle")
                                             .resizable()
-                                            .padding(geometry.size.height * 0.06)
+                                            .padding(geometry.size.height * 0.05)
                                             .foregroundColor(Color.white)
-                                    }
-                                    else{
-                                        Image(systemName: "clock")
-                                        .resizable()
-                                        .padding(geometry.size.height * 0.05)
-                                        .foregroundColor(Color.white)
+                                        }
                                     }
                                 }
                                 .aspectRatio(1.0, contentMode: .fit)
-                                .frame(width: geometry.size.height * 0.25)
-                            }
-                            
-                            /*
-                            Text("Add/Remove")
-                                .textStyle(ShrinkTextStyle())
-                            .frame(width: geometry.size.width * 0.35,
-                                   height: geometry.size.height * 0.20)
-                            */
-                            
-                            /*
-                            HStack(){
+                                .frame(width: geometry.size.height * 0.2)
                                 
                                 Button(action: {
-                                    self.isConnectingModulation.toggle()
+                                    self.modulation.isTempoSynced = !self.modulation.isTempoSynced
                                 }){
-                                    VStack{
-                                        if(self.isConnectingModulation){
-                                            Image(systemName: "plus.rectangle.fill")
+                                    ZStack{
+                                        Rectangle()
+                                            .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                            .cornerRadius(geometry.size.height * 0.05)
+                                            .padding(geometry.size.height * 0.03)
+                                        if(self.modulation.isTempoSynced){
+                                            Image(systemName: "music.note")
                                                 .resizable()
-                                                .frame(width: geometry.size.width * 0.15,
-                                                       height:geometry.size.height * 0.2)
-                                                .foregroundColor(self.knobModColor)
+                                                .padding(geometry.size.height * 0.06)
+                                                .foregroundColor(Color.white)
                                         }
                                         else{
-                                            Image(systemName: "plus.rectangle")
-                                                .resizable()
-                                                .frame(width: geometry.size.width * 0.15,
-                                                       height:geometry.size.height * 0.2)
-                                                .foregroundColor(self.knobModColor)
+                                            Image(systemName: "clock")
+                                            .resizable()
+                                            .padding(geometry.size.height * 0.05)
+                                            .foregroundColor(Color.white)
                                         }
                                     }
                                 }
-                                Button(action: {
-                                    self.isDeletingModulation.toggle()
-                                }){
-                                    VStack{
-                                        if(self.isDeletingModulation){
-                                            Image(systemName: "minus.rectangle.fill")
-                                                .resizable()
-                                                .frame(width: geometry.size.width * 0.15,
-                                                       height:geometry.size.height * 0.2)
-                                                .foregroundColor(self.knobModColor)
-                                        }
-                                        else{
-                                            Image(systemName: "minus.rectangle")
-                                                .resizable()
-                                                .frame(width: geometry.size.width * 0.15,
-                                                       height:geometry.size.height * 0.2)
-                                                .foregroundColor(self.knobModColor)
-                                            
-                                        }
-                                    }
-                                }
-                            }
+                                .aspectRatio(1.0, contentMode: .fit)
+                                .frame(width: geometry.size.height * 0.2)
                             
-                            Text("Modulation")
-                                .textStyle(ShrinkTextStyle())
-                            .frame(width: geometry.size.width * 0.30,
-                                   height: geometry.size.height * 0.20)
-                            */
+                            }
                         }
                         .frame(width: geometry.size.width * 0.35,
                                height: geometry.size.height * 0.85)
@@ -230,7 +200,7 @@ struct ModulationView_Previews: PreviewProvider {
         isDeletingModulation: .constant(false),
         pattern: .constant(Pattern(color: Color.yellow)),
         screen: .constant(SelectedScreen.main))
-        .previewLayout(.fixed(width: 300, height: 180))
+        .previewLayout(.fixed(width: 300, height: 250))
     }
 }
 

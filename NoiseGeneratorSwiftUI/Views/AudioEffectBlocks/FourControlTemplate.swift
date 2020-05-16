@@ -1,12 +1,8 @@
 import SwiftUI
 
 struct FourControlTemplate: View {
-    @State var title = "EFFECT TITLE"
-    @Binding var isBypassed : Bool
-    @Binding var knobModel1 : KnobCompleteModel
-    @Binding var knobModel2 : KnobCompleteModel
-    @Binding var knobModel3 : KnobCompleteModel
-    @Binding var knobModel4 : KnobCompleteModel
+    
+    @Binding var fourControlEffect : FourControlAudioEffect
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
     
@@ -28,16 +24,19 @@ struct FourControlTemplate: View {
                         Spacer()
                         VStack
                             {
-                            Text(self.knobModel1.display)
+                            Text(self.fourControlEffect.control1.display)
                                 .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$knobModel1, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
+                                KnobComplete(knobModel: self.$fourControlEffect.control1,
+                                             knobModColor: self.$knobModColor,
+                                             modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             modulationBeingDeleted: .constant(false))
+                                .frame(minWidth:geometry.size.width * 0.175,
+                                       maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
                                        maxHeight: geometry.size.width * 0.175)
-                            Text(self.knobModel1.name)
+                            Text(self.fourControlEffect.control1.name)
                                 .font(.system(size: 14))
                                 .bold()
-                                //.foregroundColor(Color.black)
                             }
                             .frame(width:geometry.size.width * 0.2)
                         
@@ -45,16 +44,19 @@ struct FourControlTemplate: View {
                         Spacer()
                         VStack
                             {
-                            Text(self.knobModel2.display)
+                            Text(self.fourControlEffect.control2.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel2, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
-                                minHeight:geometry.size.width * 0.175,
-                                maxHeight: geometry.size.width * 0.175)
-                            Text(self.knobModel2.name)
+                            KnobComplete(knobModel: self.$fourControlEffect.control2,
+                                         knobModColor: self.$knobModColor,
+                                         modulationBeingAssigned: self.$modulationBeingAssigned,
+                                         modulationBeingDeleted: .constant(false))
+                                .frame(minWidth:geometry.size.width * 0.175,
+                                       maxWidth:geometry.size.width * 0.175,
+                                       minHeight:geometry.size.width * 0.175,
+                                       maxHeight: geometry.size.width * 0.175)
+                            Text(self.fourControlEffect.control2.name)
                                 .font(.system(size: 14))
                                 .bold()
-                                //.foregroundColor(Color.black)
                             }
                             .frame(width:geometry.size.width * 0.2)
                             
@@ -62,16 +64,19 @@ struct FourControlTemplate: View {
                         Spacer()
                         VStack
                             {
-                            Text(self.knobModel3.display)
+                            Text(self.fourControlEffect.control3.display)
                                 .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$knobModel3, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
-                                minHeight:geometry.size.width * 0.175,
-                                maxHeight: geometry.size.width * 0.175)
-                            Text(self.knobModel3.name)
+                            KnobComplete(knobModel: self.$fourControlEffect.control3,
+                                         knobModColor: self.$knobModColor,
+                                         modulationBeingAssigned: self.$modulationBeingAssigned,
+                                         modulationBeingDeleted: .constant(false))
+                                .frame(minWidth:geometry.size.width * 0.175,
+                                       maxWidth:geometry.size.width * 0.175,
+                                       minHeight:geometry.size.width * 0.175,
+                                       maxHeight: geometry.size.width * 0.175)
+                            Text(self.fourControlEffect.control3.name)
                                 .font(.system(size: 14))
                                 .bold()
-                                //.foregroundColor(Color.black)
                             }
                             .frame(width:geometry.size.width * 0.2)
                             
@@ -80,13 +85,17 @@ struct FourControlTemplate: View {
                         VStack
                             {
 
-                            Text(self.knobModel4.display)
+                            Text(self.fourControlEffect.control4.display)
                                 .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$knobModel4, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,                  maxWidth:geometry.size.width * 0.175,
-                                minHeight:geometry.size.width * 0.175,
-                                maxHeight: geometry.size.width * 0.175)
-                            Text(self.knobModel4.name)
+                                KnobComplete(knobModel: self.$fourControlEffect.control4,
+                                             knobModColor: self.$knobModColor,
+                                             modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             modulationBeingDeleted: .constant(false))
+                                .frame(minWidth:geometry.size.width * 0.175,
+                                       maxWidth:geometry.size.width * 0.175,
+                                       minHeight:geometry.size.width * 0.175,
+                                       maxHeight: geometry.size.width * 0.175)
+                            Text(self.fourControlEffect.control4.name)
                                 .font(.system(size: 14))
                                 .bold()
                                 //.foregroundColor(Color.black)
@@ -100,7 +109,7 @@ struct FourControlTemplate: View {
                         Spacer()
                         HStack
                             {
-                            Text(self.title)
+                            Text(self.fourControlEffect.name)
                                 .font(.system(size: 16))
                                 .bold()
                                 .foregroundColor(Color.white)
@@ -113,8 +122,8 @@ struct FourControlTemplate: View {
                     VStack {
                         Spacer()
                         HStack {
-                            Button(action: {self.isBypassed.toggle()}){
-                                if(!self.isBypassed){
+                            Button(action: {self.fourControlEffect.isBypassed.toggle()}){
+                                if(!self.fourControlEffect.isBypassed){
                                 Circle()
                                     .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
                                     .frame(width:geometry.size.height * 0.15,
@@ -141,7 +150,6 @@ struct FourControlTemplate: View {
                         }
                     }
                     .padding(5)
-                    //.padding(EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0))
                     
                     }//zstack
             }//georeader
@@ -152,12 +160,9 @@ struct FourControlTemplate: View {
 
 struct FourControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
-        FourControlTemplate(isBypassed: .constant(false),
-                            knobModel1: .constant(KnobCompleteModel()),
-                            knobModel2: .constant(KnobCompleteModel()),
-                            knobModel3: .constant(KnobCompleteModel()),
-                            knobModel4: .constant(KnobCompleteModel()),
-                            knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false))
+        FourControlTemplate(fourControlEffect: .constant(FourControlAudioEffect()),
+                            knobModColor: .constant(Color.yellow),
+                            modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 380, height: 170))
     }
 }

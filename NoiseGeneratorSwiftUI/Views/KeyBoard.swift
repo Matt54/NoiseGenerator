@@ -42,7 +42,9 @@ struct KeyBoard: View {
                        height: geometry.size.height)
                 .border(Color.black, width: geometry.size.height * 0.02)
                 
-                KeyBoardView(noise: self.noise, octave: self.$noise.firstOctave)
+                KeyBoardView(noise: self.noise,
+                             octave: self.$noise.firstOctave,
+                             midiExternalNotesOn: self.$noise.midiExternalNotesOn)
                     .frame(width: geometry.size.width - geometry.size.height * 2,
                            height: geometry.size.height)
                     .border(Color.black, width: geometry.size.height * 0.02)
@@ -88,6 +90,10 @@ struct KeyBoardView: UIViewRepresentable {
     //@EnvironmentObject var noise: NoiseModel
     @ObservedObject var noise: NoiseModel
     @Binding var octave: Int
+    @Binding var midiExternalNotesOn: [MIDINoteNumber]
+    @State var notesCurrentlyOn: [MIDINoteNumber] = []
+    
+    //@Binding var midiExternalNotesOff: [MIDINoteNumber]
 
     func makeUIView(context: UIViewRepresentableContext<KeyBoardView>) -> AKKeyboardView {
         let view = AKKeyboardView()
@@ -101,6 +107,7 @@ struct KeyBoardView: UIViewRepresentable {
         view.firstOctave = octave
         view.keyOnColor = UIColor.init(red: 0.4, green: 0.1, blue: 0.7, alpha: 1.0)
         view.polyphonicMode = true
+        //view.programmaticNoteOn(<#T##note: MIDINoteNumber##MIDINoteNumber#>)
         
         return view
     }
@@ -109,6 +116,32 @@ struct KeyBoardView: UIViewRepresentable {
         uiView.frame = CGRect(x:0, y:0, width: uiView.intrinsicContentSize.width, height: uiView.intrinsicContentSize.height)
         uiView.sizeToFit()
         uiView.firstOctave = octave
+        
+        let newNotes = midiExternalNotesOn.filter {
+            !notesCurrentlyOn.contains($0)
+        }
+        
+        let cutNotes = notesCurrentlyOn.filter {
+            !midiExternalNotesOn.contains($0)
+        }
+        
+        newNotes.forEach { note in
+            uiView.programmaticNoteOn(note)
+            //notesCurrentlyOn.append(note)
+        }
+        
+        cutNotes.forEach { note in
+            uiView.programmaticNoteOff(note)
+        }
+        
+        /*
+        midiExternalNotesOff.forEach { note in
+            uiView.programmaticNoteOff(note)
+            midiExternalNotesOn = midiExternalNotesOn.filter{$0 != note}
+            midiExternalNotesOff = midiExternalNotesOff.filter{$0 != note}
+        }
+        */
+        
     }
     
     /*

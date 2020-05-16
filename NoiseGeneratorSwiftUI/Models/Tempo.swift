@@ -10,6 +10,7 @@ import Foundation
 
 public class Tempo: ObservableObject{
     
+    // blocks invalid tempo from being created (currently unused)
     var isInvalid: Bool = true
     
     var isPaused: Bool = false

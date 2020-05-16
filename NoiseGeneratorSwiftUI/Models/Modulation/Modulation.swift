@@ -24,6 +24,15 @@ public class Modulation : Identifiable, ObservableObject{
     
     var timeOfLastTimerAction: Double = 0.0
     
+    var isTriggerOnly: Bool = false
+    var isTriggered: Bool = false{
+        didSet{
+            if(isTriggerOnly && !isTriggered){
+                reset()
+            }
+        }
+    }
+    
     var isTempoSynced: Bool = false{
         didSet{ setTimeInterval() }
     }
@@ -52,7 +61,7 @@ public class Modulation : Identifiable, ObservableObject{
     @Published var isDisplayed = false
     
     // Is the modulation currently shown on GUI
-    @Published var isBypassed = false{
+    @Published var isBypassed = true{
         didSet{setBypass()}
     }
     
@@ -99,11 +108,12 @@ public class Modulation : Identifiable, ObservableObject{
         timingControl.range = 0.099
         timingControl.unit = " Hz"
         timingControl.percentRotated = 0.0
-        //timingControl.isTempoSynced = true
         
         setTimeInterval()
         
         toggleDisplayed()
+        
+        setBypass()
     }
     
     func getColorForModulation(num: Int) -> Color{
@@ -151,7 +161,6 @@ public class Modulation : Identifiable, ObservableObject{
         for i in 0..<modulationTargets.count {
             if(modulationTargets[i].knobModel === target){
                 modulationTargets[i].modulationRange = modulationTargets[i].modulationRange + val
-                print("adjusting range for " + modulationTargets[i].knobModel.name + " to " + String(modulationTargets[i].modulationRange))
                 break
             }
         }
@@ -203,6 +212,10 @@ public class Modulation : Identifiable, ObservableObject{
         timer.suspend()
     }
     
+    func reset(){
+        xValue = 0.0
+    }
+    
     func setBypass(){
         if(isBypassed){
             stop()
@@ -213,29 +226,33 @@ public class Modulation : Identifiable, ObservableObject{
     }
 
     @objc func timerAction(){
+        
+        if( !isTriggerOnly || isTriggered){
 
-        // Calculate next x value
-        xValue = xValue + CGFloat(1.0 / numberOfSteps)
-        
-        // Reset if required
-        if(xValue > 1.0){
-            xValue = CGFloat(1.0 / numberOfSteps)
-        }
-        
-        // Calculate next value
-        modulationValue = Double(pattern.getValueFromX(xVal: xValue))
-        
-        print("There are currently " + String(modulationTargets.count) + " modulationTargets." )
-        
-        // Relay the value to the targets
-        for target in modulationTargets{
-            //print("Modulating knob: " + target.knobModel.name + " with value " + String(modulationValue))
-            target.calculateTargetModulation(modulationValue: modulationValue)
-        }
-        
-        // tell the UI to get new binding values
-        DispatchQueue.main.async {
-            self.delegate?.modulationUpdateUI(self)
+            // Calculate next x value
+            xValue = xValue + CGFloat(1.0 / numberOfSteps)
+            
+            // Reset if required
+            if(xValue > 1.0){
+                xValue = CGFloat(1.0 / numberOfSteps)
+            }
+            
+            // Calculate next value
+            modulationValue = Double(pattern.getValueFromX(xVal: xValue))
+            
+            //print("There are currently " + String(modulationTargets.count) + " modulationTargets." )
+            
+            // Relay the value to the targets
+            for target in modulationTargets{
+                //print("Modulating knob: " + target.knobModel.name + " with value " + String(modulationValue))
+                target.calculateTargetModulation(modulationValue: modulationValue)
+            }
+            
+            // tell the UI to get new binding values
+            DispatchQueue.main.async {
+                self.delegate?.modulationUpdateUI(self)
+            }
+            
         }
         
         timeOfLastTimerAction = Double(DispatchTime.now().uptimeNanoseconds)
@@ -258,7 +275,6 @@ class ModulationTarget : Equatable {
     // Always between -1.0 and 1.0
     var modulationRange: Double = 0.1 {
     didSet {
-        //print("didSet modulationRange for " + knobModel.name + " to " + String(self.modulationRange))
         limitRange()
         }
     }
@@ -274,13 +290,10 @@ class ModulationTarget : Equatable {
         else if(modulationRange < -1.0){
             modulationRange = -1.0
         }
-        //print("limitRange for " + knobModel.name + " to " + String(self.modulationRange))
         knobModel.attemptedModulationRange = modulationRange
     }
     
     public func calculateTargetModulation(modulationValue: Double){
-        //print("calculateTargetModulation range for " + knobModel.name + " was " + String(self.modulationRange))
-        //print("calculateTargetModulation for " + knobModel.name + " with value " + String(modulationValue * modulationRange))
         knobModel.modulationValue = modulationValue * modulationRange
     }
     

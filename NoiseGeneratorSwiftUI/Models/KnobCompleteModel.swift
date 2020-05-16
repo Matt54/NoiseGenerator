@@ -62,7 +62,7 @@ public class KnobCompleteModel : ObservableObject{
         else{
             realModValue = modulationValue + percentRotated
         }
-        print("calculateRealValue for " + name + " with value " + String(realModValue)) 
+        //print("calculateRealValue for " + name + " with value " + String(realModValue)) 
         delegate?.modulationValueWasChanged(self)
     }
     

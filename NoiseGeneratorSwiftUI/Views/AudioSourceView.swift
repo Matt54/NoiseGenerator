@@ -8,47 +8,78 @@ struct AudioSourceView: View {
         GeometryReader{ geometry in
         VStack(spacing: 0){
             
-            ZStack{
-                Rectangle()
-                .fill(LinearGradient(Color.darkStart,Color.darkGray))
+            VStack(spacing: 0){
+                ZStack{
+                    Rectangle()
+                        .fill(LinearGradient(Color.darkStart,Color.darkGray))
                     Text("AUDIO SOURCES")
                         .bold()
                         .textStyle(ShrinkTextStyle())
                         .foregroundColor(Color.white)
+                }
+                .frame(height: geometry.size.height * 0.08)
+                
+                Divider()
+                    
+                
+                ZStack{
+                    LinearGradient(Color.darkStart,Color.darkGray)
+                    HStack(spacing: 0){
+                    ForEach(self.noise.allControlSources , id: \.id){ source in
+                            source.displayImage
+                                .resizable()
+                                .padding(geometry.size.height * 0.01)
+                                .frame(width: geometry.size.height * 0.1,
+                                       height: geometry.size.height * 0.1)
+                                .foregroundColor(Color.white)
+                                
+                                .onTapGesture(count: 1) {
+                                    self.noise.objectWillChange.send()
+                                    let current = source.isDisplayed
+                                    self.noise.hideSources()
+                                    source.isDisplayed = !current
+                                }
+                                .onLongPressGesture(minimumDuration: 0.5) {
+                                    print("Long Press")
+                                }
+                        }
+                        
+                        Button(action:{
+                            print("Let's create a new audio source!")
+                            self.noise.selectedScreen = SelectedScreen.addMicrophoneInput
+                        }){
+                            Image(systemName: "plus.circle")
+                                .resizable()
+                                .padding(geometry.size.height * 0.01)
+                                .frame(width: geometry.size.height * 0.1,
+                                       height: geometry.size.height * 0.1)
+                                .foregroundColor(Color.white)
+                        }
+                        Spacer()
+                    }
+                }
             }
             .padding(geometry.size.height * 0.02)
             .border(Color.black, width: geometry.size.height * 0.02)
-            .frame(height: geometry.size.height * 0.1)
-            
-        
+            .frame(height: geometry.size.height * 0.22)
+
             VStack(spacing: 0){
                 
                 ForEach(self.noise.oscillatorControlSources.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.oscillatorControlSources[i].isDisplayed){
-                            MorphingOscillatorView(volumeControl: self.$noise.oscillatorControlSources[i].outputVolume,
-                                       amplitude: self.$noise.oscillatorControlSources[i].outputAmplitude,
-                                       isBypassed: self.$noise.oscillatorControlSources[i].isBypassed,
-                                       title: self.$noise.oscillatorControlSources[i].name,
-                                       node: self.noise.oscillatorControlSources[i].oscillatorMixer,
-                                       knobModel1: self.$noise.oscillatorControlSources[i].control1,
-                                       knobModColor: self.$noise.knobModColor,
-                                       modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                                       modulationBeingDeleted: self.$noise.modulationBeingDeleted)
+                            MorphingOscillatorView(morphingOscillator: self.$noise.oscillatorControlSources[i],
+                                                   knobModColor: self.$noise.knobModColor,
+                                                   modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                                                   modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                         }
                     }
                 }
                 
-                
                 ForEach(self.noise.noiseControlSources.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.noiseControlSources[i].isDisplayed){
-                            NoiseGenerator(whiteVal: self.$noise.noiseControlSources[i].whiteVal,
-                                       pinkVal: self.$noise.noiseControlSources[i].pinkVal,
-                                       brownVal: self.$noise.noiseControlSources[i].brownVal,
-                                       volumeControl: self.$noise.noiseControlSources[i].outputVolume,
-                                       amplitude: self.$noise.noiseControlSources[i].outputAmplitude,
-                                       isBypassed: self.$noise.noiseControlSources[i].isBypassed)
+                            NoiseGenerator(noiseSource: self.$noise.noiseControlSources[i])
                         }
                     }
                 }
@@ -56,10 +87,7 @@ struct AudioSourceView: View {
                 ForEach(self.noise.microphoneSources.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.microphoneSources[i].isDisplayed){
-                            ExternalSourceView(volumeControl: self.$noise.microphoneSources[i].outputVolume,
-                                       amplitude: self.$noise.microphoneSources[i].outputAmplitude,
-                                       isBypassed: self.$noise.microphoneSources[i].isBypassed,
-                                       title: self.$noise.microphoneSources[i].name)
+                            ExternalSourceView(microphoneSource: self.$noise.microphoneSources[i])
                         }
                     }
                 }
@@ -68,9 +96,8 @@ struct AudioSourceView: View {
             .frame(width: geometry.size.width,
                    height: geometry.size.height * 0.85)
             */
-
             
-            
+            /*
             ZStack{
                 Color.white
                 HStack(spacing: 0){
@@ -108,7 +135,7 @@ struct AudioSourceView: View {
             .padding(geometry.size.height * 0.02)
             .border(Color.black, width: geometry.size.height * 0.02)
             .frame(height: geometry.size.height * 0.15)
-            
+            */
             }
             
         }

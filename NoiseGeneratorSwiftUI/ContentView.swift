@@ -38,21 +38,21 @@ struct ContentView: View {
                         
                         AudioSourceView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.7)
+                                   height: geometry.size.height * 0.6)
                         
                         AudioEffectView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.7)
+                                   height: geometry.size.height * 0.6)
                         
                         ModulationSourceView()
                             .frame(width:geometry.size.width * (1/3),
-                                   height: geometry.size.height * 0.7)
+                                   height: geometry.size.height * 0.6)
                         
                     }
                     
                     KeyBoard()
                         .frame(width: geometry.size.width,
-                               height: geometry.size.height * 0.2)
+                               height: geometry.size.height * 0.3)
                     /*
                     HStack(spacing: geometry.size.width * 0){
                         Color.blue

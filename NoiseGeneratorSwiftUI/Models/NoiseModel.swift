@@ -121,6 +121,13 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     var midiSignalReceived = false
     var midiTypeReceived: MidiEventType = .noteNumber
     
+    var numberOfNotesOn: Int = 0
+    var isModulationTriggered: Bool = false{
+        didSet{
+            setModulationTriggers()
+        }
+    }
+    
     init(){
         
         //bank = AKOscillatorBank(waveform: AKTable(.sawtooth))
@@ -147,10 +154,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         getInputDevicesAvailable()
         
         createMicrophoneInput(id: 1)
-        
-        //create a noise generator to play with
-        //createNewSource(sourceNumber: 1)
-        
+
         //create a morphing oscillator to play with
         createNewSource(sourceNumber: 2)
         
@@ -179,6 +183,9 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         midi.openInput()
         midi.openOutput()
         midi.addListener(self)
+        
+        //create a noise generator to play with
+        //createNewSource(sourceNumber: 1)
     }
     
     func hideSources(){
@@ -414,7 +421,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func createNewModulation(){
         let modulation = Modulation(tempo: tempo)
         modulation.delegate = self
-        modulation.start()
         modulations.append(modulation)
     }
     
@@ -433,6 +439,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func updateModulations(){
         for modulation in modulations{
             modulation.setTimeInterval()
+        }
+    }
+    
+    func setModulationTriggers(){
+        for modulation in modulations{
+            modulation.isTriggered = isModulationTriggered
         }
     }
     
@@ -540,6 +552,9 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
     
     // MARK: MIDI received
+    
+    @Published var midiExternalNotesOn: [MIDINoteNumber] = []
+    //@Published var midiExternalNotesOff: [MIDINoteNumber] = []
 
     // Note On Number + Velocity + MIDI Channel
     func receivedMIDINoteOn(noteNumber: MIDINoteNumber,
@@ -552,6 +567,10 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         print(outputMIDIMessage)
         midiSignalReceived = true
         playNote(note: noteNumber, velocity: velocity, channel: channel)
+        
+        DispatchQueue.main.async {
+            self.midiExternalNotesOn.append(noteNumber)
+        }
     }
 
     // Note Off Number + Velocity + MIDI Channel
@@ -565,7 +584,18 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         print(outputMIDIMessage)
         midiSignalReceived = false
         stopNote(note: noteNumber, channel: channel)
+        DispatchQueue.main.async {
+            self.midiExternalNotesOn = self.midiExternalNotesOn.filter{$0 != noteNumber}
+        }
+        /*
+        DispatchQueue.main.async {
+            self.midiExternalNotesOff.append(noteNumber)
+        }
+        */
     }
+    
+    //midiExternalNotesOn = midiExternalNotesOn.filter{$0 != noteNumber}
+    //midiExternalNotesOff = midiExternalNotesOff.filter{$0 != noteNumber}
 
     // Controller Number + Value + MIDI Channel
     func receivedMIDIController(_ controller: MIDIByte, value: MIDIByte, channel: MIDIChannel) {
@@ -605,14 +635,21 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
 
+    
     func playNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) {
-        //demoSampler.play(noteNumber: note, velocity: velocity, channel: channel)
         handleMidiNote(note: note, velocity: velocity)
+        numberOfNotesOn = numberOfNotesOn + 1
+        if(!isModulationTriggered){
+            isModulationTriggered = true
+        }
     }
 
     func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
         handleMidiNote(note: note, velocity: 0)
-        //demoSampler.stop(noteNumber: note, channel: channel)
+        numberOfNotesOn = numberOfNotesOn - 1
+        if(numberOfNotesOn == 0){
+            isModulationTriggered = false
+        }
     }
     
     
@@ -622,13 +659,15 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
 extension NoiseModel: AKKeyboardDelegate {
     
     func noteOn(note: MIDINoteNumber) {
+        playNote(note: note, velocity: 80, channel: MIDIChannel())
       //bank.play(noteNumber: note, velocity: 80)
-        handleMidiNote(note: note, velocity: 80)
+        //handleMidiNote(note: note, velocity: 80)
     }
       
     func noteOff(note: MIDINoteNumber) {
+        stopNote(note: note, channel: MIDIChannel())
       //bank.stop(noteNumber: note)
-        handleMidiNote(note: note, velocity: 0)
+        //handleMidiNote(note: note, velocity: 0)
     }
     
 }

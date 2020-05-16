@@ -142,6 +142,10 @@ public class MicrophoneSource: AudioSource{
         setDisplayImage()
     }
     
+    init(){
+        super.init(toggle: input)
+    }
+    
     func setDevice(device: AKDevice){
         do{
             try input.setDevice(device)

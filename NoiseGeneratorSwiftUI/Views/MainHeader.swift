@@ -32,6 +32,59 @@ struct MainHeader: View {
                 // Master Volume
                 HStack(spacing: 0){
 
+                    //Settings button
+                    Button(action: {
+                        print("Pressed Settings!")
+                    }){
+                        ZStack{
+                            Rectangle()
+                                .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                .cornerRadius(geometry.size.height * 0.2)
+                                .padding(geometry.size.height * 0.03)
+                            Image(systemName: "gear")
+                                .resizable()
+                                .padding(geometry.size.height * 0.1)
+                                .foregroundColor(Color.white)
+                                .aspectRatio(1.0, contentMode: .fit)
+                        }
+                    }
+                    .frame(width: geometry.size.width * (1/22),
+                           height: geometry.size.height * 0.7)
+                    .padding(.leading, geometry.size.width * 0.01)
+                    
+                    
+                    //Bluetooth button
+                    Button(action: {
+                        self.noise.selectedScreen = .bluetoothMIDI
+                    }){/*
+                            Image(systemName: "b.circle.fill")
+                                .resizable()
+                        */
+                        ZStack{
+                            Rectangle()
+                                .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                .cornerRadius(geometry.size.height * 0.2)
+                                .padding(geometry.size.height * 0.03)
+                            BluetoothIcon()
+                                .padding(geometry.size.height * 0.1)
+                                .foregroundColor(Color.white)
+                                .aspectRatio(1.0, contentMode: .fit)
+                        }
+                    }
+                    .frame(width: geometry.size.width * (1/22),
+                           height: geometry.size.height * 0.7)
+                    .padding(.leading, geometry.size.width * 0.01)
+                    
+                    Spacer()
+                    
+                /*
+                    BluetoothMidiButton()
+                        .frame(width: geometry.size.width * (1/10),
+                               height: geometry.size.height * 0.7)
+                    
+                    
+                    Spacer()
+ */
                     
                     ZStack{
                         //Rectangle()
@@ -73,26 +126,6 @@ struct MainHeader: View {
                     
                     Spacer()
                     
-                    Button(action: {
-                        self.noise.selectedScreen = .bluetoothMIDI
-                    }){
-                            Image(systemName: "b.circle.fill")
-                                .resizable()
-                                .padding(geometry.size.height * 0.05)
-                                 .foregroundColor(Color.black)
-                                 .aspectRatio(1.0, contentMode: .fit)
-                    }
-                    
-                    Spacer()
-                    
-                /*
-                    BluetoothMidiButton()
-                        .frame(width: geometry.size.width * (1/10),
-                               height: geometry.size.height * 0.7)
-                    
-                    
-                    Spacer()
- */
                     
                     KnobComplete(knobModel: self.$noise.masterVolumeControl,
                                  knobModColor: self.$noise.knobModColor,

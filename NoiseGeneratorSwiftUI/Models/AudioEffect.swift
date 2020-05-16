@@ -48,6 +48,13 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
         }
     }
     
+    init(){
+        self.toggleControls = AKMixer()
+        id = -1
+        position = -1
+        effect = AKMixer()
+    }
+    
     init(pos: Int, toggle: AKToggleable, node: AKInput ){
         position = pos
         toggleControls = toggle
@@ -111,6 +118,11 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
 }
 
 public class TwoControlAudioEffect: AudioEffect{
+    
+    override init(){
+        super.init()
+    }
+    
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
         control1.delegate = self
@@ -142,6 +154,9 @@ public class TwoControlAudioEffect: AudioEffect{
 }
 
 public class FourControlAudioEffect: AudioEffect{
+    override init(){
+        super.init()
+    }
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
     }
@@ -164,6 +179,9 @@ public class FourControlAudioEffect: AudioEffect{
 }
 
 public class OneControlWithPresetsAudioEffect: AudioEffect{
+    override init(){
+        super.init()
+    }
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
     }
@@ -476,6 +494,7 @@ public class AppleReverbAudioEffect: OneControlWithPresetsAudioEffect{
         name = "Apple Preset Reverb"
         displayOnImage = Image(systemName: "r.circle.fill")
         displayOffImage = Image(systemName: "r.circle")
+        setDisplayImage()
         
         presets = ["Cathedral", "Large Hall", "Large Hall 2",
         "Large Room", "Large Room 2", "Medium Chamber",

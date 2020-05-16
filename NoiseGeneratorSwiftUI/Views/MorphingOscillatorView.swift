@@ -12,13 +12,8 @@ import AudioKitUI
 
 struct MorphingOscillatorView: View {
     
-    @Binding var volumeControl: Double
-    @Binding var amplitude: Double
-    @Binding var isBypassed: Bool
-    @Binding var title: String
-    @State var node: AKMixer
-
-    @Binding var knobModel1 : KnobCompleteModel
+    @Binding var morphingOscillator: MorphingOscillatorBank
+    
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
     @Binding var modulationBeingDeleted: Bool
@@ -30,16 +25,16 @@ struct MorphingOscillatorView: View {
             GeometryReader
             { geometry in
                 VStack(spacing: 0){
+                    
                     HStack(spacing: 0){
                         
-                        
                         VStack(spacing: 0){
-                            //OutputPlotView(nodeToPlot: self.node)
+                            //OutputPlotView(nodeToPlot: self.morphingOscillator.oscillatorMixer)
                             Rectangle()
                                 .border(Color.black, width: geometryOut.size.height * 0.01)
                                 .padding(geometry.size.height * 0.05)
                             
-                            KnobComplete(knobModel: self.$knobModel1,
+                            KnobComplete(knobModel: self.$morphingOscillator.control1,
                                          knobModColor: self.$knobModColor,
                                          modulationBeingAssigned: self.$modulationBeingAssigned,
                                          modulationBeingDeleted: self.$modulationBeingDeleted)
@@ -52,8 +47,8 @@ struct MorphingOscillatorView: View {
                                height: geometry.size.height * 0.85)
                         
                         
-                        VolumeComplete(amplitude: self.$amplitude,
-                                       volumeControl: self.$volumeControl,
+                        VolumeComplete(amplitude: self.$morphingOscillator.outputAmplitude,
+                                       volumeControl: self.$morphingOscillator.outputVolume,
                                        isRightHanded: .constant(true),
                                        numberOfRects: .constant(10),
                                        title: "VOL")
@@ -62,7 +57,7 @@ struct MorphingOscillatorView: View {
                                    height:geometry.size.height * 0.85)
                     }
                         
-                    TitleBar(title: self.$title, isBypassed: self.$isBypassed)
+                    TitleBar(title: self.$morphingOscillator.name, isBypassed: self.$morphingOscillator.isBypassed)
                         .frame(height:geometry.size.height * 0.15)
                         
                 }
@@ -76,12 +71,7 @@ struct MorphingOscillatorView: View {
 
 struct MorphingOscillatorView_Previews: PreviewProvider {
     static var previews: some View {
-        MorphingOscillatorView(volumeControl: .constant(1.0),
-                               amplitude: .constant(0.5),
-                               isBypassed: .constant(false),
-                               title: .constant("deviceID"),
-                               node: AKMixer(),
-                               knobModel1: .constant(KnobCompleteModel()),
+        MorphingOscillatorView(morphingOscillator: .constant(MorphingOscillatorBank()),
                                knobModColor: .constant(Color.yellow),
                                modulationBeingAssigned: .constant(false),
                                modulationBeingDeleted: .constant(false))

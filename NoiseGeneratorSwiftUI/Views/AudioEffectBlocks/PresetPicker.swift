@@ -2,15 +2,12 @@ import SwiftUI
 
 struct PresetPicker: View {
     
-    @State var title = "EFFECT TITLE"
-    @State var showPresets = false
-    
-    @Binding var isBypassed : Bool
-    @Binding var presetIndex : Int
-    @Binding var knobModel : KnobCompleteModel
-    @Binding var presets: [String]
+    @Binding var oneControlEffect : OneControlWithPresetsAudioEffect
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
+    
+    
+    @State var showPresets = false
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -22,12 +19,12 @@ struct PresetPicker: View {
             {
             ScrollView(.vertical, showsIndicators: false){
                 VStack {
-                    ForEach(0 ..< self.presets.count){ n in
+                    ForEach(0 ..< self.oneControlEffect.presets.count){ n in
                         Button(action: {
-                            self.presetIndex = n
+                            self.oneControlEffect.presetIndex = n
                             self.showPresets.toggle()
                         }, label: {
-                            Text(self.presets[n])
+                            Text(self.oneControlEffect.presets[n])
                                 .font(.system(size: 20))
                                 .bold()
                                 .foregroundColor(Color.white)
@@ -48,9 +45,9 @@ struct PresetPicker: View {
                     HStack {
                         
                         Button(action: {
-                            if(self.presetIndex > 0)
+                            if(self.oneControlEffect.presetIndex > 0)
                             {
-                                self.presetIndex = self.presetIndex - 1
+                                self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex - 1
                             }
                         }){
                             
@@ -64,7 +61,7 @@ struct PresetPicker: View {
                         Button(action: {
                             self.showPresets.toggle()
                         }, label: {
-                            Text(self.presets[self.presetIndex])
+                            Text(self.oneControlEffect.presets[self.oneControlEffect.presetIndex])
                                 .font(.system(size: 16))
                                 .bold()
                                 .foregroundColor(Color.white)
@@ -72,9 +69,9 @@ struct PresetPicker: View {
                         .frame(minWidth: 0,maxWidth: .infinity)
                         Spacer()
                         Button(action: {
-                            if(self.presetIndex < self.presets.count - 1)
+                            if(self.oneControlEffect.presetIndex < self.oneControlEffect.presets.count - 1)
                             {
-                                self.presetIndex = self.presetIndex + 1
+                                self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex + 1
                             }
                         }, label: {
                             //Text("Next")
@@ -91,13 +88,16 @@ struct PresetPicker: View {
                     //Knob
                     Spacer()
                     VStack {
-                        Text(self.knobModel.display)
+                        Text(self.oneControlEffect.control1.display)
                             .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$knobModel, knobModColor: self.$knobModColor, modulationBeingAssigned: self.$modulationBeingAssigned, modulationBeingDeleted: .constant(false))
+                        KnobComplete(knobModel: self.$oneControlEffect.control1,
+                                     knobModColor: self.$knobModColor,
+                                     modulationBeingAssigned: self.$modulationBeingAssigned,
+                                     modulationBeingDeleted: .constant(false))
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
-                        Text(self.knobModel.name)
+                        Text(self.oneControlEffect.control1.name)
                             .font(.system(size: 14))
                             .bold()
                         //.foregroundColor(Color.black)
@@ -107,7 +107,7 @@ struct PresetPicker: View {
                     
                 
                     HStack {
-                        Text(self.title)
+                        Text(self.oneControlEffect.name)
                             .font(.system(size: 16))
                             .bold()
                             .foregroundColor(Color.white)
@@ -123,8 +123,8 @@ struct PresetPicker: View {
                     VStack {
                         Spacer()
                         HStack {
-                            Button(action: {self.isBypassed.toggle()}){
-                                if(!self.isBypassed){
+                            Button(action: {self.oneControlEffect.isBypassed.toggle()}){
+                                if(!self.oneControlEffect.isBypassed){
                                 Circle()
                                     .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
                                     .frame(width:geometry.size.height * 0.11,
@@ -165,12 +165,9 @@ struct PresetPicker: View {
 
 struct PresetPicker_Previews: PreviewProvider {
     static var previews: some View {
-        PresetPicker(isBypassed: .constant(false),
-                     presetIndex: .constant(0),
-            knobModel: .constant(KnobCompleteModel()),
-                     presets: .constant(["Preset 1", "Preset 2", "Preset 3",
-                                        "Preset 4", "Preset 5", "Preset 6"]),
-                     knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false))
+        PresetPicker(oneControlEffect: .constant(OneControlWithPresetsAudioEffect()),
+                     knobModColor: .constant(Color.yellow),
+                     modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 280, height: 220))
     }
 }

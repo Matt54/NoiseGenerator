@@ -1,18 +1,10 @@
 import SwiftUI
 
 struct TwoControlTemplate: View {
-    @State var title = "EFFECT TITLE"
-    @Binding var isBypassed : Bool
-    @Binding var knobModel1 : KnobCompleteModel
-    @Binding var knobModel2 : KnobCompleteModel
+    @Binding var twoControlAudioEffect: TwoControlAudioEffect
     @Binding var knobModColor: Color
     @Binding var modulationBeingAssigned: Bool
     @Binding var modulationBeingDeleted: Bool
-    
-    @Binding var inputAmplitude: Double
-    @Binding var inputVolume: Double
-    @Binding var outputAmplitude: Double
-    @Binding var outputVolume: Double
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -30,8 +22,8 @@ struct TwoControlTemplate: View {
                     {
                         //Input Volume
                         VStack{
-                            VolumeComplete(amplitude: self.$inputAmplitude,
-                                           volumeControl: self.$inputVolume,
+                            VolumeComplete(amplitude: self.$twoControlAudioEffect.inputAmplitude,
+                                           volumeControl: self.$twoControlAudioEffect.inputVolume,
                                            isRightHanded: .constant(false),
                                            numberOfRects: .constant(10),
                                            title: "IN")
@@ -47,14 +39,14 @@ struct TwoControlTemplate: View {
                             VStack(spacing: 0)
                             {
                                 // Text - Value Display
-                                Text(self.knobModel1.display)
+                                Text(self.twoControlAudioEffect.control1.display)
                                     .textStyle(ShrinkTextStyle())
                                     .frame(width: geometry.size.width * 0.3,
                                            height: geometry.size.height * 0.1)
                                     .scaledToFit()
                                 
                                 // Knob Controller
-                                KnobComplete(knobModel: self.$knobModel1,
+                                KnobComplete(knobModel: self.$twoControlAudioEffect.control1,
                                              knobModColor: self.$knobModColor,
                                              modulationBeingAssigned: self.$modulationBeingAssigned,
                                              modulationBeingDeleted: self.$modulationBeingDeleted)
@@ -62,7 +54,7 @@ struct TwoControlTemplate: View {
                                     .padding(.vertical, geometry.size.height * 0.05)
                                     
                                 // Text - Parameter
-                                Text(self.knobModel1.name)
+                                Text(self.twoControlAudioEffect.control1.name)
                                     .bold()
                                     .textStyle(ShrinkTextStyle())
                                     .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
@@ -76,12 +68,12 @@ struct TwoControlTemplate: View {
                             {
                                 
                                 // Text - Value Display
-                                Text(self.knobModel2.display)
+                                Text(self.twoControlAudioEffect.control2.display)
                                     .textStyle(ShrinkTextStyle())
                                     .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
                                 
                                 // Knob Controller
-                                KnobComplete(knobModel: self.$knobModel2,
+                                KnobComplete(knobModel: self.$twoControlAudioEffect.control2,
                                              knobModColor: self.$knobModColor,
                                              modulationBeingAssigned: self.$modulationBeingAssigned,
                                              modulationBeingDeleted: self.$modulationBeingDeleted)
@@ -89,7 +81,7 @@ struct TwoControlTemplate: View {
                                     .padding(.vertical, geometry.size.height * 0.05)
                                 
                                 // Text - Parameter
-                                Text(self.knobModel2.name)
+                                Text(self.twoControlAudioEffect.control2.name)
                                     .bold()
                                     .textStyle(ShrinkTextStyle())
                                     .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
@@ -103,8 +95,8 @@ struct TwoControlTemplate: View {
 
                         //Output Volume
                         VStack{
-                            VolumeComplete(amplitude: self.$outputAmplitude,
-                                           volumeControl: self.$outputVolume,
+                            VolumeComplete(amplitude: self.$twoControlAudioEffect.outputAmplitude,
+                                           volumeControl: self.$twoControlAudioEffect.outputVolume,
                                            isRightHanded: .constant(true),
                                            numberOfRects: .constant(10),
                                            title: "OUT")
@@ -118,7 +110,7 @@ struct TwoControlTemplate: View {
                     }
                     
                     // Title Bar
-                    TitleBar(title: self.$title, isBypassed: self.$isBypassed)
+                    TitleBar(title: self.$twoControlAudioEffect.name, isBypassed: self.$twoControlAudioEffect.isBypassed)
                         .frame(height:geometry.size.height * 0.15)
 
                 }// VStack - Entire View
@@ -135,16 +127,10 @@ struct TwoControlTemplate: View {
 
 struct TwoControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
-        TwoControlTemplate(isBypassed: .constant(false),
-                           knobModel1: .constant(KnobCompleteModel()),
-                           knobModel2: .constant(KnobCompleteModel()),
+        TwoControlTemplate(twoControlAudioEffect: .constant(TwoControlAudioEffect()),
                            knobModColor: .constant(Color.yellow),
                            modulationBeingAssigned: .constant(false),
-                           modulationBeingDeleted: .constant(false),
-                           inputAmplitude: .constant(1.0),
-                           inputVolume: .constant(0.8999999),
-                           outputAmplitude: .constant(0.0),
-                           outputVolume: .constant(0.5))
+                           modulationBeingDeleted: .constant(false))
         .previewLayout(.fixed(width: 500, height: 300))
     }
 }
