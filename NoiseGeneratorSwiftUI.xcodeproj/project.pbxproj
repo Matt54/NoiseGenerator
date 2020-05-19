@@ -17,6 +17,7 @@
 		FA1C4B3A2458BEB600A7E442 /* VolumeComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */; };
 		FA1C4B3C2459C7D700A7E442 /* EffectRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */; };
 		FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA220F61245483C700AACE5B /* KnobCompleteModel.swift */; };
+		FA27D2FF24743D9D008BC9D3 /* VolumeMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */; };
 		FA33B4492465953E00387F0B /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA33B4482465953E00387F0B /* Styles.swift */; };
 		FA33B44C246595C100387F0B /* TextExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA33B44B246595C100387F0B /* TextExtension.swift */; };
 		FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3565D02450D963004AFA8C /* AddEffectForm.swift */; };
@@ -97,6 +98,7 @@
 		FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeComplete.swift; sourceTree = "<group>"; };
 		FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRow.swift; sourceTree = "<group>"; };
 		FA220F61245483C700AACE5B /* KnobCompleteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCompleteModel.swift; sourceTree = "<group>"; };
+		FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeMixer.swift; sourceTree = "<group>"; };
 		FA33B4482465953E00387F0B /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		FA33B44B246595C100387F0B /* TextExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextExtension.swift; sourceTree = "<group>"; };
 		FA3565D02450D963004AFA8C /* AddEffectForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEffectForm.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
 				FA0A68662469FF590016534A /* Tempo.swift */,
 				FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */,
+				FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA6ACFBA24573ADE0009CC20 /* SlidingTriangle.swift in Sources */,
+				FA27D2FF24743D9D008BC9D3 /* VolumeMixer.swift in Sources */,
 				FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */,
 				FA1211A1246C31460077941E /* KeyBoard.swift in Sources */,
 				FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */,
