@@ -24,11 +24,11 @@ struct TwoControlTemplate: View {
                     {
                         //Input Volume
                         VStack{
-                            VolumeComplete(amplitude: self.$twoControlAudioEffect.inputAmplitude,
-                                           volumeControl: self.$twoControlAudioEffect.inputVolume,
-                                           isRightHanded: .constant(false),
-                                           numberOfRects: .constant(10),
-                                           title: "IN")
+                            VolumeComplete(amplitude: self.$twoControlAudioEffect.inputVolumeMixer.amplitude,
+                                           volumeControl: self.$twoControlAudioEffect.inputVolumeMixer.volumeControl,
+                                           isRightHanded: self.$twoControlAudioEffect.inputVolumeMixer.isRightHanded,
+                                           numberOfRects: self.$twoControlAudioEffect.inputVolumeMixer.numberOfRects,
+                                           title: self.twoControlAudioEffect.inputVolumeMixer.name)
                                 .padding(geometry.size.width * 0.05)
                                 .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                         }
@@ -99,11 +99,11 @@ struct TwoControlTemplate: View {
 
                         //Output Volume
                         VStack{
-                            VolumeComplete(amplitude: self.$twoControlAudioEffect.outputAmplitude,
-                                           volumeControl: self.$twoControlAudioEffect.outputVolume,
-                                           isRightHanded: .constant(true),
-                                           numberOfRects: .constant(10),
-                                           title: "OUT")
+                            VolumeComplete(amplitude: self.$twoControlAudioEffect.outputVolumeMixer.amplitude,
+                                           volumeControl: self.$twoControlAudioEffect.outputVolumeMixer.volumeControl,
+                                           isRightHanded: self.$twoControlAudioEffect.outputVolumeMixer.isRightHanded,
+                                           numberOfRects: self.$twoControlAudioEffect.outputVolumeMixer.numberOfRects,
+                                           title: self.twoControlAudioEffect.outputVolumeMixer.name)
                                 //.padding(geometry.size.width * 0.01)
                                 //.frame(width:geometry.size.width * 0.1)
                             .padding(geometry.size.width * 0.05)

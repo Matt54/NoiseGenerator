@@ -49,11 +49,11 @@ struct MorphingOscillatorView: View {
                                height: geometry.size.height * 0.85)
                         
                         
-                        VolumeComplete(amplitude: self.$morphingOscillator.outputAmplitude,
-                                       volumeControl: self.$morphingOscillator.outputVolume,
-                                       isRightHanded: .constant(true),
-                                       numberOfRects: .constant(10),
-                                       title: "VOL")
+                        VolumeComplete(amplitude: self.$morphingOscillator.volumeMixer.amplitude,
+                                       volumeControl: self.$morphingOscillator.volumeMixer.volumeControl,
+                                       isRightHanded: self.$morphingOscillator.volumeMixer.isRightHanded,
+                                       numberOfRects: self.$morphingOscillator.volumeMixer.numberOfRects,
+                                       title: self.morphingOscillator.volumeMixer.name)
                             .padding(geometry.size.width * 0.05)
                             .frame(width: geometry.size.width * 0.2,
                                    height:geometry.size.height * 0.85)

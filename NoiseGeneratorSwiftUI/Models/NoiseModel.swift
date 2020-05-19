@@ -151,8 +151,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
         
-        
-        
         AKSettings.bufferLength = .medium
         AKSettings.audioInputEnabled = true
         AKSettings.defaultToSpeaker = true
@@ -305,7 +303,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         // Route each audio effect to the next in line
         for i in 0..<allControlSources.count {
-            allControlSources[i].output.setOutput(to: inputMixer)
+            //allControlSources[i].output.setOutput(to: inputMixer)
+            allControlSources[i].volumeMixer.output.setOutput(to: inputMixer)
         }
         
         fixInternalAudioRouting()
@@ -339,7 +338,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         if(allControlEffects.count > 0){
             //inputMixer.connect(to: allControlEffects[0].input)
-            inputMixer.setOutput(to: allControlEffects[0].input)
+            //inputMixer.setOutput(to: allControlEffects[0].input)
+            inputMixer.setOutput(to: allControlEffects[0].inputVolumeMixer.input)
         }
         else{
             //inputMixer.connect(to: outputMixer)
@@ -351,17 +351,19 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         // Break all current connections
         for i in 0..<allControlEffects.count {
-            allControlEffects[i].output.disconnectOutput()
+            //allControlEffects[i].output.disconnectOutput()
+            allControlEffects[i].outputVolumeMixer.output.disconnectOutput()
         }
         
         // Route each audio effect to the next in line
         for i in 0..<allControlEffects.count - 1  {
-            allControlEffects[i].output.setOutput(to: allControlEffects[i+1].input)
+            //allControlEffects[i].output.setOutput(to: allControlEffects[i+1].input)
+            allControlEffects[i].outputVolumeMixer.output.setOutput(to: allControlEffects[i+1].inputVolumeMixer.input)
         }
         
         //set the output of the last effect to our output mixer
-        allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
-        
+        //allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
+        allControlEffects[allControlEffects.count - 1].outputVolumeMixer.output.setOutput(to: outputMixer)
         
         // Connect input
         connectSourceToEffectChain()
@@ -390,6 +392,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
             for i in 0..<self.allControlSources.count {
                 if(self.allControlSources[i].isDisplayed){
                     self.allControlSources[i].readAmplitudes()
+                    print(self.allControlSources[i].volumeMixer.amplitude)
                 }
             }
             

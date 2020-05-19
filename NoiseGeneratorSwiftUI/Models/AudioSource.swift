@@ -16,13 +16,17 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
     static var numberOfInputs = 0
     
+    @Published var volumeMixer = VolumeMixer()
+    
     // All audio sources have outputs, some have inputs
+    /*
     @Published var outputAmplitude = 1.0
     @Published var outputVolume = 1.0{
         didSet { outputMixer.volume = outputVolume }
     }
     @Published var outputMixer = AKMixer()
     @Published var output = AKAmplitudeTracker()
+    */
     
     var toggleControls: AKToggleable
     
@@ -49,13 +53,15 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
         AudioEffect.numberOfEffects = AudioEffect.numberOfEffects + 1
         id = AudioEffect.numberOfEffects
         setBypass()
-        setupAudioRouting()
+        //setupAudioRouting()
     }
     
+    /*
     func setupAudioRouting(){
         output.mode = .peak
         outputMixer.setOutput(to: output)
     }
+    */
     
     func setBypass(){
         if(isBypassed){
@@ -77,7 +83,8 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
     func readAmplitudes(){
         //inputAmplitude = inputTracker.amplitude
-        outputAmplitude = output.amplitude
+        //outputAmplitude = output.amplitude
+        volumeMixer.updateAmplitude()
         //print(outputAmplitude)
     }
     
@@ -117,7 +124,8 @@ public class MonoAudioSource: AudioSource{
     var input: AKInput
     
     override func setupInputRouting(){
-        input.setOutput(to: outputMixer)
+        //input.setOutput(to: outputMixer)
+        input.setOutput(to:volumeMixer.input)
     }
     
     init(toggle: AKToggleable, node: AKInput ){
@@ -130,11 +138,16 @@ public class MonoAudioSource: AudioSource{
 public class StereoAudioSource: AudioSource{
     var input: AKStereoInput
     
+    override func setupInputRouting(){
+        //input.setOutput(to: outputMixer)
+        input.setOutput(to:volumeMixer.input)
+    }
+    
     init(){
         //input = node
         input = AKStereoInput()
         super.init(toggle: input)
-        input.setOutput(to: outputMixer)
+        setupInputRouting()
     }
 }
 
@@ -157,7 +170,8 @@ public class MicrophoneSource: AudioSource{
         self.name = device.deviceID
         
         let stereoFieldLimiter = AKStereoFieldLimiter(input)
-        stereoFieldLimiter.setOutput(to: outputMixer)
+        //stereoFieldLimiter.setOutput(to: outputMixer)
+        stereoFieldLimiter.setOutput(to: volumeMixer.input)
         
         displayOnImage = Image(systemName: "mic.circle.fill")
         displayOffImage = Image(systemName: "mic.circle")

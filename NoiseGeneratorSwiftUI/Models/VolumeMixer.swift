@@ -36,7 +36,7 @@ public class VolumeMixer : ObservableObject{
         input.setOutput(to: output)
     }
     
-    func getAmplitude() -> Double{
-        return output.amplitude
+    func updateAmplitude(){
+        amplitude = output.amplitude
     }
 }

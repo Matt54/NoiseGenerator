@@ -17,11 +17,11 @@ struct NoiseGenerator: View {
                             .frame(width: geometry.size.width * 0.8,
                                    height: geometry.size.height * 0.8)
                         
-                        VolumeComplete(amplitude: self.$noiseSource.outputAmplitude,
-                                       volumeControl: self.$noiseSource.outputVolume,
-                                       isRightHanded: .constant(true),
-                                       numberOfRects: .constant(10),
-                                       title: "VOL")
+                        VolumeComplete(amplitude: self.$noiseSource.volumeMixer.amplitude,
+                                    volumeControl: self.$noiseSource.volumeMixer.volumeControl,
+                                    isRightHanded: self.$noiseSource.volumeMixer.isRightHanded,
+                                    numberOfRects: self.$noiseSource.volumeMixer.numberOfRects,
+                                    title: self.noiseSource.volumeMixer.name)
                             .padding(geometry.size.width * 0.05)
                             .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                     }

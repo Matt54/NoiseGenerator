@@ -4,8 +4,6 @@ import SwiftUI
 
 public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     
-    
-    
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
@@ -17,6 +15,10 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     public var id: Int//UUID = UUID()
     var effect: AKInput
     
+    @Published var inputVolumeMixer = VolumeMixer()
+    @Published var outputVolumeMixer = VolumeMixer()
+    
+    /*
     @Published var inputAmplitude = 1.0
     @Published var outputAmplitude = 1.0
     
@@ -31,6 +33,7 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     var inputTracker = AKAmplitudeTracker()
     var outputMixer = AKMixer()
     var output = AKAmplitudeTracker()
+    */
     
     @Published var isBypassed = false{
         didSet{
@@ -67,6 +70,7 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     }
 
     func setupAudioRouting(){
+        /*
         inputTracker.mode = .peak
         output.mode = .peak
         
@@ -74,11 +78,18 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
         inputTracker.setOutput(to: effect)
         effect.setOutput(to: outputMixer)
         outputMixer.setOutput(to: output)
+        */
+        
+        inputVolumeMixer.output.setOutput(to: effect)
+        effect.setOutput(to: outputVolumeMixer.output)
     }
     
     func readAmplitudes(){
-        inputAmplitude = inputTracker.amplitude
-        outputAmplitude = output.amplitude
+        //inputAmplitude = inputTracker.amplitude
+        //outputAmplitude = output.amplitude
+        
+        inputVolumeMixer.updateAmplitude()
+        outputVolumeMixer.updateAmplitude()
     }
     
     func toggleDisplayed(){
