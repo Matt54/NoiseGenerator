@@ -75,6 +75,36 @@ struct MainHeader: View {
                            height: geometry.size.height * 0.7)
                     .padding(.leading, geometry.size.width * 0.01)
                     
+                    //Midi Learn button
+                    Button(action: {
+                        if(self.noise.specialSelection == .midiLearn){
+                            self.noise.specialSelection = .none
+                        }
+                        else{
+                            self.noise.specialSelection = .midiLearn
+                        }
+                        
+                    }){/*
+                            Image(systemName: "b.circle.fill")
+                                .resizable()
+                        */
+                        ZStack{
+                            Rectangle()
+                                .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                .cornerRadius(geometry.size.height * 0.2)
+                                .padding(geometry.size.height * 0.03)
+                            Text("MIDI LEARN")
+                                .bold()
+                                .textStyle(ShrinkTextStyle())
+                                .padding(geometry.size.height * 0.15)
+                                .foregroundColor(Color.white)
+                                //.aspectRatio(1.0, contentMode: .fit)
+                        }
+                    }
+                    .frame(width: geometry.size.width * (1/7),
+                           height: geometry.size.height * 0.7)
+                    .padding(.leading, geometry.size.width * 0.01)
+                    
                     Spacer()
                     
                 /*
@@ -129,8 +159,9 @@ struct MainHeader: View {
                     
                     KnobComplete(knobModel: self.$noise.masterVolumeControl,
                                  knobModColor: self.$noise.knobModColor,
-                    modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                    modulationBeingDeleted: self.$noise.modulationBeingDeleted)
+                                 specialSelection: self.$noise.specialSelection)
+                    //modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                    //modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                     .padding(geometry.size.height * 0.1)
                     .aspectRatio(1.0, contentMode: .fit)
 

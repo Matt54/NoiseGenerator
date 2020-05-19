@@ -1,19 +1,12 @@
 import SwiftUI
 
 struct ModulationView: View {
-    
-    /*
-    @State var title = "MOD #"
-    @Binding var isBypassed : Bool
-    @Binding var knobModel1 : KnobCompleteModel
-    
-    */
-    
+
     @Binding var modulation: Modulation
     
     @Binding var knobModColor: Color
-    @Binding var isConnectingModulation: Bool
-    @Binding var isDeletingModulation: Bool
+    @Binding var specialSelection: SpecialSelection
+    
     @Binding var pattern: Pattern
     @Binding var screen: SelectedScreen
 
@@ -35,7 +28,13 @@ struct ModulationView: View {
                         VStack(spacing: 0){
                             
                             Button(action: {
-                                self.isConnectingModulation.toggle()
+                                if(self.specialSelection == .none){
+                                    self.specialSelection = .assignModulation
+                                }
+                                else{
+                                    self.specialSelection = .none
+                                }
+                                
                             }){
                                 ZStack{
                                     Rectangle()
@@ -53,7 +52,13 @@ struct ModulationView: View {
                             }
                             
                             Button(action: {
-                                self.isDeletingModulation.toggle()
+                                //self.isDeletingModulation.toggle()
+                                if(self.specialSelection == .none){
+                                    self.specialSelection = .deleteModulation
+                                }
+                                else{
+                                    self.specialSelection = .none
+                                }
                             }){
                                 ZStack{
                                     Rectangle()
@@ -139,8 +144,7 @@ struct ModulationView: View {
                             // Knob Controller
                             KnobComplete(knobModel: self.$modulation.timingControl,
                                          knobModColor: self.$knobModColor,
-                                         modulationBeingAssigned: .constant(false),
-                                         modulationBeingDeleted: .constant(false))
+                                         specialSelection: self.$specialSelection)
                                 .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
                                 .padding(.vertical, geometry.size.height * 0.05)
                             
@@ -196,8 +200,7 @@ struct ModulationView_Previews: PreviewProvider {
     static var previews: some View {
         ModulationView(modulation: .constant(Modulation(tempo: Tempo(bpm: 120))),
         knobModColor: .constant(Color.yellow),
-        isConnectingModulation: .constant(false),
-        isDeletingModulation: .constant(false),
+        specialSelection: .constant(SpecialSelection.none),
         pattern: .constant(Pattern(color: Color.yellow)),
         screen: .constant(SelectedScreen.main))
         .previewLayout(.fixed(width: 300, height: 250))

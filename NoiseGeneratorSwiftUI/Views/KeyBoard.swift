@@ -41,10 +41,11 @@ struct KeyBoard: View {
                 .frame(width: geometry.size.height,
                        height: geometry.size.height)
                 .border(Color.black, width: geometry.size.height * 0.02)
-                
-                KeyBoardView(noise: self.noise,
-                             octave: self.$noise.firstOctave,
-                             midiExternalNotesOn: self.$noise.midiExternalNotesOn)
+                self.noise.keyboardViewController
+                /*
+                KeyBoardViewController(noise: self.noise,
+                             octave: self.$noise.firstOctave)*/
+                             //midiNoteKeyboardChange: self.$noise.midiNoteKeyboardChange)
                     .frame(width: geometry.size.width - geometry.size.height * 2,
                            height: geometry.size.height)
                     .border(Color.black, width: geometry.size.height * 0.02)
@@ -84,39 +85,54 @@ struct KeyBoard_Previews: PreviewProvider {
     }
 }
 
-struct KeyBoardView: UIViewRepresentable {
+struct KeyBoardViewController: UIViewRepresentable {
     typealias UIViewType = AKKeyboardView
     
+    @State var keyboardView : AKKeyboardView = AKKeyboardView()
+    @State var firstOctave = 1
+    
+    //@ObservedObject var noise: NoiseModel
+    //@Binding var octave: Int
+    
     //@EnvironmentObject var noise: NoiseModel
-    @ObservedObject var noise: NoiseModel
-    @Binding var octave: Int
-    @Binding var midiExternalNotesOn: [MIDINoteNumber]
-    @State var notesCurrentlyOn: [MIDINoteNumber] = []
+    
+    //@Binding var midiNoteKeyboardChange : MIDINoteKeyboardChange
+    //@Binding var midiExternalNotesOn: [MIDINoteNumber]
+    //@State var notesCurrentlyOn: [MIDINoteNumber] = []
     
     //@Binding var midiExternalNotesOff: [MIDINoteNumber]
+    
+    
 
-    func makeUIView(context: UIViewRepresentableContext<KeyBoardView>) -> AKKeyboardView {
-        let view = AKKeyboardView()
-        
-        view.delegate = noise
+    func makeUIView(context: UIViewRepresentableContext<KeyBoardViewController>) -> AKKeyboardView {
+        //view.delegate = noise
         
         // Without this, the keyboard does not respect the frame
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        keyboardView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        keyboardView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         
-        view.firstOctave = octave
-        view.keyOnColor = UIColor.init(red: 0.4, green: 0.1, blue: 0.7, alpha: 1.0)
-        view.polyphonicMode = true
+        keyboardView.firstOctave = firstOctave
+        keyboardView.keyOnColor = UIColor.init(red: 0.4, green: 0.1, blue: 0.7, alpha: 1.0)
+        keyboardView.polyphonicMode = true
         //view.programmaticNoteOn(<#T##note: MIDINoteNumber##MIDINoteNumber#>)
         
-        return view
+        return keyboardView
     }
 
-    func updateUIView(_ uiView: AKKeyboardView, context: UIViewRepresentableContext<KeyBoardView>) {
+    func updateUIView(_ uiView: AKKeyboardView, context: UIViewRepresentableContext<KeyBoardViewController>) {
         uiView.frame = CGRect(x:0, y:0, width: uiView.intrinsicContentSize.width, height: uiView.intrinsicContentSize.height)
         uiView.sizeToFit()
-        uiView.firstOctave = octave
+        uiView.firstOctave = firstOctave
         
+        /*
+        if(midiNoteKeyboardChange.isOn){
+            uiView.programmaticNoteOn(midiNoteKeyboardChange.note)
+        }else{
+            uiView.programmaticNoteOff(midiNoteKeyboardChange.note)
+        }
+        */
+        
+        /*
         let newNotes = midiExternalNotesOn.filter {
             !notesCurrentlyOn.contains($0)
         }
@@ -129,10 +145,12 @@ struct KeyBoardView: UIViewRepresentable {
             uiView.programmaticNoteOn(note)
             //notesCurrentlyOn.append(note)
         }
+ 
         
         cutNotes.forEach { note in
             uiView.programmaticNoteOff(note)
         }
+        */
         
         /*
         midiExternalNotesOff.forEach { note in

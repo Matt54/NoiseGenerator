@@ -2,14 +2,23 @@ import Foundation
 
 public class KnobCompleteModel : ObservableObject{
     
-    var delegate:ModulationDelegate?
-    var handoffDelegate:KnobModelModulationHandoff?
+    //var delegate:ModulationDelegate?
+    var handoffDelegate:KnobModelHandoff?
     
     @Published var percentRotated = 0.0{
     didSet {
+        print("percent rotated was updated: " + String(percentRotated))
         calculateRealValue()
         calculateRealRange()
         }
+    }
+    
+    @Published var currentAngle: Double = -135.0
+    
+    func handfreeKnobRotate(_ newPercentRotate: Double){
+        percentRotated = newPercentRotate
+        currentAngle = percentRotated * 270.0 - 135.0
+        handoffDelegate?.handsFreeTextUpdate(self)
     }
     
     // This controls the display of the modulation amount
@@ -42,6 +51,9 @@ public class KnobCompleteModel : ObservableObject{
     @Published var unit = ""
     @Published var display = "Display"
     
+    @Published var midiAssignment : String = "nil"
+    @Published var isMidiLearning : Bool = false
+    
     public var isTempoSynced: Bool = false
     
     init(){
@@ -62,8 +74,7 @@ public class KnobCompleteModel : ObservableObject{
         else{
             realModValue = modulationValue + percentRotated
         }
-        //print("calculateRealValue for " + name + " with value " + String(realModValue)) 
-        delegate?.modulationValueWasChanged(self)
+        handoffDelegate?.modulationValueWasChanged(self)
     }
     
     // sets the realModulationRange from the position + attemptedModulationRange logic
@@ -82,26 +93,32 @@ public class KnobCompleteModel : ObservableObject{
 
     func handoffKnobModel(){
         print("handoffKnobModel")
-        handoffDelegate?.KnobModelAssignToModulation(self)
+        //handoffDelegate?.KnobModelAssignToModulation(self)
+        handoffDelegate?.KnobModelHandoff(self)
     }
     
     func removeKnobModel(){
         print("removeModulation")
-        handoffDelegate?.KnobModelRemoveModulation(self)
+        handoffDelegate?.KnobModelHandoff(self)
+        //handoffDelegate?.KnobModelRemoveModulation(self)
     }
+    
     
     func adjustModulationRange(adjust: Double){
-        handoffDelegate?.KnobModelAdjustModulationRange(self, adjust: adjust)
+        handoffDelegate?.KnobModelRangeHandoff(self, adjust: adjust)
     }
     
 }
 
+/*
 protocol ModulationDelegate {
-    func modulationValueWasChanged(_ sender: KnobCompleteModel)
+    
 }
+*/
 
-protocol KnobModelModulationHandoff{
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
+protocol KnobModelHandoff{
+    func KnobModelHandoff(_ sender: KnobCompleteModel)
+    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
+    func modulationValueWasChanged(_ sender: KnobCompleteModel)
+    func handsFreeTextUpdate(_ sender: KnobCompleteModel)
 }

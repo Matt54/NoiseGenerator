@@ -1,8 +1,8 @@
 import Foundation
 import SwiftUI
 
-public class Modulation : Identifiable, ObservableObject{
-    
+public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
+
     //@EnvironmentObject var noise: NoiseModel
     
     var tempo: Tempo
@@ -39,21 +39,23 @@ public class Modulation : Identifiable, ObservableObject{
     
     @Published var timeInterval = 0.01{
     didSet {
-        var leftoverTime = 0.0
-        if(!(timeOfLastTimerAction == 0)){
-            leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - timeOfLastTimerAction) / 1_000_000_000
-        }
-        if(leftoverTime > 0)
-        {
-            setTimeInterval(timeInterval: timeInterval, leftoverTime: leftoverTime)
-        }
-        else{
-            setTimeInterval(timeInterval: timeInterval)
-        }
+        if(!isBypassed){
+            var leftoverTime = 0.0
+            if(!(timeOfLastTimerAction == 0)){
+                leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - timeOfLastTimerAction) / 1_000_000_000
+            }
+            if(leftoverTime > 0)
+            {
+                setTimeInterval(timeInterval: timeInterval, leftoverTime: leftoverTime)
+            }
+            else{
+                setTimeInterval(timeInterval: timeInterval)
+            }
+            }
         }
     }
     
-    @Published var timingControl = KnobCompleteModel(){
+    @Published var timingControl : KnobCompleteModel{
         didSet{ setTimeInterval() }
     }
     
@@ -99,9 +101,12 @@ public class Modulation : Identifiable, ObservableObject{
         
         pattern = Pattern(color: Color.black)
         
+        timingControl = KnobCompleteModel()
+        timingControl.handoffDelegate = self
+        
         modulationColor = self.getColorForModulation(num: id)
         pattern.modulationColor = modulationColor
-        
+
         timer.eventHandler = {self.timerAction()}
         
         timingControl.name = "Rate"
@@ -257,6 +262,30 @@ public class Modulation : Identifiable, ObservableObject{
         
         timeOfLastTimerAction = Double(DispatchTime.now().uptimeNanoseconds)
     }
+    
+    
+    var handoffDelegate:ParameterHandoff?
+    func KnobModelHandoff(_ sender: KnobCompleteModel) {
+        print("hit modulation parameter handoff")
+        handoffDelegate?.KnobModelHandoff(sender)
+    }
+    
+    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
+    handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
+    }
+    
+    func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        print("we're trying to modulate a modulation.")
+        // DONT FORGET THAT YOU SHOULDN'T ADD THIS WITHOUT SPLITTING DISPLAY FROM ACTUAL TIMEINTERVAL
+    }
+    
+    func handsFreeTextUpdate(_ sender: KnobCompleteModel) {
+        print("we're trying to midi cc or macro a modulation.")
+        
+        //DONT FORGET TO CHANGE THIS IF YOU ALLOW MODS TO CHANGE MODS
+        setTimeInterval()
+    }
+    
 }
 
 protocol ModulationDelegateUI {

@@ -2,7 +2,9 @@ import AudioKit
 import Combine
 import SwiftUI
 
-public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, KnobModelModulationHandoff{
+public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
+    
+    
     
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
@@ -104,8 +106,20 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
 
     // Called when any KnobCompleteModel notices a change
     func modulationValueWasChanged(_ sender: KnobCompleteModel) {}
+    func handsFreeTextUpdate(_ sender: KnobCompleteModel) {}
     
-    var handoffDelegate:AudioEffectKnobHandoff?
+    var handoffDelegate:ParameterHandoff?
+    func KnobModelHandoff(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelHandoff(sender)
+    }
+    
+    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
+    handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
+    }
+    
+    
+    
+    /*
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
         handoffDelegate?.KnobModelAssignToModulation(sender)
     }
@@ -115,6 +129,8 @@ public class AudioEffect: Identifiable, ObservableObject, ModulationDelegate, Kn
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
         handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
     }
+    */
+    
 }
 
 public class TwoControlAudioEffect: AudioEffect{
@@ -125,8 +141,8 @@ public class TwoControlAudioEffect: AudioEffect{
     
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
-        control1.delegate = self
-        control2.delegate = self
+        //control1.delegate = self
+        //control2.delegate = self
         control1.handoffDelegate = self
         control2.handoffDelegate = self
     }
@@ -143,12 +159,23 @@ public class TwoControlAudioEffect: AudioEffect{
             setEffect1()
         }
         else if(sender === control2){
-            setControl2()
+            setEffect2()
+        }
+    }
+    
+    override func handsFreeTextUpdate(_ sender: KnobCompleteModel) {
+        if(sender === control1){
+            setDisplay1()
+        }
+        else if(sender === control2){
+            setDisplay2()
         }
     }
     
     func setControl1(){}
     func setControl2(){}
+    func setDisplay1(){}
+    func setDisplay2(){}
     func setEffect1(){}
     func setEffect2(){}
 }
@@ -214,36 +241,40 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
         control1.name = "Cutoff"
         control1.range = 20992
         control1.unit = " Hz"
-        control1.percentRotated = 0.0
+        control1.percentRotated = 1.0
         
         control2.name = "Resonance"
     }
     
     override func setControl1(){
         setEffect1()
-        
-        // This prevents modulation from interferring with display logic
-        let displayValue = 8 + pow(control1.percentRotated, 3) * control1.range
-        
-        if(displayValue > 1000){
-            control1.unit = " kHz"
-            control1.display = String(format: "%.2f", (8 + pow(control1.percentRotated, 3) * control1.range) / 1000) + control1.unit
-        }
-        else{
-            control1.unit = " Hz"
-            control1.display = String(format: "%.0f", 8 + pow(control1.percentRotated, 3) * control1.range) + control1.unit
-        }
+        setDisplay1()
     }
     override func setEffect1(){
          filter.cutoffFrequency = 8 + pow(control1.realModValue, 3) * control1.range
     }
+    override func setDisplay1(){
+         let displayValue = 8 + pow(control1.percentRotated, 3) * control1.range
+         
+         if(displayValue > 1000){
+             control1.unit = " kHz"
+             control1.display = String(format: "%.2f", (8 + pow(control1.percentRotated, 3) * control1.range) / 1000) + control1.unit
+         }
+         else{
+             control1.unit = " Hz"
+             control1.display = String(format: "%.0f", 8 + pow(control1.percentRotated, 3) * control1.range) + control1.unit
+         }
+    }
     
     override func setControl2(){
         setEffect2()
-        control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+        setDisplay2()
     }
     override func setEffect2(){
          filter.resonance = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
     }
 }
 
@@ -562,8 +593,10 @@ public class ListedEffect{
     }
 }
 
-protocol AudioEffectKnobHandoff{
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
+protocol ParameterHandoff{
+    //func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
+    //func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
+    func KnobModelHandoff(_ sender: KnobCompleteModel)
+    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
+    //func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

@@ -5,8 +5,9 @@ struct KnobComplete: View {
 
     @Binding var knobModel : KnobCompleteModel
     @Binding var knobModColor: Color
-    @Binding var modulationBeingAssigned: Bool
-    @Binding var modulationBeingDeleted: Bool
+    @Binding var specialSelection: SpecialSelection
+    //@Binding var modulationBeingAssigned: Bool
+    //@Binding var modulationBeingDeleted: Bool
     
     var sensitivity: Double = 0.01;
     
@@ -58,10 +59,14 @@ struct KnobComplete: View {
                     }
                 }
                 
-                KnobControl(percentRotated: self.$knobModel.percentRotated, realModValue: self.$knobModel.realModValue, knobModColor: self.$knobModColor)
+                KnobControl(percentRotated: self.$knobModel.percentRotated,
+                            realModValue: self.$knobModel.realModValue,
+                            knobModColor: self.$knobModColor,
+                            currentAngle: self.$knobModel.currentAngle)
                     .frame(width:geometry.size.width * 0.9)
                 
-                if(self.modulationBeingAssigned){
+                //if(self.modulationBeingAssigned){
+                if(self.specialSelection == .assignModulation){
                     VStack{
                         if(self.knobModel.modSelected){
                             ZStack{
@@ -111,7 +116,8 @@ struct KnobComplete: View {
                         }
                     }
                 }
-                if(self.modulationBeingDeleted){
+                //if(self.modulationBeingDeleted){
+                if(self.specialSelection == .deleteModulation){
                     VStack{
                         if(self.knobModel.modSelected){
                             ZStack{
@@ -128,14 +134,73 @@ struct KnobComplete: View {
                         }
                     }
                 }
-            }//ZStack            
+                if(self.specialSelection == .midiLearn){
+                    VStack{
+                        ZStack{
+                            Color(red: 1.0, green: 0.5, blue: 0.0, opacity: 0.2)
+                            .gesture(DragGesture(minimumDistance: 0)
+                                .onChanged{ value in
+                                    //self.knobModel.isMidiLearning = true
+                                    self.knobModel.handoffKnobModel()
+                            })
+                            
+                            if(self.knobModel.isMidiLearning){
+                                ZStack{
+                                    Circle()
+                                        .foregroundColor(Color(red: 1.0, green: 1.0, blue: 1.0, opacity: 0.9))
+                                    Image(systemName: "ear").resizable()
+                                        .padding(geometry.size.width * 0.05)
+                                }
+                                .frame(width:geometry.size.width * 0.3,
+                                       height: geometry.size.height * 0.3)
+                                .foregroundColor(Color.black)
+                            }
+                            else{
+                                Image(systemName: "link.circle.fill").resizable()
+                                .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
+                                .foregroundColor(Color.white)
+                            }
+                            
+                            if(self.knobModel.isMidiLearning){
+                                VStack{
+                                    HStack{
+                                        Spacer()
+                                        ZStack{
+                                        Rectangle()
+                                            .cornerRadius(geometry.size.width * 0.1)
+                                            
+                                            .frame(width:geometry.size.width * 0.25,
+                                                   height: geometry.size.height * 0.25)
+                                            .foregroundColor(Color(red: 1.0, green: 1.0, blue: 1.0, opacity: 0.9))
+                                            
+                                            
+                                            Text(self.knobModel.midiAssignment)
+                                                .bold()
+                                                .textStyle(ShrinkTextStyle())
+                                        }
+                                        
+                                        .frame(width:geometry.size.width * 0.25,
+                                               height: geometry.size.height * 0.25)
+                                    }
+                                    .padding(geometry.size.width * 0.02)
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                }
+            }//ZStack
         }
     }
 }
 
 struct KnobComplete_Previews: PreviewProvider {
     static var previews: some View {
-        KnobComplete(knobModel: .constant(KnobCompleteModel()), knobModColor: .constant(Color.yellow), modulationBeingAssigned: .constant(false), modulationBeingDeleted: .constant(true))
+        KnobComplete(knobModel: .constant(KnobCompleteModel()),
+                     knobModColor: .constant(Color.yellow),
+                     specialSelection: .constant(SpecialSelection.midiLearn))
+                     //modulationBeingAssigned: .constant(false),
+                     //modulationBeingDeleted: .constant(true)
         .previewLayout(.fixed(width: 400, height: 400))
     }
 }

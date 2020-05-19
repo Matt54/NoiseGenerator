@@ -3,6 +3,7 @@ import SwiftUI
 struct Knob: View {
     
     @Binding var percentRotated: Double
+    @Binding var currentAngle: Double; //frame width
     
     var startAngle: Double = -135.0;
     var endAngle: Double = 135.0;
@@ -10,7 +11,7 @@ struct Knob: View {
     var sensitivity: Double = 2.5;
     var range: Double = 270.0;
     
-    @State var currentAngle: Double = -135.0; //frame width
+    
     @State var h: CGFloat = 0; //frame height
     
     @State var deltaX: Double = 0.0
@@ -98,7 +99,8 @@ struct Knob: View {
 
 struct Knob_Previews: PreviewProvider {
     static var previews: some View {
-        Knob(percentRotated: .constant(0.5))
+        Knob(percentRotated: .constant(0.5),
+             currentAngle:  .constant(135))
         .previewLayout(.fixed(width: 400, height: 450))
     }
 }

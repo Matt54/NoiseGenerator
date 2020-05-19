@@ -4,8 +4,8 @@ struct PresetPicker: View {
     
     @Binding var oneControlEffect : OneControlWithPresetsAudioEffect
     @Binding var knobModColor: Color
-    @Binding var modulationBeingAssigned: Bool
-    
+    //@Binding var modulationBeingAssigned: Bool
+    @Binding var specialSelection: SpecialSelection
     
     @State var showPresets = false
     
@@ -92,8 +92,9 @@ struct PresetPicker: View {
                             .font(.system(size: 14))
                         KnobComplete(knobModel: self.$oneControlEffect.control1,
                                      knobModColor: self.$knobModColor,
-                                     modulationBeingAssigned: self.$modulationBeingAssigned,
-                                     modulationBeingDeleted: .constant(false))
+                                     specialSelection: self.$specialSelection)
+                                     //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                     //modulationBeingDeleted: .constant(false))
                             .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
                                    minHeight:geometry.size.width * 0.275,
                                    maxHeight: geometry.size.width * 0.275)
@@ -167,7 +168,8 @@ struct PresetPicker_Previews: PreviewProvider {
     static var previews: some View {
         PresetPicker(oneControlEffect: .constant(OneControlWithPresetsAudioEffect()),
                      knobModColor: .constant(Color.yellow),
-                     modulationBeingAssigned: .constant(false))
+                     specialSelection: .constant(SpecialSelection.none))
+                     //modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 280, height: 220))
     }
 }

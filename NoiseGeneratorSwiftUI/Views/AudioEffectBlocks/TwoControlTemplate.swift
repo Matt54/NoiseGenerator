@@ -3,8 +3,10 @@ import SwiftUI
 struct TwoControlTemplate: View {
     @Binding var twoControlAudioEffect: TwoControlAudioEffect
     @Binding var knobModColor: Color
-    @Binding var modulationBeingAssigned: Bool
-    @Binding var modulationBeingDeleted: Bool
+    @Binding var specialSelection: SpecialSelection
+    
+    //@Binding var modulationBeingAssigned: Bool
+    //@Binding var modulationBeingDeleted: Bool
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -48,8 +50,9 @@ struct TwoControlTemplate: View {
                                 // Knob Controller
                                 KnobComplete(knobModel: self.$twoControlAudioEffect.control1,
                                              knobModColor: self.$knobModColor,
-                                             modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             modulationBeingDeleted: self.$modulationBeingDeleted)
+                                             specialSelection: self.$specialSelection)
+                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             //modulationBeingDeleted: self.$modulationBeingDeleted)
                                     .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
                                     .padding(.vertical, geometry.size.height * 0.05)
                                     
@@ -75,8 +78,9 @@ struct TwoControlTemplate: View {
                                 // Knob Controller
                                 KnobComplete(knobModel: self.$twoControlAudioEffect.control2,
                                              knobModColor: self.$knobModColor,
-                                             modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             modulationBeingDeleted: self.$modulationBeingDeleted)
+                                             specialSelection: self.$specialSelection)
+                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             //modulationBeingDeleted: self.$modulationBeingDeleted)
                                     .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
                                     .padding(.vertical, geometry.size.height * 0.05)
                                 
@@ -129,8 +133,9 @@ struct TwoControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
         TwoControlTemplate(twoControlAudioEffect: .constant(TwoControlAudioEffect()),
                            knobModColor: .constant(Color.yellow),
-                           modulationBeingAssigned: .constant(false),
-                           modulationBeingDeleted: .constant(false))
+                           specialSelection: .constant(SpecialSelection.none))
+                           //modulationBeingAssigned: .constant(false),
+                           //modulationBeingDeleted: .constant(false))
         .previewLayout(.fixed(width: 500, height: 300))
     }
 }

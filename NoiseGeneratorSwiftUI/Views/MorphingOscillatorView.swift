@@ -15,8 +15,9 @@ struct MorphingOscillatorView: View {
     @Binding var morphingOscillator: MorphingOscillatorBank
     
     @Binding var knobModColor: Color
-    @Binding var modulationBeingAssigned: Bool
-    @Binding var modulationBeingDeleted: Bool
+    @Binding var specialSelection: SpecialSelection
+    //@Binding var modulationBeingAssigned: Bool
+    //@Binding var modulationBeingDeleted: Bool
     
     
     var body: some View {
@@ -36,8 +37,9 @@ struct MorphingOscillatorView: View {
                             
                             KnobComplete(knobModel: self.$morphingOscillator.control1,
                                          knobModColor: self.$knobModColor,
-                                         modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         modulationBeingDeleted: self.$modulationBeingDeleted)
+                                         specialSelection: self.$specialSelection)
+                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                         //modulationBeingDeleted: self.$modulationBeingDeleted)
                             .aspectRatio(1.0, contentMode: .fit)
                             .padding(geometry.size.height * 0.05)
                             .frame(height: geometry.size.height * 0.3)
@@ -73,8 +75,9 @@ struct MorphingOscillatorView_Previews: PreviewProvider {
     static var previews: some View {
         MorphingOscillatorView(morphingOscillator: .constant(MorphingOscillatorBank()),
                                knobModColor: .constant(Color.yellow),
-                               modulationBeingAssigned: .constant(false),
-                               modulationBeingDeleted: .constant(false))
+                               specialSelection: .constant(SpecialSelection.none))
+                               //modulationBeingAssigned: .constant(false),
+                               //modulationBeingDeleted: .constant(false))
         .previewLayout(.fixed(width: 250, height: 150))
     }
 }

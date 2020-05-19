@@ -70,8 +70,9 @@ struct AudioSourceView: View {
                         if(self.noise.oscillatorControlSources[i].isDisplayed){
                             MorphingOscillatorView(morphingOscillator: self.$noise.oscillatorControlSources[i],
                                                    knobModColor: self.$noise.knobModColor,
-                                                   modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                                                   modulationBeingDeleted: self.$noise.modulationBeingDeleted)
+                                                   specialSelection: self.$noise.specialSelection)
+                                                   //modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                                                   //modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                         }
                     }
                 }

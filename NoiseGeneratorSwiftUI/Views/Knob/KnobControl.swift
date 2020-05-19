@@ -5,6 +5,7 @@ struct KnobControl: View {
     @Binding var percentRotated: Double
     @Binding var realModValue: Double
     @Binding var knobModColor: Color
+    @Binding var currentAngle: Double
     
     var body: some View {
         GeometryReader{ geometry in
@@ -16,7 +17,7 @@ struct KnobControl: View {
                     center: CGPoint(x: geometry.size.width/2, y: geometry.size.height/2),
                     radius: geometry.size.width / 2 - geometry.size.width * 0.05 * 0.5)
                     .fill(self.knobModColor)
-                Knob(percentRotated: self.$percentRotated)
+                Knob(percentRotated: self.$percentRotated, currentAngle: self.$currentAngle)
                     .frame(width:geometry.size.width * 0.9)
                 }
             .frame(width:geometry.size.width)
@@ -54,6 +55,7 @@ struct KnobControl_Previews: PreviewProvider {
     static var previews: some View {
         KnobControl(percentRotated: .constant(0.5),
                     realModValue: .constant(0.5),
-                    knobModColor: .constant(Color.yellow))
+                    knobModColor: .constant(Color.yellow),
+                    currentAngle: .constant(0))
     }
 }

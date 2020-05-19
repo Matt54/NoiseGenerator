@@ -82,8 +82,9 @@ struct AudioEffectView: View {
                     if(self.noise.twoControlEffects[i].isDisplayed){
                         TwoControlTemplate(twoControlAudioEffect: self.$noise.twoControlEffects[i],
                                            knobModColor: self.$noise.knobModColor,
-                                           modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                                           modulationBeingDeleted: self.$noise.modulationBeingDeleted)
+                                           specialSelection: self.$noise.specialSelection)
+                                           //modulationBeingAssigned: self.$noise.modulationBeingAssigned,
+                                           //modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                     }
                 }
             }
@@ -94,7 +95,8 @@ struct AudioEffectView: View {
                     if(self.noise.fourControlEffects[i].isDisplayed){
                         FourControlTemplate(fourControlEffect: self.$noise.fourControlEffects[i],
                                             knobModColor: self.$noise.knobModColor,
-                                            modulationBeingAssigned: self.$noise.modulationBeingAssigned)
+                                            specialSelection: self.$noise.specialSelection)
+                                            //modulationBeingAssigned: self.$noise.modulationBeingAssigned)
                     }
                 }
             }
@@ -105,7 +107,8 @@ struct AudioEffectView: View {
                     if(self.noise.oneControlWithPresetsEffects[i].isDisplayed){
                         PresetPicker(oneControlEffect: self.$noise.oneControlWithPresetsEffects[i],
                                      knobModColor: self.$noise.knobModColor,
-                                     modulationBeingAssigned: self.$noise.modulationBeingAssigned)
+                                     specialSelection: self.$noise.specialSelection)
+                                    // modulationBeingAssigned: self.$noise.modulationBeingAssigned)
                     }
                 }
             }

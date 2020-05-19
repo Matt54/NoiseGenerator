@@ -4,7 +4,8 @@ struct FourControlTemplate: View {
     
     @Binding var fourControlEffect : FourControlAudioEffect
     @Binding var knobModColor: Color
-    @Binding var modulationBeingAssigned: Bool
+    //@Binding var modulationBeingAssigned: Bool
+    @Binding var specialSelection: SpecialSelection
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -28,8 +29,9 @@ struct FourControlTemplate: View {
                                 .font(.system(size: 14))
                                 KnobComplete(knobModel: self.$fourControlEffect.control1,
                                              knobModColor: self.$knobModColor,
-                                             modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             modulationBeingDeleted: .constant(false))
+                                             specialSelection: self.$specialSelection)
+                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             //modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,
                                        maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
@@ -48,8 +50,9 @@ struct FourControlTemplate: View {
                                 .font(.system(size: 14))
                             KnobComplete(knobModel: self.$fourControlEffect.control2,
                                          knobModColor: self.$knobModColor,
-                                         modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         modulationBeingDeleted: .constant(false))
+                                         specialSelection: self.$specialSelection)
+                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                         //modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,
                                        maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
@@ -68,8 +71,9 @@ struct FourControlTemplate: View {
                                 .font(.system(size: 14))
                             KnobComplete(knobModel: self.$fourControlEffect.control3,
                                          knobModColor: self.$knobModColor,
-                                         modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         modulationBeingDeleted: .constant(false))
+                                         specialSelection: self.$specialSelection)
+                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                         //modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,
                                        maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
@@ -89,8 +93,9 @@ struct FourControlTemplate: View {
                                 .font(.system(size: 14))
                                 KnobComplete(knobModel: self.$fourControlEffect.control4,
                                              knobModColor: self.$knobModColor,
-                                             modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             modulationBeingDeleted: .constant(false))
+                                             specialSelection: self.$specialSelection)
+                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
+                                             //modulationBeingDeleted: .constant(false))
                                 .frame(minWidth:geometry.size.width * 0.175,
                                        maxWidth:geometry.size.width * 0.175,
                                        minHeight:geometry.size.width * 0.175,
@@ -162,7 +167,8 @@ struct FourControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
         FourControlTemplate(fourControlEffect: .constant(FourControlAudioEffect()),
                             knobModColor: .constant(Color.yellow),
-                            modulationBeingAssigned: .constant(false))
+                            specialSelection: .constant(SpecialSelection.none))
+                            //modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 380, height: 170))
     }
 }

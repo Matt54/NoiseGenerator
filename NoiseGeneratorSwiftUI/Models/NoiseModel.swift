@@ -4,7 +4,7 @@ import Combine
 import SwiftUI
 import Foundation
 
-final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnobHandoff, AKMIDIListener{
+final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandoff, AKMIDIListener{
     
     // Single shared data model
     static let shared = NoiseModel()
@@ -84,6 +84,8 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     @Published var modulationSelected: Bool = true
     
     // ON - modulation can be assigned and range can be adjusted
+    
+    /*
     @Published var modulationBeingAssigned: Bool = false{
         willSet{
             if(modulationBeingDeleted){
@@ -100,16 +102,23 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
             }
         }
     }
+    */
+    
+    // Updates display for modulation apply, delete, and midi learn
+    @Published var specialSelection : SpecialSelection = .none
+    
+    //For MIDI learn
+    var selectedKnob : KnobCompleteModel?
     
     // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
-    
-    @Published var firstOctave: Int = 2
-    
-    
-    
-    //var bank: AKOscillatorBank!
+    @Published var keyboardViewController : KeyBoardViewController
+    @Published var firstOctave: Int = 2{
+        didSet{
+            keyboardViewController.keyboardView.firstOctave = firstOctave
+        }
+    }
     
     enum MidiEventType: String {
         case
@@ -128,19 +137,28 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
+    var midiLearnMappings : [MIDILearnMapping] = []
+    
+    var limiter = AKPeakLimiter()
+    
     init(){
         
-        //bank = AKOscillatorBank(waveform: AKTable(.sawtooth))
-        //bank.setOutput(to: inputMixer)
+        keyboardViewController = KeyBoardViewController()
+        keyboardViewController.keyboardView.delegate = self
         
         masterVolumeControl.percentRotated = 0.7
         
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
         
+        
+        
         AKSettings.bufferLength = .medium
         AKSettings.audioInputEnabled = true
         AKSettings.defaultToSpeaker = true
+        
+        //AKSettings.bufferLength = .longest
+        //AKSettings.BufferLength.
         
         // Allow audio to play while the iOS device is muted.
         AKSettings.playbackWhileMuted = true
@@ -154,15 +172,19 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         getInputDevicesAvailable()
         
         createMicrophoneInput(id: 1)
-
+        
         //create a morphing oscillator to play with
         createNewSource(sourceNumber: 2)
+        
+        //create a noise oscillator to play with
+        //createNewSource(sourceNumber: 1)
         
         connectSourceToEffectChain()
         
         setupOutputChain()
         
-        AudioKit.output = outputAmplitudeTracker //mic //outputAmplitudeTracker//outputMixer
+        outputAmplitudeTracker.setOutput(to: limiter)
+        AudioKit.output = limiter //mic //outputAmplitudeTracker//outputMixer
 
         //START AUDIOKIT
         do{
@@ -174,9 +196,16 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         
         //START AUDIOBUS
         Audiobus.start()
-        
-        
+
         createNewModulation()
+        
+        /*
+        let voice = Voice(note: MIDINoteNumber(clamping: 80), velocity: 80, channel: 0, waveforms: [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)])
+        voice.oscillator.setOutput(to: outputAmplitudeTracker)
+        voice.setADSR(attackDuration: 0.1, decayDuration: 0.1, sustainLevel: 1.0, releaseDuration: 0.1)
+        voice.oscillator.index = 1.0
+        voice.play()
+        */
         
         midi.createVirtualInputPort(98909, name: "AKMidiReceiver")
         midi.createVirtualOutputPort(97789, name: "AKMidiReceiver")
@@ -184,7 +213,53 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         midi.openOutput()
         midi.addListener(self)
         
+        
+        
+        //connectSourceToEffectChain()
+        
+        //setupOutputChain()
+        
         //create a noise generator to play with
+        //createNewSource(sourceNumber: 1)
+        
+        //connectSourceToEffectChain()
+        //setupOutputChain()
+        
+        //connectSourceToEffectChain()
+        //inputMixer.setOutput(to: allControlEffects[0].input)
+        //allControlEffects[0].input.connect(input: inputMixer)
+        
+        //set the output of the last effect to our output mixer
+        //allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
+        
+        //inputMixer.disconnectOutput()
+        //inputMixer.setOutput(to: allControlEffects[0].input)
+        //connectSourceToEffectChain()
+        //setupOutputChain()
+        
+        /*
+        let voice = Voice(note: MIDINoteNumber(clamping: 80), velocity: 80, channel: 0, waveforms: [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)])
+        voice.oscillator.setOutput(to: limiter)
+        voice.setADSR(attackDuration: 0.1, decayDuration: 0.1, sustainLevel: 1.0, releaseDuration: 0.1)
+        voice.oscillator.index = 1.0
+        voice.play()
+        */
+        
+        //connectSourceToEffectChain()
+        //setupOutputChain()
+        
+        //create a tremolo to play with
+        //createNewEffect(pos: allControlEffects.count, effectNumber: 2)
+        
+        //connectSourceToEffectChain()
+        //oscillatorControlSources[0].output.setOutput(to: limiter)
+        
+        //oscillatorControlSources[0].setupInputRouting()
+        //setupSourceAudioChain()
+        //oscillatorControlSources[0].setupAudioRouting()
+        //setupSourceAudioChain()
+        //oscillatorControlSources[0].play(note: MIDINoteNumber(clamping: 80), velocity: 80, channel: 0)
+        
         //createNewSource(sourceNumber: 1)
     }
     
@@ -216,18 +291,33 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
     }
     
+    
     func setupSourceAudioChain(){
         
+        inputMixer.disconnectOutput()
+        inputMixer.disconnectInput()
+        
+        /*
         for i in 0..<allControlSources.count {
             allControlSources[i].output.disconnectOutput()
         }
-        
+        */
         
         // Route each audio effect to the next in line
         for i in 0..<allControlSources.count {
             allControlSources[i].output.setOutput(to: inputMixer)
         }
         
+        fixInternalAudioRouting()
+        
+        
+    }
+    
+    func fixInternalAudioRouting(){
+        for source in oscillatorControlSources{
+            source.setupInputRouting()
+            //source.setupAudioRouting()
+        }
     }
     
     func setExternalSource(){
@@ -244,19 +334,20 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         // Disconnect input mixer from all outputs
         // if there are audio effects, connect to the first in chain
         // else, connect to the output mixer
-        inputMixer.disconnectOutput()
+        setupSourceAudioChain()
+        
+        
         if(allControlEffects.count > 0){
-            inputMixer.connect(to: allControlEffects[0].input)
+            //inputMixer.connect(to: allControlEffects[0].input)
+            inputMixer.setOutput(to: allControlEffects[0].input)
         }
         else{
-            inputMixer.connect(to: outputMixer)
+            //inputMixer.connect(to: outputMixer)
+            inputMixer.setOutput(to: outputMixer)
         }
     }
     
     func setupEffectAudioChain(){
-        
-        // Connect input
-        connectSourceToEffectChain()
         
         // Break all current connections
         for i in 0..<allControlEffects.count {
@@ -270,6 +361,10 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         
         //set the output of the last effect to our output mixer
         allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
+        
+        
+        // Connect input
+        connectSourceToEffectChain()
     }
 
     
@@ -312,9 +407,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         let audioSource = getSourceType(sourceNumber: sourceNumber)
         addSourceToControlArray(source: audioSource)
         allControlSources.append(audioSource)
-        setupSourceAudioChain()
+        //setupSourceAudioChain()
+        connectSourceToEffectChain()
         audioSource.handoffDelegate = self
         //audioSource.handoffDelegate = self
+        
     }
     
     func getSourceType(sourceNumber: Int) -> AudioSource{
@@ -382,6 +479,10 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         allControlEffects.append(audioEffect)
         setupEffectAudioChain()
         audioEffect.handoffDelegate = self
+        
+        //setupSourceAudioChain()
+        //connectSourceToEffectChain()
+        //fixInternalAudioRouting()
     }
     
     func getEffectType(pos: Int, effectNumber: Int) -> AudioEffect{
@@ -421,6 +522,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     func createNewModulation(){
         let modulation = Modulation(tempo: tempo)
         modulation.delegate = self
+        modulation.handoffDelegate = self
         modulations.append(modulation)
     }
     
@@ -460,11 +562,60 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         }
         else{
             knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
-            self.modulationBeingAssigned = false
+            //self.modulationBeingAssigned = false
+            
+            if( (self.specialSelection == .assignModulation) || (self.specialSelection == .deleteModulation) ){
+                self.specialSelection = .none
+            }
         }
         self.objectWillChange.send()
     }
     
+    func KnobModelHandoff(_ sender: KnobCompleteModel) {
+        if(specialSelection == .assignModulation){
+            print("we hit noise modulation assignment")
+            for modulation in modulations{
+                if(modulation.isDisplayed){
+                    modulation.addModulationTarget(newTarget: sender)
+                    print("knob assigned in noise")
+                }
+            }
+        }
+        else if(specialSelection == .deleteModulation){
+            print("we hit noise modulation delete")
+            for modulation in modulations{
+                if(modulation.isDisplayed){
+                    modulation.removeModulationTarget(removeTarget: sender)
+                    print("knob removed in noise")
+                }
+            }
+            sender.modSelected = false
+            sender.modulationValue = sender.percentRotated
+        }
+        else if(specialSelection == .midiLearn){
+            print("we hit noise midi learn")
+            
+            if selectedKnob != nil {
+                selectedKnob?.isMidiLearning = false
+            }
+            
+            selectedKnob = sender
+            selectedKnob?.isMidiLearning = true
+        }
+    }
+    
+    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
+        if(specialSelection == .assignModulation){
+            for modulation in modulations{
+                if(modulation.isDisplayed){
+                    print("Range Should Adjust by " + String(adjust))
+                    modulation.adjustModulationRange(target: sender, val: adjust)
+                }
+            }
+        }
+    }
+    
+    /*
     func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
         //print("we hit noise")
         for modulation in modulations{
@@ -485,7 +636,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         sender.modSelected = false
         sender.modulationValue = sender.percentRotated
     }
-    
     func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
         for modulation in modulations{
             if(modulation.isDisplayed){
@@ -494,6 +644,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
             }
         }
     }
+    */
     
     // All Effects that can be added
     @Published var listedEffects = [
@@ -540,21 +691,24 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
 
-    func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity){
-        print("got something!")
-        print(note)
-        print(velocity)
-        //bank.play(noteNumber: note, velocity: velocity)
-        
+    
+    
+    func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         for oscillator in oscillatorControlSources{
-            oscillator.play(note: note, velocity: velocity)
+            oscillator.play(note: note, velocity: velocity, channel: channel)
+            
+        }
+    }
+    
+    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
+        print("handlePitch in Noise")
+        for oscillator in oscillatorControlSources{
+            print("inside the for loop")
+            oscillator.handlePitchBend(pitchWheelValue: pitchWheelValue, channel: channel)
         }
     }
     
     // MARK: MIDI received
-    
-    @Published var midiExternalNotesOn: [MIDINoteNumber] = []
-    //@Published var midiExternalNotesOff: [MIDINoteNumber] = []
 
     // Note On Number + Velocity + MIDI Channel
     func receivedMIDINoteOn(noteNumber: MIDINoteNumber,
@@ -562,6 +716,12 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
                             channel: MIDIChannel,
                             portID: MIDIUniqueID? = nil,
                             offset: MIDITimeStamp = 0) {
+        print("")
+        print("Got Note On!")
+        print("Note Number: " + String(noteNumber))
+        print("Velocity: " + String(velocity))
+        print("channel: " + String(channel))
+        
         midiTypeReceived = .noteNumber
         let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  noteOn: \(noteNumber)  velocity: \(velocity)"
         print(outputMIDIMessage)
@@ -569,57 +729,130 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
         playNote(note: noteNumber, velocity: velocity, channel: channel)
         
         DispatchQueue.main.async {
-            self.midiExternalNotesOn.append(noteNumber)
+            self.keyboardViewController.keyboardView.programmaticNoteOn(noteNumber)
         }
     }
 
     // Note Off Number + Velocity + MIDI Channel
     func receivedMIDINoteOff(noteNumber: MIDINoteNumber,
                              velocity: MIDIVelocity,
-                            channel: MIDIChannel,
-                            portID: MIDIUniqueID? = nil,
-                            offset: MIDITimeStamp = 0) {
+                             channel: MIDIChannel,
+                             portID: MIDIUniqueID? = nil,
+                             offset: MIDITimeStamp = 0) {
+        print("")
+        print("Got Note Off!")
+        print("Note Number: " + String(noteNumber))
+        print("Velocity: " + String(velocity))
+        print("channel: " + String(channel))
+        
         midiTypeReceived = .noteNumber
-        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  noteOff: \(noteNumber)  velocity: \(velocity)"
-        print(outputMIDIMessage)
         midiSignalReceived = false
+        
         stopNote(note: noteNumber, channel: channel)
         DispatchQueue.main.async {
-            self.midiExternalNotesOn = self.midiExternalNotesOn.filter{$0 != noteNumber}
+            self.keyboardViewController.keyboardView.programmaticNoteOff(noteNumber)
         }
-        /*
-        DispatchQueue.main.async {
-            self.midiExternalNotesOff.append(noteNumber)
-        }
-        */
     }
-    
-    //midiExternalNotesOn = midiExternalNotesOn.filter{$0 != noteNumber}
-    //midiExternalNotesOff = midiExternalNotesOff.filter{$0 != noteNumber}
 
     // Controller Number + Value + MIDI Channel
-    func receivedMIDIController(_ controller: MIDIByte, value: MIDIByte, channel: MIDIChannel) {
-        // If the controller value reaches 127 or above, then trigger the `demoSampler` note.
-        // If the controller value is less, then stop the note.
-        // This creates an on/off type of "momentary" MIDI messaging.
+    func receivedMIDIController(_ controller: MIDIByte, value: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp) {
+        
+        /*
         if value >= 127 {
             playNote(note: 30 + controller, velocity: 80, channel: channel)
         } else {
             stopNote(note: 30 + controller, channel: channel)
         }
+        */
+        
+        print("")
+        print("Got CC!")
+        print("Controller: " + String(controller))
+        print("Value: " + String(value))
+        print("channel: " + String(channel))
+        
         midiTypeReceived = .continuousControl
-        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  controller: \(controller)  value: \(value)"
-        print(outputMIDIMessage)
         midiSignalReceived = true
+        
+        if(specialSelection == .midiLearn){
+            
+            guard let selectedKnob = selectedKnob else {
+              return
+            }
+            
+            var knobPreviouslyMapped = false
+            
+            // Check if this knob is already assigned to anything
+            for midiLearnMapping in midiLearnMappings{
+                if(selectedKnob === midiLearnMapping.control){
+                    knobPreviouslyMapped = true
+                    midiLearnMapping.ccNumber = controller
+                    midiLearnMapping.channel = channel
+                    break
+                }
+            }
+            
+            if(!knobPreviouslyMapped){
+                let newMapping = MIDILearnMapping(control: selectedKnob, ccNumber: controller, channel: channel)
+                selectedKnob.midiAssignment = String(newMapping.ccNumber)
+                midiLearnMappings.append(newMapping)
+            }
+            
+        }
+        else{
+            
+            // adjust anything assigned to that cc number
+            for midiLearnMapping in midiLearnMappings{
+                if(midiLearnMapping.ccNumber == controller){
+                    midiLearnMapping.control.handfreeKnobRotate(Double(value) * (1.0 / 127.0))
+                }
+            }
+            
+        }
+    }
+    
+    func receivedMIDIPitchWheel(_ pitchWheelValue: MIDIWord, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
+         /*
+         pitchWheelValue: MIDI Pitch Wheel Value (0-16383) [0 = max down, 8_192 = no bend, 16_383 = max up]
+         channel: MIDI Channel (1-16)
+         portID: MIDI Unique Port ID
+         offset: the offset in samples that this event occurs in the buffer
+         */
+        
+        print("")
+        print("Got Pitch Wheel!")
+        print("Pitch Wheel Value: " + String(pitchWheelValue))
+        print("channel: " + String(channel))
+        
+        handlePitchBend(pitchWheelValue: pitchWheelValue, channel: channel)
+    }
+    
+    func receivedMIDISystemCommand(_ data: [MIDIByte], portID: MIDIUniqueID?, offset: MIDITimeStamp){
+        /*
+         Receive a MIDI system command (such as clock, sysex, etc)
+         data: Array of integers
+         portID: MIDI Unique Port ID
+         offset: the offset in samples that this event occurs in the buffer
+         */
+        
+        print("")
+        print("Got System Command!")
+        for byte in data{
+            print("Byte: " + String(byte))
+        }
     }
 
     // Program Change Number + MIDI Channel
-    func receivedMIDIProgramChange(_ program: MIDIByte, channel: MIDIChannel) {
-        // Trigger the `demoSampler` note and release it after half a second (0.5), since program changes don't have a note off release.
-        //triggerSamplerNote(program, channel: channel)
+    func receivedMIDIProgramChange(_ program: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp) {
+        
+        print("")
+        print("Got Program Change!")
+        print("Program: " + String(program))
+        print("channel: " + String(channel))
+        
         midiTypeReceived = .programChange
-        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  programChange: \(program)"
-        print(outputMIDIMessage)
+        //let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  programChange: \(program)"
+        //print(outputMIDIMessage)
         midiSignalReceived = true
     }
 
@@ -637,7 +870,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
 
     
     func playNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) {
-        handleMidiNote(note: note, velocity: velocity)
+        handleMidiNote(note: note, velocity: velocity, channel: channel)
         numberOfNotesOn = numberOfNotesOn + 1
         if(!isModulationTriggered){
             isModulationTriggered = true
@@ -645,14 +878,23 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, AudioEffectKnob
     }
 
     func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
-        handleMidiNote(note: note, velocity: 0)
+        handleMidiNote(note: note, velocity: 0, channel: channel)
         numberOfNotesOn = numberOfNotesOn - 1
         if(numberOfNotesOn == 0){
             isModulationTriggered = false
         }
     }
-    
-    
+}
+
+public class MIDILearnMapping{
+    var control: KnobCompleteModel
+    var ccNumber: MIDIByte
+    var channel: MIDIChannel
+    init(control: KnobCompleteModel, ccNumber: MIDIByte, channel: MIDIChannel){
+        self.control = control
+        self.ccNumber = ccNumber
+        self.channel = channel
+    }
 }
 
 // Keyboard protocol conformance
@@ -660,20 +902,23 @@ extension NoiseModel: AKKeyboardDelegate {
     
     func noteOn(note: MIDINoteNumber) {
         playNote(note: note, velocity: 80, channel: MIDIChannel())
-      //bank.play(noteNumber: note, velocity: 80)
-        //handleMidiNote(note: note, velocity: 80)
     }
       
     func noteOff(note: MIDINoteNumber) {
         stopNote(note: note, channel: MIDIChannel())
-      //bank.stop(noteNumber: note)
-        //handleMidiNote(note: note, velocity: 0)
     }
     
 }
 
 public enum SelectedScreen{
     case main, addEffect, addMicrophoneInput, adjustPattern, bluetoothMIDI
+    var name: String {
+        return "\(self)"
+    }
+}
+
+public enum SpecialSelection{
+    case none, assignModulation, deleteModulation, midiLearn
     var name: String {
         return "\(self)"
     }

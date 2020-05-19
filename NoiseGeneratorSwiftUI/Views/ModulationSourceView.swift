@@ -88,8 +88,9 @@ struct ModulationSourceView: View {
                         if(self.noise.modulations[i].isDisplayed){
                         ModulationView(modulation: self.$noise.modulations[i],
                           knobModColor: self.$noise.knobModColor,
-                          isConnectingModulation: self.$noise.modulationBeingAssigned,
-                          isDeletingModulation: self.$noise.modulationBeingDeleted,
+                          specialSelection: self.$noise.specialSelection,
+                          //isConnectingModulation: self.$noise.modulationBeingAssigned,
+                          //isDeletingModulation: self.$noise.modulationBeingDeleted,
                           pattern: self.$noise.modulations[i].pattern,
                           screen: self.$noise.selectedScreen)
                         }
