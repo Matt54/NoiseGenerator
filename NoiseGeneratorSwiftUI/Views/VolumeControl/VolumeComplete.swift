@@ -7,6 +7,8 @@ struct VolumeComplete: View {
     @Binding var numberOfRects: Int
     @State var title: String
     
+    //
+    
     var body: some View {
         GeometryReader { geometry in
             Group{
