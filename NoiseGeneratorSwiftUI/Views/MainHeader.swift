@@ -56,10 +56,7 @@ struct MainHeader: View {
                     //Bluetooth button
                     Button(action: {
                         self.noise.selectedScreen = .bluetoothMIDI
-                    }){/*
-                            Image(systemName: "b.circle.fill")
-                                .resizable()
-                        */
+                    }){
                         ZStack{
                             Rectangle()
                                 .fill(LinearGradient(Color.darkEnd, Color.darkStart))
@@ -84,10 +81,7 @@ struct MainHeader: View {
                             self.noise.specialSelection = .midiLearn
                         }
                         
-                    }){/*
-                            Image(systemName: "b.circle.fill")
-                                .resizable()
-                        */
+                    }){
                         ZStack{
                             Rectangle()
                                 .fill(LinearGradient(Color.darkEnd, Color.darkStart))
@@ -107,14 +101,6 @@ struct MainHeader: View {
                     
                     Spacer()
                     
-                /*
-                    BluetoothMidiButton()
-                        .frame(width: geometry.size.width * (1/10),
-                               height: geometry.size.height * 0.7)
-                    
-                    
-                    Spacer()
- */
                     
                     ZStack{
                         //Rectangle()
@@ -160,8 +146,6 @@ struct MainHeader: View {
                     KnobComplete(knobModel: self.$noise.masterVolumeControl,
                                  knobModColor: self.$noise.knobModColor,
                                  specialSelection: self.$noise.specialSelection)
-                    //modulationBeingAssigned: self.$noise.modulationBeingAssigned,
-                    //modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                     .padding(geometry.size.height * 0.1)
                     .aspectRatio(1.0, contentMode: .fit)
 
@@ -186,22 +170,3 @@ struct MainHeader_Previews: PreviewProvider {
         .previewLayout(.fixed(width: 1500, height: 100))
     }
 }
-
-/*
-struct BluetoothMidiButton: UIViewRepresentable {
-    typealias UIViewType = AKBluetoothMIDIButton
-
-    func makeUIView(context: UIViewRepresentableContext<BluetoothMidiButton>) -> AKBluetoothMIDIButton {
-        let view = AKBluetoothMIDIButton()
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        view.backgroundColor = .black
-        return view
-    }
-    func updateUIView(_ uiView: AKBluetoothMIDIButton, context: UIViewRepresentableContext<BluetoothMidiButton>) {
-        uiView.frame = CGRect(x:0, y:0, width: uiView.intrinsicContentSize.width, height: uiView.intrinsicContentSize.height)
-        uiView.sizeToFit()
-    }
-
-}
- */

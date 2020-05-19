@@ -33,7 +33,8 @@ struct SlidingTriangle: View {
 
 struct SlidingTriangle_Previews: PreviewProvider {
     static var previews: some View {
-        SlidingTriangle(amplitudeControl: .constant(0.5), isRightHanded: .constant(false))
+        SlidingTriangle(amplitudeControl: .constant(0.5),
+                        isRightHanded: .constant(false))
             .previewLayout(.fixed(width: 30, height: 400))
     }
 }

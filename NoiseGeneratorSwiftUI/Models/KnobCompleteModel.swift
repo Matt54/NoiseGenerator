@@ -110,12 +110,6 @@ public class KnobCompleteModel : ObservableObject{
     
 }
 
-/*
-protocol ModulationDelegate {
-    
-}
-*/
-
 protocol KnobModelHandoff{
     func KnobModelHandoff(_ sender: KnobCompleteModel)
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)

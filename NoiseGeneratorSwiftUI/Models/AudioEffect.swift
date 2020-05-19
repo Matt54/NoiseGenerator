@@ -15,25 +15,8 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     public var id: Int//UUID = UUID()
     var effect: AKInput
     
-    @Published var inputVolumeMixer = VolumeMixer()
+    @Published var inputVolumeMixer = VolumeMixer(isRightHanded: false)
     @Published var outputVolumeMixer = VolumeMixer()
-    
-    /*
-    @Published var inputAmplitude = 1.0
-    @Published var outputAmplitude = 1.0
-    
-    @Published var inputVolume = 1.0{
-        didSet { input.volume = inputVolume }
-    }
-    @Published var outputVolume = 1.0{
-        didSet { outputMixer.volume = outputVolume }
-    }
-    
-    var input = AKMixer()
-    var inputTracker = AKAmplitudeTracker()
-    var outputMixer = AKMixer()
-    var output = AKAmplitudeTracker()
-    */
     
     @Published var isBypassed = false{
         didSet{
@@ -70,24 +53,11 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     }
 
     func setupAudioRouting(){
-        /*
-        inputTracker.mode = .peak
-        output.mode = .peak
-        
-        input.setOutput(to: inputTracker)
-        inputTracker.setOutput(to: effect)
-        effect.setOutput(to: outputMixer)
-        outputMixer.setOutput(to: output)
-        */
-        
         inputVolumeMixer.output.setOutput(to: effect)
         effect.setOutput(to: outputVolumeMixer.output)
     }
     
     func readAmplitudes(){
-        //inputAmplitude = inputTracker.amplitude
-        //outputAmplitude = output.amplitude
-        
         inputVolumeMixer.updateAmplitude()
         outputVolumeMixer.updateAmplitude()
     }
@@ -128,20 +98,6 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
     
-    
-    
-    /*
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelAssignToModulation(sender)
-    }
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelRemoveModulation(sender)
-    }
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
-        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
-    }
-    */
-    
 }
 
 public class TwoControlAudioEffect: AudioEffect{
@@ -152,8 +108,6 @@ public class TwoControlAudioEffect: AudioEffect{
     
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
-        //control1.delegate = self
-        //control2.delegate = self
         control1.handoffDelegate = self
         control2.handoffDelegate = self
     }
@@ -605,9 +559,6 @@ public class ListedEffect{
 }
 
 protocol ParameterHandoff{
-    //func KnobModelAssignToModulation(_ sender: KnobCompleteModel)
-    //func KnobModelRemoveModulation(_ sender: KnobCompleteModel)
     func KnobModelHandoff(_ sender: KnobCompleteModel)
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
-    //func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double)
 }

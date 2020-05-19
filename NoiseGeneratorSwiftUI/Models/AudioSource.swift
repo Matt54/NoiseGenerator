@@ -4,8 +4,6 @@ import SwiftUI
 
 public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
-    
-    
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
@@ -17,16 +15,6 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     static var numberOfInputs = 0
     
     @Published var volumeMixer = VolumeMixer()
-    
-    // All audio sources have outputs, some have inputs
-    /*
-    @Published var outputAmplitude = 1.0
-    @Published var outputVolume = 1.0{
-        didSet { outputMixer.volume = outputVolume }
-    }
-    @Published var outputMixer = AKMixer()
-    @Published var output = AKAmplitudeTracker()
-    */
     
     var toggleControls: AKToggleable
     
@@ -53,15 +41,7 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
         AudioEffect.numberOfEffects = AudioEffect.numberOfEffects + 1
         id = AudioEffect.numberOfEffects
         setBypass()
-        //setupAudioRouting()
     }
-    
-    /*
-    func setupAudioRouting(){
-        output.mode = .peak
-        outputMixer.setOutput(to: output)
-    }
-    */
     
     func setBypass(){
         if(isBypassed){
@@ -82,8 +62,6 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     func readAmplitudes(){
-        //inputAmplitude = inputTracker.amplitude
-        //outputAmplitude = output.amplitude
         volumeMixer.updateAmplitude()
         //print(outputAmplitude)
     }
@@ -105,18 +83,6 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
     handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
-    
-    /*
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelAssignToModulation(sender)
-    }
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelRemoveModulation(sender)
-    }
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
-        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
-    }
-    */
     
 }
 

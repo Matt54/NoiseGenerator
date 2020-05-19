@@ -24,10 +24,18 @@ public class VolumeMixer : ObservableObject{
     init(){
         amplitude = 0
         volumeControl = 1.0
-        isRightHanded = true
-        numberOfRects = 20
+        numberOfRects = 10
         name = "OUT"
-        
+        isRightHanded = true
+        setupAudioRouting()
+    }
+    
+    init(isRightHanded: Bool){
+        amplitude = 0
+        volumeControl = 1.0
+        numberOfRects = 10
+        name = "OUT"
+        self.isRightHanded = isRightHanded
         setupAudioRouting()
     }
     

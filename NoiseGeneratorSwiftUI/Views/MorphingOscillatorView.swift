@@ -16,9 +16,6 @@ struct MorphingOscillatorView: View {
     
     @Binding var knobModColor: Color
     @Binding var specialSelection: SpecialSelection
-    //@Binding var modulationBeingAssigned: Bool
-    //@Binding var modulationBeingDeleted: Bool
-    
     
     var body: some View {
         GeometryReader
@@ -30,7 +27,6 @@ struct MorphingOscillatorView: View {
                     HStack(spacing: 0){
                         
                         VStack(spacing: 0){
-                            //OutputPlotView(nodeToPlot: self.morphingOscillator.oscillatorMixer)
                             Rectangle()
                                 .border(Color.black, width: geometryOut.size.height * 0.01)
                                 .padding(geometry.size.height * 0.05)
@@ -38,8 +34,6 @@ struct MorphingOscillatorView: View {
                             KnobComplete(knobModel: self.$morphingOscillator.control1,
                                          knobModColor: self.$knobModColor,
                                          specialSelection: self.$specialSelection)
-                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         //modulationBeingDeleted: self.$modulationBeingDeleted)
                             .aspectRatio(1.0, contentMode: .fit)
                             .padding(geometry.size.height * 0.05)
                             .frame(height: geometry.size.height * 0.3)
@@ -50,11 +44,6 @@ struct MorphingOscillatorView: View {
                         
                         
                         VolumeComplete(volumeMixer: self.$morphingOscillator.volumeMixer)
-                        /*(amplitude: self.$morphingOscillator.volumeMixer.amplitude,
-                                       volumeControl: self.$morphingOscillator.volumeMixer.volumeControl,
-                                       isRightHanded: self.$morphingOscillator.volumeMixer.isRightHanded,
-                                       numberOfRects: self.$morphingOscillator.volumeMixer.numberOfRects,
-                                       title: self.morphingOscillator.volumeMixer.name)*/
                             .padding(geometry.size.width * 0.05)
                             .frame(width: geometry.size.width * 0.2,
                                    height:geometry.size.height * 0.85)
@@ -77,13 +66,9 @@ struct MorphingOscillatorView_Previews: PreviewProvider {
         MorphingOscillatorView(morphingOscillator: .constant(MorphingOscillatorBank()),
                                knobModColor: .constant(Color.yellow),
                                specialSelection: .constant(SpecialSelection.none))
-                               //modulationBeingAssigned: .constant(false),
-                               //modulationBeingDeleted: .constant(false))
         .previewLayout(.fixed(width: 250, height: 150))
     }
 }
-
-
 
 
 struct OutputPlotView: UIViewRepresentable {

@@ -4,9 +4,6 @@ struct TwoControlTemplate: View {
     @Binding var twoControlAudioEffect: TwoControlAudioEffect
     @Binding var knobModColor: Color
     @Binding var specialSelection: SpecialSelection
-    
-    //@Binding var modulationBeingAssigned: Bool
-    //@Binding var modulationBeingDeleted: Bool
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
@@ -25,11 +22,6 @@ struct TwoControlTemplate: View {
                         //Input Volume
                         VStack{
                             VolumeComplete(volumeMixer: self.$twoControlAudioEffect.inputVolumeMixer)
-                                /*amplitude: self.$twoControlAudioEffect.inputVolumeMixer.amplitude,
-                                           volumeControl: self.$twoControlAudioEffect.inputVolumeMixer.volumeControl,
-                                           isRightHanded: self.$twoControlAudioEffect.inputVolumeMixer.isRightHanded,
-                                           numberOfRects: self.$twoControlAudioEffect.inputVolumeMixer.numberOfRects,
-                                           title: self.twoControlAudioEffect.inputVolumeMixer.name)*/
                                 .padding(geometry.size.width * 0.05)
                                 .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                         }
@@ -52,8 +44,6 @@ struct TwoControlTemplate: View {
                                 KnobComplete(knobModel: self.$twoControlAudioEffect.control1,
                                              knobModColor: self.$knobModColor,
                                              specialSelection: self.$specialSelection)
-                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             //modulationBeingDeleted: self.$modulationBeingDeleted)
                                     .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
                                     .padding(.vertical, geometry.size.height * 0.05)
                                     
@@ -80,8 +70,6 @@ struct TwoControlTemplate: View {
                                 KnobComplete(knobModel: self.$twoControlAudioEffect.control2,
                                              knobModColor: self.$knobModColor,
                                              specialSelection: self.$specialSelection)
-                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             //modulationBeingDeleted: self.$modulationBeingDeleted)
                                     .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
                                     .padding(.vertical, geometry.size.height * 0.05)
                                 
@@ -101,15 +89,8 @@ struct TwoControlTemplate: View {
                         //Output Volume
                         VStack{
                             VolumeComplete(volumeMixer: self.$twoControlAudioEffect.outputVolumeMixer)
-                            /*(amplitude: self.$twoControlAudioEffect.outputVolumeMixer.amplitude,
-                                           volumeControl: self.$twoControlAudioEffect.outputVolumeMixer.volumeControl,
-                                           isRightHanded: self.$twoControlAudioEffect.outputVolumeMixer.isRightHanded,
-                                           numberOfRects: self.$twoControlAudioEffect.outputVolumeMixer.numberOfRects,
-                                           title: self.twoControlAudioEffect.outputVolumeMixer.name)*/
-                                //.padding(geometry.size.width * 0.01)
-                                //.frame(width:geometry.size.width * 0.1)
-                            .padding(geometry.size.width * 0.05)
-                            .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
+                                .padding(geometry.size.width * 0.05)
+                                .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                             
                         }
                         .frame(width:geometry.size.width * 0.2)
@@ -136,8 +117,7 @@ struct TwoControlTemplate_Previews: PreviewProvider {
         TwoControlTemplate(twoControlAudioEffect: .constant(TwoControlAudioEffect()),
                            knobModColor: .constant(Color.yellow),
                            specialSelection: .constant(SpecialSelection.none))
-                           //modulationBeingAssigned: .constant(false),
-                           //modulationBeingDeleted: .constant(false))
+
         .previewLayout(.fixed(width: 500, height: 300))
     }
 }

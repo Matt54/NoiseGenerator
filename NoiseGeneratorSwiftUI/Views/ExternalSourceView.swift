@@ -3,16 +3,6 @@ import SwiftUI
 struct ExternalSourceView: View {
     
     @Binding var microphoneSource: MicrophoneSource
-    
-    
-    /*
-    @Binding var volumeControl: Double
-    @Binding var amplitude: Double
-    @Binding var isBypassed: Bool
-    @Binding var title: String
-    */
-    
-    //@Environment(\.colorScheme) var colorScheme: ColorScheme
    
     var body: some View {
     GeometryReader
@@ -21,11 +11,6 @@ struct ExternalSourceView: View {
             { geometry in
                 VStack(spacing: 0){
                     VolumeComplete(volumeMixer: self.$microphoneSource.volumeMixer)
-                    /*(amplitude: self.$microphoneSource.volumeMixer.amplitude,
-                                   volumeControl: self.$microphoneSource.volumeMixer.volumeControl,
-                                   isRightHanded: self.$microphoneSource.volumeMixer.isRightHanded,
-                                   numberOfRects: self.$microphoneSource.volumeMixer.numberOfRects,
-                                   title: self.microphoneSource.volumeMixer.name)*/
                         .padding(geometry.size.width * 0.08)
                         .frame(width: geometry.size.width * 0.27,
                                height:geometry.size.height * 0.85)
