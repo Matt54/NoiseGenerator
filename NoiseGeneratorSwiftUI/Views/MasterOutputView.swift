@@ -13,6 +13,7 @@ struct MasterOutputView: View {
                 
             GeometryReader{ geometry in
                 VStack(spacing: 0){
+                    /*
                     HStack{
                         VolumeComplete(amplitude: self.$noise.outputAmplitudeLeft,
                                        volumeControl: self.$noise.masterVolume,
@@ -25,7 +26,7 @@ struct MasterOutputView: View {
                     }
                     .frame(width:geometry.size.width,
                            height: geometry.size.height * 0.85)
-                    
+                    */
                     // Title Bar
                     TitleBar(title: .constant("Master Volume"),
                              isBypassed: self.$noise.masterBypass)
