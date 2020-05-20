@@ -138,6 +138,17 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
     }
     
     var midiLearnMappings : [MIDILearnMapping] = []
+    var isMIDISustained : Bool = false
+    var midiSustainedNotes: [ActiveMIDINotes] = []
+    
+    public class ActiveMIDINotes{
+        var note: MIDINoteNumber
+        var channel: MIDIChannel
+        init(note: MIDINoteNumber, channel: MIDIChannel){
+            self.note = note
+            self.channel = channel
+        }
+    }
     
     var limiter = AKPeakLimiter()
     
@@ -303,7 +314,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         // Route each audio effect to the next in line
         for i in 0..<allControlSources.count {
-            //allControlSources[i].output.setOutput(to: inputMixer)
             allControlSources[i].volumeMixer.output.setOutput(to: inputMixer)
         }
         
@@ -335,10 +345,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         // else, connect to the output mixer
         setupSourceAudioChain()
         
-        
         if(allControlEffects.count > 0){
-            //inputMixer.connect(to: allControlEffects[0].input)
-            //inputMixer.setOutput(to: allControlEffects[0].input)
             inputMixer.setOutput(to: allControlEffects[0].inputVolumeMixer.input)
         }
         else{
@@ -351,18 +358,15 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         // Break all current connections
         for i in 0..<allControlEffects.count {
-            //allControlEffects[i].output.disconnectOutput()
             allControlEffects[i].outputVolumeMixer.output.disconnectOutput()
         }
         
         // Route each audio effect to the next in line
         for i in 0..<allControlEffects.count - 1  {
-            //allControlEffects[i].output.setOutput(to: allControlEffects[i+1].input)
             allControlEffects[i].outputVolumeMixer.output.setOutput(to: allControlEffects[i+1].inputVolumeMixer.input)
         }
         
         //set the output of the last effect to our output mixer
-        //allControlEffects[allControlEffects.count - 1].output.setOutput(to: outputMixer)
         allControlEffects[allControlEffects.count - 1].outputVolumeMixer.output.setOutput(to: outputMixer)
         
         // Connect input
@@ -773,14 +777,25 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         }
         else{
             
+            //catch the defined midi notes
+            if(controller == MIDISupportedBytes.damperOnOff.rawValue){
+                if(value > 63){
+                    isMIDISustained = true
+                }
+                else{
+                    releaseNotes()
+                }
+            }
+            
             // adjust anything assigned to that cc number
             for midiLearnMapping in midiLearnMappings{
                 if(midiLearnMapping.ccNumber == controller){
                     midiLearnMapping.control.handfreeKnobRotate(Double(value) * (1.0 / 127.0))
                 }
             }
-            
         }
+        
+        
     }
     
     func receivedMIDIPitchWheel(_ pitchWheelValue: MIDIWord, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
@@ -847,13 +862,28 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         if(!isModulationTriggered){
             isModulationTriggered = true
         }
+        if(isMIDISustained){
+            
+        }
     }
 
     func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
-        handleMidiNote(note: note, velocity: 0, channel: channel)
-        numberOfNotesOn = numberOfNotesOn - 1
-        if(numberOfNotesOn == 0){
-            isModulationTriggered = false
+        if(!isMIDISustained){
+            handleMidiNote(note: note, velocity: 0, channel: channel)
+            numberOfNotesOn = numberOfNotesOn - 1
+            if(numberOfNotesOn == 0){
+                isModulationTriggered = false
+            }
+        }
+        else{
+            midiSustainedNotes.append(ActiveMIDINotes(note: note, channel: channel))
+        }
+    }
+    
+    func releaseNotes(){
+        isMIDISustained = false
+        for midiSustainedNote in midiSustainedNotes{
+            stopNote(note: midiSustainedNote.note, channel: midiSustainedNote.channel)
         }
     }
 }
