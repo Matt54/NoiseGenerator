@@ -39,15 +39,22 @@ struct MorphingOscillatorView: View {
                             .frame(height: geometry.size.height * 0.3)
                             
                         }
-                        .frame(width: geometry.size.width * 0.65,
-                               height: geometry.size.height * 0.85)
+                        .frame(width: geometry.size.width * 0.65)
                         
                         
                         VolumeComplete(volumeMixer: self.$morphingOscillator.volumeMixer)
                             .padding(geometry.size.width * 0.05)
-                            .frame(width: geometry.size.width * 0.2,
-                                   height:geometry.size.height * 0.85)
+                            .frame(width: geometry.size.width * 0.2)
+                        
+                        Spacer()
+                        
+                        /*
+                        BlockDisplaySelect(selectedBlockDisplay: .constant(SelectedBlockDisplay.controls))
+                            .frame(width: geometry.size.height * 0.15)
+                        */
+                        
                     }
+                    .frame(height: geometry.size.height * 0.85)
                         
                     TitleBar(title: self.$morphingOscillator.name, isBypassed: self.$morphingOscillator.isBypassed)
                         .frame(height:geometry.size.height * 0.15)
@@ -55,8 +62,8 @@ struct MorphingOscillatorView: View {
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
             }
-            .padding(geometryOut.size.height * 0.02)
-            .border(Color.black, width: geometryOut.size.height * 0.02)
+            .padding(geometryOut.size.height * 0.00)
+            .border(Color.black, width: geometryOut.size.height * 0.00)
         }
     }
 }

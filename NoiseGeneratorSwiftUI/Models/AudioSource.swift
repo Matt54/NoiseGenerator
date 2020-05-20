@@ -4,6 +4,8 @@ import SwiftUI
 
 public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
+    
+    
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
@@ -41,7 +43,15 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
         AudioEffect.numberOfEffects = AudioEffect.numberOfEffects + 1
         id = AudioEffect.numberOfEffects
         setBypass()
+        //setupAudioRouting()
     }
+    
+    /*
+    func setupAudioRouting(){
+        output.mode = .peak
+        outputMixer.setOutput(to: output)
+    }
+    */
     
     func setBypass(){
         if(isBypassed){
@@ -62,6 +72,8 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     func readAmplitudes(){
+        //inputAmplitude = inputTracker.amplitude
+        //outputAmplitude = output.amplitude
         volumeMixer.updateAmplitude()
         //print(outputAmplitude)
     }
@@ -83,6 +95,18 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
     handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
+    
+    /*
+    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelAssignToModulation(sender)
+    }
+    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
+        handoffDelegate?.KnobModelRemoveModulation(sender)
+    }
+    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
+        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
+    }
+    */
     
 }
 
@@ -236,7 +260,7 @@ public class Voice{
         setOscillatorFrequency()
         
         //convert 0 to 127 range to 0 to 1.0
-        oscillator.amplitude = Double(velocity) / 127.0
+        oscillator.amplitude = Double(velocity) / 127.0 * 0.5
         
         print("Amplitude: " + String(oscillator.amplitude))
         
@@ -295,7 +319,7 @@ public class Voice{
         
         
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + output.releaseDuration * 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + output.attackDuration + output.decayDuration + output.releaseDuration * 5.0) {
             // your code here
             self.oscillator.stop()
             self.oscillator.detach()

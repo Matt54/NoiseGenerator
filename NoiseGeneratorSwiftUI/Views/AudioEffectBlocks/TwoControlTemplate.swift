@@ -104,8 +104,8 @@ struct TwoControlTemplate: View {
                 .background(LinearGradient(Color.white, Color.lightGray))
                 
             }// georeader - inner
-            .padding(geometryOut.size.height * 0.02)
-            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.02)
+            .padding(geometryOut.size.height * 0.0)
+            .border(Color.BlackWhiteColor(for: self.colorScheme), width: geometryOut.size.height * 0.0)
         }// outer georeader (so we can make the border)
     }//view
 }//struct

@@ -71,8 +71,8 @@ struct AudioEffectView: View {
                     }
                 }
             }
-            .padding(geometry.size.height * 0.02)
-            .border(Color.black, width: geometry.size.height * 0.02)
+            .padding(geometry.size.height * 0.0)
+            .border(Color.black, width: geometry.size.height * 0.0)
             .frame(height: geometry.size.height * 0.22)
             
             
@@ -154,8 +154,10 @@ struct AudioEffectView: View {
             .border(Color.black, width: geometry.size.height * 0.02)
             .frame(height: geometry.size.height * 0.15)
             */
- 
+             
             }
+            .padding(geometry.size.height * 0.0)
+            .border(Color.black, width: geometry.size.height * 0.0)
         }
     }
 }

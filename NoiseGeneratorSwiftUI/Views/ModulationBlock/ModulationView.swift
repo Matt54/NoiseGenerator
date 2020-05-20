@@ -188,9 +188,9 @@ struct ModulationView: View {
                 .background(LinearGradient(Color.white, Color.lightGray))
                 }//zstack
         }//georeader
-        .padding(geometryOuter.size.height * 0.02)
+        .padding(geometryOuter.size.height * 0.0)
         .border(Color.BlackWhiteColor(for: self.colorScheme),
-                width: geometryOuter.size.height * 0.02)
+                width: geometryOuter.size.height * 0.0)
         }
         
     }//view

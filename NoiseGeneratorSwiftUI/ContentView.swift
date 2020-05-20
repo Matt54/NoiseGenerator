@@ -36,6 +36,10 @@ struct ContentView: View {
 
                     HStack(spacing: geometry.size.width * 0){
                         
+                        MainBlocks()
+                        .frame(height: geometry.size.height * 0.6)
+                        
+                        /*
                         AudioSourceView()
                             .frame(width:geometry.size.width * (1/3),
                                    height: geometry.size.height * 0.6)
@@ -47,6 +51,7 @@ struct ContentView: View {
                         ModulationSourceView()
                             .frame(width:geometry.size.width * (1/3),
                                    height: geometry.size.height * 0.6)
+                        */
                         
                     }
                     

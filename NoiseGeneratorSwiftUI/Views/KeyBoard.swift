@@ -21,11 +21,12 @@ struct KeyBoard: View {
             HStack(spacing: 0){
                 //Invert Button
                 VStack(spacing: 0){
+                    /*
                     Text("OCTAVE")
                         .bold()
                         .textStyle(ShrinkTextStyle())
                         .frame(height: geometry.size.height * 0.3)
-                    
+                    */
                    Button(action: {
                         self.noise.firstOctave = self.noise.firstOctave - 1
                    }){
@@ -52,10 +53,12 @@ struct KeyBoard: View {
                 
                 
                 VStack(spacing: 0){
+                    /*
                 Text("OCTAVE")
                     .bold()
                     .textStyle(ShrinkTextStyle())
                     .frame(height: geometry.size.height * 0.3)
+                    */
                 //Invert Button
                Button(action: {
                    self.noise.firstOctave = self.noise.firstOctave + 1
@@ -114,6 +117,7 @@ struct KeyBoardViewController: UIViewRepresentable {
         keyboardView.firstOctave = firstOctave
         keyboardView.keyOnColor = UIColor.init(red: 0.4, green: 0.1, blue: 0.7, alpha: 1.0)
         keyboardView.polyphonicMode = true
+        keyboardView.octaveCount = 3
         //view.programmaticNoteOn(<#T##note: MIDINoteNumber##MIDINoteNumber#>)
         
         return keyboardView

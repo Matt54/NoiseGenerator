@@ -78,8 +78,8 @@ struct ModulationSourceView: View {
                         }
                     }
                 }
-                .padding(geometry.size.height * 0.02)
-                .border(Color.black, width: geometry.size.height * 0.02)
+                .padding(geometry.size.height * 0.0)
+                .border(Color.black, width: geometry.size.height * 0.0)
                 .frame(height: geometry.size.height * 0.22)
             
                 // Add All Modulations
@@ -148,6 +148,8 @@ struct ModulationSourceView: View {
                 */
  
             }
+            .padding(geometry.size.height * 0.0)
+            .border(Color.black, width: geometry.size.height * 0.0)
         }
     }
 }
