@@ -618,37 +618,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         }
     }
     
-    /*
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        //print("we hit noise")
-        for modulation in modulations{
-            if(modulation.isDisplayed){
-                modulation.addModulationTarget(newTarget: sender)
-            }
-        }
-    }
-    
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
-        //print("we hit noise")
-        for modulation in modulations{
-            if(modulation.isDisplayed){
-                modulation.removeModulationTarget(removeTarget: sender)
-                print("knob removed")
-            }
-        }
-        sender.modSelected = false
-        sender.modulationValue = sender.percentRotated
-    }
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
-        for modulation in modulations{
-            if(modulation.isDisplayed){
-                print("Range Should Adjust by " + String(adjust))
-                modulation.adjustModulationRange(target: sender, val: adjust)
-            }
-        }
-    }
-    */
-    
     // All Effects that can be added
     @Published var listedEffects = [
         ListedEffect(id: 1,
@@ -887,6 +856,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
             isModulationTriggered = false
         }
     }
+}
+
+public enum MIDISupportedBytes: MIDIByte{
+    case modulationWheel = 1
+    case damperOnOff = 64
 }
 
 public class MIDILearnMapping{

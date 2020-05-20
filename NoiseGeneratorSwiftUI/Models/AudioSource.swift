@@ -199,8 +199,6 @@ public class AvailableInputSource{
 
 public class Voice{
     
-    var isAllocated: Bool = false
-    
     var pitchBend: UInt16 = 16_384 / 2{
         didSet{
             print("didSet pitchBend")
@@ -221,14 +219,6 @@ public class Voice{
     
     var output: AKAmplitudeEnvelope = AKAmplitudeEnvelope()
     
-    /*
-    init(waveforms: [AKTable]){
-        oscillator = AKMorphingOscillator(waveformArray: waveforms)
-        oscillator.setOutput(to: output)
-        oscillator.rampDuration = 0.001
-    }
-    */
-    
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, waveforms: [AKTable]){
         
         print("")
@@ -244,22 +234,11 @@ public class Voice{
         setupNote(note: note, velocity: velocity)
     }
     
-    func allocateVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        isAllocated = true
-        self.channel = channel
-        self.note = note
-        setupNote(note: note, velocity: velocity)
-        oscillator.setOutput(to: output)
-    }
-    
     func setupNote(note: MIDINoteNumber, velocity: MIDIVelocity){
-        
-        //output.releaseDuration = 0.1
-        
         //convert midi note to frequency
         setOscillatorFrequency()
         
-        //convert 0 to 127 range to 0 to 1.0
+        //convert 0 to 127 range to 0 to 0.5 (because it's LOUD - maybe even go less)
         oscillator.amplitude = Double(velocity) / 127.0 * 0.5
         
         print("Amplitude: " + String(oscillator.amplitude))
@@ -269,7 +248,6 @@ public class Voice{
     
     func setOscillatorFrequency(){
         oscillator.frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
-        //oscillator.frequency = note.midiNoteToFrequency()
         print("Frequency: " + String(oscillator.frequency))
     }
     
@@ -299,101 +277,39 @@ public class Voice{
     }
     
     func play(){
-        
         oscillator.start()
         output.start()
     }
     
-    func stop(){
-        oscillator.stop()
-    }
-    
     func kill(){
         output.stop()
-        //oscillator.stop()
-        //oscillator.disconnectOutput()
-        //isAllocated = false
-        //print("killed the voice")
-        //oscillator.detach()
-        //output.detach()
-        
-        
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + output.attackDuration + output.decayDuration + output.releaseDuration * 5.0) {
-            // your code here
             self.oscillator.stop()
             self.oscillator.detach()
             self.output.detach()
         }
-        
-        
-        /*
-        let t = DispatchSource.makeTimerSource()
-        t.schedule(deadline: DispatchTime.now() + output.releaseDuration * 5.0, leeway: DispatchTimeInterval.nanoseconds(500_000_000))
-        t.setEventHandler(handler: { [weak self] in
-            // called every so often by the interval we defined above
-            //self!.timerAction()
-            //self!.oscillator.stop()
-            //self!.oscillator.disconnectOutput()
-            //self!.output.disconnectOutput()
-            DispatchQueue.main.async {
-                self!.oscillator.detach()
-                self!.output.detach()
-            }
-            //print("killed the voice")
-            t.setEventHandler {}
-            t.cancel()
-        })
-        */
     }
     
-    /*
-    @objc func timerAction(){
-        oscillator.stop()
-        oscillator.disconnectOutput()
-        output.disconnectOutput()
-    }*/
-    
-    
     deinit{
-        //self!.oscillator = nil
-        //self!.output = nil
         print("killed the voice")
     }
     
 }
 
 class MorphingOscillatorBank: MonoAudioSource{
-
-    //var oscillator : AKMorphingOscillatorBank = AKMorphingOscillatorBank(waveformArray: [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)])
     
     var waveforms = [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)]
     
     var voices : [Voice] = []
     
-    //var voices = [Voice?](repeating: nil, count: 64)
-    //var allocatedVoices : [Voice] = []
-    //var waveforms: [AKTable] = [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)]
     var index: Double = 1.0{
         didSet{
-            //oscillator.index = control1.realModValue * control1.range
-            
             for voice in voices{
                 voice.oscillator.index = control1.realModValue * control1.range
             }
             
         }
     }
-    
-    /*
-    func createVoices(){
-        for i in 0...voices.count-1{
-            voices[i] = Voice(waveforms: waveforms)
-            voices[i]!.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
-            voices[i]!.oscillator.index = index
-        }
-    }
-    */
     
     var attack: Double = 0.1
     var decay: Double = 0.1
@@ -409,70 +325,31 @@ class MorphingOscillatorBank: MonoAudioSource{
     init(){
         super.init(toggle: oscillatorMixer, node: oscillatorMixer)
         
-        //createVoices()
-        
         displayOnImage = Image(systemName: "o.circle.fill")
         displayOffImage = Image(systemName: "o.circle")
         setDisplayImage()
         
         control1.name = name + " waveform"
-        //control1.delegate = self
         control1.handoffDelegate = self
         control1.range = Double(waveforms.count - 1)
         setControl1()
-        
-        //oscillator.setOutput(to: oscillatorMixer)
 
         name = "OSC 1"
     }
     
     //This is handling both the on and the off events
     func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        //oscillator.play(noteNumber: note, velocity: velocity)
-        
         if(velocity > 0){
-            /*
-            for i in 0...voices.count-1{
-                if(!voices[i]!.isAllocated){
-                    voices[i] = Voice(waveforms: waveformArray)
-                    voices[i]!.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
-                    voices[i]!.oscillator.index = index
-                    
-                    voices[i]!.allocateVoice(note: note, velocity: velocity, channel: channel)
-                    voices[i]!.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
-                    oscillatorMixer.connect(input: voices[i]!.output)
-                    voices[i]!.play()
-                    allocatedVoices.append(voices[i]!)
-                    print(allocatedVoices)
-                    break
-                }
-                //voices[i] = Voice(waveforms: waveformArray)
-            }
-            */
-            
-            
             let newVoice = Voice(note: note, velocity: velocity, channel: channel, waveforms: waveforms)
             newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
             newVoice.oscillator.index = index
             newVoice.output.setOutput(to: oscillatorMixer)
-            //oscillatorMixer.connect(input: newVoice.output)
             newVoice.play()
             voices.append(newVoice)
             print(voices)
             print(AudioKit.engine.description)
         }
         else{
-            /*
-            let killVoices = allocatedVoices.filter {$0.note == note}
-            for killVoice in killVoices{
-                killVoice.kill()
-                //killVoice.output.disconnectOutput(from: oscillatorMixer)
-                oscillatorMixer.disconnectOutput(from: killVoice.output)
-                //oscillatorMixer.dis//(input: killVoice.output)
-            }
-            allocatedVoices = allocatedVoices.filter {$0.note != note}
-            */
-            
             let killVoices = voices.filter {$0.note == note}
             for killVoice in killVoices{
                 killVoice.kill()
@@ -481,8 +358,6 @@ class MorphingOscillatorBank: MonoAudioSource{
             print(voices)
             
         }
-        
-        //oscillatorBank.play(noteNumber: note, velocity: velocity)
     }
     
     func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
@@ -512,7 +387,6 @@ class MorphingOscillatorBank: MonoAudioSource{
     func setControl1(){
         index = control1.realModValue * control1.range
     }
-    
     
 }
 
