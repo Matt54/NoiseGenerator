@@ -14,11 +14,13 @@
 		FA0A68672469FF590016534A /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A68662469FF590016534A /* Tempo.swift */; };
 		FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A6868246A01ED0016534A /* MainHeader.swift */; };
 		FA1211A1246C31460077941E /* KeyBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1211A0246C31460077941E /* KeyBoard.swift */; };
+		FA1A0E0024772F8B00A8FC7D /* WavetableDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */; };
 		FA1C4B3A2458BEB600A7E442 /* VolumeComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */; };
 		FA1C4B3C2459C7D700A7E442 /* EffectRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */; };
 		FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA220F61245483C700AACE5B /* KnobCompleteModel.swift */; };
 		FA27D2FF24743D9D008BC9D3 /* VolumeMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */; };
 		FA27D301247480CF008BC9D3 /* BlockDisplaySelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA27D300247480CF008BC9D3 /* BlockDisplaySelect.swift */; };
+		FA2A4FB92475EFEF00D246BD /* KnobVerticalStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2A4FB82475EFEF00D246BD /* KnobVerticalStack.swift */; };
 		FA33B4492465953E00387F0B /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA33B4482465953E00387F0B /* Styles.swift */; };
 		FA33B44C246595C100387F0B /* TextExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA33B44B246595C100387F0B /* TextExtension.swift */; };
 		FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3565D02450D963004AFA8C /* AddEffectForm.swift */; };
@@ -49,11 +51,13 @@
 		FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B61C52461C04F0029DD68 /* Pattern.swift */; };
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
 		FA986B4C243B611000700156 /* Audiobus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA986B4B243B611000700156 /* Audiobus.swift */; };
+		FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9CFE152476B33800DAD510 /* ADSR.swift */; };
 		FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */; };
 		FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC124687EEF00CA2E47 /* GridLines.swift */; };
 		FAAA3CC424689BC300CA2E47 /* PatternAdjust.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */; };
 		FAAA3CC62468A42300CA2E47 /* MiniPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC52468A42300CA2E47 /* MiniPattern.swift */; };
 		FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAB7188246743C700B884B3 /* ExternalSourceView.swift */; };
+		FAAE1EF42475C1D3007C0443 /* OscillatorTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */; };
 		FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */; };
 		FAB700DF24531CCE0053F13A /* Modulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB700DE24531CCE0053F13A /* Modulation.swift */; };
 		FAB700E1245328790053F13A /* ModulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB700E0245328790053F13A /* ModulationView.swift */; };
@@ -97,11 +101,13 @@
 		FA0A68662469FF590016534A /* Tempo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		FA0A6868246A01ED0016534A /* MainHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHeader.swift; sourceTree = "<group>"; };
 		FA1211A0246C31460077941E /* KeyBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBoard.swift; sourceTree = "<group>"; };
+		FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavetableDisplay.swift; sourceTree = "<group>"; };
 		FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeComplete.swift; sourceTree = "<group>"; };
 		FA1C4B3B2459C7D700A7E442 /* EffectRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRow.swift; sourceTree = "<group>"; };
 		FA220F61245483C700AACE5B /* KnobCompleteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCompleteModel.swift; sourceTree = "<group>"; };
 		FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeMixer.swift; sourceTree = "<group>"; };
 		FA27D300247480CF008BC9D3 /* BlockDisplaySelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockDisplaySelect.swift; sourceTree = "<group>"; };
+		FA2A4FB82475EFEF00D246BD /* KnobVerticalStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobVerticalStack.swift; sourceTree = "<group>"; };
 		FA33B4482465953E00387F0B /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		FA33B44B246595C100387F0B /* TextExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextExtension.swift; sourceTree = "<group>"; };
 		FA3565D02450D963004AFA8C /* AddEffectForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEffectForm.swift; sourceTree = "<group>"; };
@@ -134,11 +140,13 @@
 		FA922F922448D9E100C63DAD /* FourControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourControlTemplate.swift; sourceTree = "<group>"; };
 		FA986B4A243B604500700156 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		FA986B4B243B611000700156 /* Audiobus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audiobus.swift; sourceTree = "<group>"; };
+		FA9CFE152476B33800DAD510 /* ADSR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADSR.swift; sourceTree = "<group>"; };
 		FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPicker.swift; sourceTree = "<group>"; };
 		FAAA3CC124687EEF00CA2E47 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternAdjust.swift; sourceTree = "<group>"; };
 		FAAA3CC52468A42300CA2E47 /* MiniPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPattern.swift; sourceTree = "<group>"; };
 		FAAB7188246743C700B884B3 /* ExternalSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalSourceView.swift; sourceTree = "<group>"; };
+		FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OscillatorTitleBar.swift; sourceTree = "<group>"; };
 		FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeDisplay.swift; sourceTree = "<group>"; };
 		FAB700DE24531CCE0053F13A /* Modulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modulation.swift; sourceTree = "<group>"; };
 		FAB700E0245328790053F13A /* ModulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationView.swift; sourceTree = "<group>"; };
@@ -182,18 +190,70 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		FA0987CA2476B0DD0010047F /* Unused */ = {
+			isa = PBXGroup;
+			children = (
+				FA7DA85C2469874600822786 /* MasterOutputView.swift */,
+				FA27D300247480CF008BC9D3 /* BlockDisplaySelect.swift */,
+			);
+			path = Unused;
+			sourceTree = "<group>";
+		};
+		FA0987CB2476B1090010047F /* MainScreen */ = {
+			isa = PBXGroup;
+			children = (
+				FA0A6868246A01ED0016534A /* MainHeader.swift */,
+				FA7AF36D2474BA9B00D0DA7F /* MainBlocks.swift */,
+				FA0987CC2476B16C0010047F /* MainBlockViews */,
+				FA1211A0246C31460077941E /* KeyBoard.swift */,
+			);
+			path = MainScreen;
+			sourceTree = "<group>";
+		};
+		FA0987CC2476B16C0010047F /* MainBlockViews */ = {
+			isa = PBXGroup;
+			children = (
+				FAE707D92465F90200F27B31 /* AudioEffectView.swift */,
+				FA81DFA1245C971D00473657 /* AudioEffectBlocks */,
+				FAE707D72465F80C00F27B31 /* AudioSourceView.swift */,
+				FA0987CD2476B1AE0010047F /* AudioSourceBlocks */,
+				FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */,
+				FA81DFA3245C973A00473657 /* ModulationBlock */,
+			);
+			path = MainBlockViews;
+			sourceTree = "<group>";
+		};
+		FA0987CD2476B1AE0010047F /* AudioSourceBlocks */ = {
+			isa = PBXGroup;
+			children = (
+				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
+				FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */,
+				FA9CFE152476B33800DAD510 /* ADSR.swift */,
+				FAAB7188246743C700B884B3 /* ExternalSourceView.swift */,
+				FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */,
+			);
+			path = AudioSourceBlocks;
+			sourceTree = "<group>";
+		};
+		FA0987CE2476B1E30010047F /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				FADBBC6F246FF1B5004C58B5 /* BluetoothIcon.swift */,
+				FABEB092246E22AA00C2F424 /* BluetoothMidiView.swift */,
+			);
+			path = Bluetooth;
+			sourceTree = "<group>";
+		};
 		FA220F632454848200AACE5B /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				FA33B44D2465964B00387F0B /* Modulation */,
-				FA33B44A2465958F00387F0B /* Extensions */,
+				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
+				FA3EAB222476AFCE003638C0 /* Graphical */,
+				FA3EAB212476AF99003638C0 /* Timing */,
+				FA3EAB202476AF7D003638C0 /* Helpers */,
 				FA093A352448A94A00BCD16C /* AudioEffect.swift */,
 				FAE707D52465DC3500F27B31 /* AudioSource.swift */,
 				FA220F61245483C700AACE5B /* KnobCompleteModel.swift */,
-				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
-				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
-				FA0A68662469FF590016534A /* Tempo.swift */,
-				FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */,
 				FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */,
 			);
 			path = Models;
@@ -202,27 +262,15 @@
 		FA220F64245484BD00AACE5B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				FADBBC6F246FF1B5004C58B5 /* BluetoothIcon.swift */,
-				FABEB092246E22AA00C2F424 /* BluetoothMidiView.swift */,
-				FAAB7188246743C700B884B3 /* ExternalSourceView.swift */,
-				FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */,
-				FA7DA85C2469874600822786 /* MasterOutputView.swift */,
-				FA33B4472465952400387F0B /* Styles */,
-				FA81DFA3245C973A00473657 /* ModulationBlock */,
-				FA81DFA1245C971D00473657 /* AudioEffectBlocks */,
+				FA0987CB2476B1090010047F /* MainScreen */,
 				FA81DFA0245C970200473657 /* TitleBarControl */,
 				FA81DF9F245C966900473657 /* AddEffectScreen */,
-				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
 				FA81DF9C245C95F500473657 /* Knob */,
 				FA81DF9B245C959200473657 /* VolumeControl */,
 				FAE707E12466186500F27B31 /* AddInputDeviceScreen */,
-				FAE707D92465F90200F27B31 /* AudioEffectView.swift */,
-				FAE707D72465F80C00F27B31 /* AudioSourceView.swift */,
-				FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */,
-				FA0A6868246A01ED0016534A /* MainHeader.swift */,
-				FA1211A0246C31460077941E /* KeyBoard.swift */,
-				FA27D300247480CF008BC9D3 /* BlockDisplaySelect.swift */,
-				FA7AF36D2474BA9B00D0DA7F /* MainBlocks.swift */,
+				FA0987CE2476B1E30010047F /* Bluetooth */,
+				FA33B4472465952400387F0B /* Styles */,
+				FA0987CA2476B0DD0010047F /* Unused */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -243,15 +291,6 @@
 				FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		FA33B44D2465964B00387F0B /* Modulation */ = {
-			isa = PBXGroup;
-			children = (
-				FAB700DE24531CCE0053F13A /* Modulation.swift */,
-				FA8B61C52461C04F0029DD68 /* Pattern.swift */,
-			);
-			path = Modulation;
 			sourceTree = "<group>";
 		};
 		FA377A2924317C3000CBE2C4 = {
@@ -310,6 +349,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		FA3EAB202476AF7D003638C0 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */,
+				FA33B44A2465958F00387F0B /* Extensions */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		FA3EAB212476AF99003638C0 /* Timing */ = {
+			isa = PBXGroup;
+			children = (
+				FA0A68662469FF590016534A /* Tempo.swift */,
+				FAB700DE24531CCE0053F13A /* Modulation.swift */,
+				FAD6505D245251D600B10110 /* RepeatingTimer.swift */,
+			);
+			path = Timing;
+			sourceTree = "<group>";
+		};
+		FA3EAB222476AFCE003638C0 /* Graphical */ = {
+			isa = PBXGroup;
+			children = (
+				FA8B61C52461C04F0029DD68 /* Pattern.swift */,
+			);
+			path = Graphical;
+			sourceTree = "<group>";
+		};
 		FA81DF9B245C959200473657 /* VolumeControl */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +394,7 @@
 				FAFC1309243CF9AB009D1169 /* Knob.swift */,
 				FA4FDC70243F7C5600325F89 /* KnobComplete.swift */,
 				FAD334E6243E6410009B0DDF /* KnobControl.swift */,
+				FA2A4FB82475EFEF00D246BD /* KnobVerticalStack.swift */,
 			);
 			path = Knob;
 			sourceTree = "<group>";
@@ -356,6 +423,7 @@
 			children = (
 				FAC1F4A5245A4F39007E1331 /* PowerButton.swift */,
 				FA81DF99245C87FF00473657 /* TitleBar.swift */,
+				FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */,
 			);
 			path = TitleBarControl;
 			sourceTree = "<group>";
@@ -501,10 +569,12 @@
 				FA1211A1246C31460077941E /* KeyBoard.swift in Sources */,
 				FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */,
 				FA1C4B3A2458BEB600A7E442 /* VolumeComplete.swift in Sources */,
+				FA1A0E0024772F8B00A8FC7D /* WavetableDisplay.swift in Sources */,
 				FA377A3624317C3000CBE2C4 /* AppDelegate.swift in Sources */,
 				FAAA3CC424689BC300CA2E47 /* PatternAdjust.swift in Sources */,
 				FA3CBB44246D7134009DE169 /* MorphingOscillatorView.swift in Sources */,
 				FA1C4B3C2459C7D700A7E442 /* EffectRow.swift in Sources */,
+				FA2A4FB92475EFEF00D246BD /* KnobVerticalStack.swift in Sources */,
 				FA4FDC71243F7C5600325F89 /* KnobComplete.swift in Sources */,
 				FA33B44C246595C100387F0B /* TextExtension.swift in Sources */,
 				FADBBC70246FF1B5004C58B5 /* BluetoothIcon.swift in Sources */,
@@ -537,7 +607,9 @@
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,
 				FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
+				FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,
+				FAAE1EF42475C1D3007C0443 /* OscillatorTitleBar.swift in Sources */,
 				FA0A68672469FF590016534A /* Tempo.swift in Sources */,
 				FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */,
 				FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */,
@@ -701,6 +773,7 @@
 					"\"/Users/macbook/Sync/Code/Xcode/AudioDev/Projects/NoiseGeneratorSwiftUI/NoiseGeneratorSwiftUI/Library/Audiobus\"",
 				);
 				INFOPLIST_FILE = NoiseGeneratorSwiftUI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -736,6 +809,7 @@
 					"\"/Users/macbook/Sync/Code/Xcode/AudioDev/Projects/NoiseGeneratorSwiftUI/NoiseGeneratorSwiftUI/Library/Audiobus\"",
 				);
 				INFOPLIST_FILE = NoiseGeneratorSwiftUI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

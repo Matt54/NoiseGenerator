@@ -12,8 +12,10 @@ public extension Color {
     static let offBlack = Color(red: (255-225) / 255, green: (255-225) / 255, blue: (255-235) / 255)
     
     static let lightGray = Color.init(red: 0.85, green: 0.85, blue: 0.9)
-    
     static let darkGray = Color.init(red: 0.2, green: 0.2, blue: 0.2)
+    
+    static let lightWood = Color.init(red: 92 / 100, green: 80 / 100, blue: 64 / 100)
+    static let darkWood = Color.init(red: 84 / 100, green: 68 / 100, blue: 48 / 100)
     
     static let darkStart = Color(red: 50 / 255, green: 60 / 255, blue: 65 / 255)
     static let darkEnd = Color(red: 25 / 255, green: 25 / 255, blue: 30 / 255)

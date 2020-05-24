@@ -4,7 +4,7 @@ import SwiftUI
 
 public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
-    
+    @Published var selectedBlockDisplay = SelectedBlockDisplay.controls
     
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
@@ -95,18 +95,6 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
     handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
-    
-    /*
-    func KnobModelAssignToModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelAssignToModulation(sender)
-    }
-    func KnobModelRemoveModulation(_ sender: KnobCompleteModel) {
-        handoffDelegate?.KnobModelRemoveModulation(sender)
-    }
-    func KnobModelAdjustModulationRange(_ sender: KnobCompleteModel, adjust: Double) {
-        handoffDelegate?.KnobModelAdjustModulationRange(sender, adjust: adjust)
-    }
-    */
     
 }
 
@@ -201,7 +189,7 @@ public class Voice{
     
     var pitchBend: UInt16 = 16_384 / 2{
         didSet{
-            print("didSet pitchBend")
+            //print("didSet pitchBend")
             setOscillatorFrequency()
         }
     }
@@ -221,13 +209,27 @@ public class Voice{
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, waveforms: [AKTable]){
         
+        /*
         print("")
         print("New Voice!")
         print("Note Number: " + String(note))
         print("Velocity: " + String(velocity))
         print("channel: " + String(channel))
+        */
         
         oscillator = AKMorphingOscillator(waveformArray: waveforms)
+        
+        /*
+        var newTable : [Float] = []
+        // This is every value in the waveform
+        for element in 0...waveforms[0].count - 1{
+            let value = waveforms[0][element].value()
+            print(value)
+            newTable[element] += Float(random(in: -0.3...0.3) + Double(element) / 2_048.0)
+        }
+        var newTable2 = AKTable(newTable)
+        */
+        
         oscillator.rampDuration = 0.001
         self.channel = channel
         self.note = note
@@ -239,16 +241,16 @@ public class Voice{
         setOscillatorFrequency()
         
         //convert 0 to 127 range to 0 to 0.5 (because it's LOUD - maybe even go less)
-        oscillator.amplitude = Double(velocity) / 127.0 * 0.5
+        oscillator.amplitude = Double(velocity) / 127.0 * 0.2
         
-        print("Amplitude: " + String(oscillator.amplitude))
+        //print("Amplitude: " + String(oscillator.amplitude))
         
         oscillator.setOutput(to: output)
     }
     
     func setOscillatorFrequency(){
         oscillator.frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
-        print("Frequency: " + String(oscillator.frequency))
+        //print("Frequency: " + String(oscillator.frequency))
     }
     
     func getFrequencyFromNoteAndPitchBend(note: MIDINoteNumber, pitchBend: UInt16) -> Double {
@@ -257,6 +259,7 @@ public class Voice{
     }
     
     func setADSR(attackDuration: Double, decayDuration: Double, sustainLevel: Double, releaseDuration: Double){
+        output.rampDuration = 0
         setAttack(attackDuration)
         setDecay(decayDuration)
         setSustain(sustainLevel)
@@ -265,15 +268,19 @@ public class Voice{
     
     func setAttack(_ attackDuration: Double){
         output.attackDuration = attackDuration
+        //print("we set the attack to: " + String(output.attackDuration) )
     }
     func setDecay(_ decayDuration: Double){
         output.decayDuration = decayDuration
+        //print("we set the decay to: " + String(output.decayDuration) )
     }
     func setSustain(_ sustainLevel: Double){
         output.sustainLevel = sustainLevel
+        //print("we set the sustain to: " + String(output.sustainLevel ) )
     }
     func setRelease(_ releaseDuration: Double){
         output.releaseDuration = releaseDuration
+        //print("we set the release to: " + String(output.releaseDuration) )
     }
     
     func play(){
@@ -291,50 +298,126 @@ public class Voice{
     }
     
     deinit{
-        print("killed the voice")
+        //print("killed the voice")
     }
     
 }
 
 class MorphingOscillatorBank: MonoAudioSource{
     
-    var waveforms = [AKTable(.sine), AKTable(.triangle),AKTable(.square), AKTable(.sawtooth)]
+    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.triangle), AKTable(.square), AKTable(.sawtooth)]
+    var displayWaveform : [Float] = [Float](AKTable(.sine))
+    
+    //var waveforms = [AKTable(.sine), AKTable(.sawtooth)]
     
     var voices : [Voice] = []
     
+    var isSetup = false
+    
     var index: Double = 1.0{
         didSet{
+            // I think we need to prevent voices from being destroyed until after this loop
+            // EXC_BAD_ACCESS(code=2, address=0x197a65fb8)
             for voice in voices{
-                voice.oscillator.index = control1.realModValue * control1.range
+                voice.oscillator.index = index// indexControl.realModValue * control1.range
             }
-            
         }
     }
     
-    var attack: Double = 0.1
-    var decay: Double = 0.1
-    var sustain: Double = 1.0
-    var release: Double = 0.01
+    var attack: Double = 99{
+        didSet{
+            for voice in voices{
+                voice.setAttack(attack)
+            }
+        }
+    }
+    
+    var decay: Double = 0.1{
+        didSet{
+            for voice in voices{
+                voice.setDecay(decay)
+            }
+        }
+    }
+    
+    var sustain: Double = 1.0{
+        didSet{
+            for voice in voices{
+                voice.setSustain(sustain)
+            }
+        }
+    }
+
+    var release: Double = 0.01{
+        didSet{
+            for voice in voices{
+                voice.setRelease(release)
+            }
+        }
+    }
+    
+    var releaseDisplay: Double = 0.01
     
     var oscillatorMixer = AKMixer()
     
-    @Published var control1 = KnobCompleteModel(){
-        didSet{ setControl1() }
+    @Published var indexControl = KnobCompleteModel(){
+        didSet{ setIndexControl() }
+    }
+    @Published var attackControl = KnobCompleteModel(){
+        didSet{ setAttackControl() }
+    }
+    @Published var decayControl = KnobCompleteModel(){
+        didSet{ setDecayControl() }
+    }
+    @Published var sustainControl = KnobCompleteModel(){
+        didSet{ setSustainControl() }
+    }
+    @Published var releaseControl = KnobCompleteModel(){
+        didSet{ setReleaseControl() }
     }
     
     init(){
+        //displayWaveform = calculateDisplayWavetable()
+        //[Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
+        
         super.init(toggle: oscillatorMixer, node: oscillatorMixer)
         
         displayOnImage = Image(systemName: "o.circle.fill")
         displayOffImage = Image(systemName: "o.circle")
         setDisplayImage()
         
-        control1.name = name + " waveform"
-        control1.handoffDelegate = self
-        control1.range = Double(waveforms.count - 1)
-        setControl1()
+        indexControl.name = "Waveform"
+        indexControl.handoffDelegate = self
+        indexControl.range = Double(waveforms.count - 1)
+        setIndexControl()
+        
+        attackControl.name = "Attack"
+        attackControl.handoffDelegate = self
+        attackControl.percentRotated = 0.01
+        attackControl.range = 10
+        setAttackControl()
+        
+        decayControl.name = "Decay"
+        decayControl.handoffDelegate = self
+        decayControl.percentRotated = 0.5
+        decayControl.range = 10
+        setDecayControl()
+        
+        sustainControl.name = "Sustain"
+        sustainControl.handoffDelegate = self
+        sustainControl.percentRotated = 1.0
+        //sustainControl.range = 1
+        setSustainControl()
+        
+        releaseControl.name = "Release"
+        releaseControl.handoffDelegate = self
+        releaseControl.range = 1
+        setReleaseControl()
 
+        selectedBlockDisplay = SelectedBlockDisplay.controls
         name = "OSC 1"
+        
+        isSetup = true
     }
     
     //This is handling both the on and the off events
@@ -346,8 +429,8 @@ class MorphingOscillatorBank: MonoAudioSource{
             newVoice.output.setOutput(to: oscillatorMixer)
             newVoice.play()
             voices.append(newVoice)
-            print(voices)
-            print(AudioKit.engine.description)
+            //print(voices)
+            //print(AudioKit.engine.description)
         }
         else{
             let killVoices = voices.filter {$0.note == note}
@@ -355,17 +438,17 @@ class MorphingOscillatorBank: MonoAudioSource{
                 killVoice.kill()
             }
             voices = voices.filter {$0.note != note}
-            print(voices)
+            //print(voices)
             
         }
     }
     
     func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
-        print("handlePitch")
+        //print("handlePitch")
         
         for voice in voices{
             if(voice.channel.hex == channel.hex){
-                print("same channel")
+                //print("same channel")
                 voice.pitchBend = pitchWheelValue
             }
         }
@@ -374,18 +457,94 @@ class MorphingOscillatorBank: MonoAudioSource{
     
     /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
     override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
-        if(sender === control1){
-            setControl1()
+        if(sender === indexControl){
+            setIndexControl()
         }
-            /*
-        else if(sender === control2){
-            setControl2()
+        else if(sender === attackControl){
+            setAttackControl()
         }
-        */
+        else if(sender === decayControl){
+            setDecayControl()
+        }
+        else if(sender === sustainControl){
+            setSustainControl()
+        }
+        else if(sender === releaseControl){
+            setReleaseControl()
+        }
     }
     
-    func setControl1(){
-        index = control1.realModValue * control1.range
+    func setIndexControl(){
+        index = indexControl.realModValue * indexControl.range
+        indexControl.display = String(format: "%.2f",index)
+        
+        if(isSetup){
+            displayWaveform = calculateDisplayWavetable()
+        }
+    }
+    func setAttackControl(){
+        attack = pow(attackControl.realModValue, 3) * attackControl.range
+        attackControl.display = String(format: "%.2f",attack) + " s"
+        //print("set attack to: " + String(attack))
+    }
+    func setDecayControl(){
+        decay = 0.1 + pow(decayControl.realModValue, 3) * decayControl.range
+        decayControl.display = String(format: "%.2f",decay) + " s"
+        //print("set decay to: " + String(decay))
+    }
+    func setSustainControl(){
+        sustain = sustainControl.realModValue * sustainControl.range
+        sustainControl.display = String(format: "%.2f",sustain) + " db"
+        //print("set sustain to: " + String(sustain))
+    }
+    func setReleaseControl(){
+        release = 0.01 + pow(releaseControl.realModValue, 3) * releaseControl.range
+        releaseDisplay = release * 5.0
+        releaseControl.display = String(format: "%.2f", releaseDisplay) + " s"
+        //print("set release to: " + String(release))
+    }
+    
+    func calculateDisplayWavetable() -> [Float]{
+        
+        //var arrayCount = waveforms[0].count
+        
+        //var table3 = [Float](waveforms[0])
+        //var table4 = [Float](waveforms[0])
+        
+        /*
+        var table1 : [Double] = Array(repeating: 0.0, count: arrayCount)
+        var table2 : [Double] = Array(repeating: 0.0, count: arrayCount)
+        
+        for element in 0...waveforms[0].count - 1{
+            //let value = waveforms[0][element].value()
+            //print(value)
+            table1[element] = waveforms[0][element].value()
+            table2[element] = waveforms[1][element].value()
+        }
+        */
+        
+        //displayWaveform = result
+        if(index < 1){
+            return [Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
+        }
+        else if(index < 2){
+            return [Float](vDSP.linearInterpolate([Float](waveforms[1]),[Float](waveforms[2]),using: Float(index - 1)))
+        }
+        else{
+            return [Float](vDSP.linearInterpolate([Float](waveforms[2]),[Float](waveforms[3]),using: Float(index - 2)))
+        }
+        
+        
+        
+        /*
+        for element in 0...waveforms[0].count - 1{
+            displayWaveform[element] = Float(result[element])
+            print(displayWaveform[element])
+        }
+        */
+        
+        //displayWaveform
+        
     }
     
 }

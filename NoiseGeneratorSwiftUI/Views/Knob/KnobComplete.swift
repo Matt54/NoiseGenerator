@@ -199,8 +199,6 @@ struct KnobComplete_Previews: PreviewProvider {
         KnobComplete(knobModel: .constant(KnobCompleteModel()),
                      knobModColor: .constant(Color.yellow),
                      specialSelection: .constant(SpecialSelection.midiLearn))
-                     //modulationBeingAssigned: .constant(false),
-                     //modulationBeingDeleted: .constant(true)
         .previewLayout(.fixed(width: 400, height: 400))
     }
 }

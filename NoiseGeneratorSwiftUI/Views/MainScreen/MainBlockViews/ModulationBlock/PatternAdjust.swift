@@ -11,9 +11,9 @@ struct PatternAdjust: View {
             VStack(spacing: 0){
                 
                 PatternGraph(pattern: self.$pattern)
-                .padding(geometry.size.height * 0.1)
-                .border(Color.black, width: geometry.size.height * 0.02)
-                .frame(height:geometry.size.height * 0.85)
+                    .padding(geometry.size.height * 0.1)
+                    .border(Color.black, width: geometry.size.height * 0.02)
+                    .frame(height:geometry.size.height * 0.85)
                 
                 HStack{
                     

@@ -11,6 +11,8 @@ struct TitleBar: View {
                 {
                 Rectangle()
                     .fill(LinearGradient(Color.darkStart,Color.darkGray))
+                    
+                    
                 Text(self.title)
                     .bold()
                     .textStyle(ShrinkTextStyle())

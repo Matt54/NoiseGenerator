@@ -99,7 +99,7 @@ struct BlockDisplaySelect_Previews: PreviewProvider {
 }
 
 public enum SelectedBlockDisplay{
-    case controls, volume
+    case controls, volume, adsr
     var name: String {
         return "\(self)"
     }

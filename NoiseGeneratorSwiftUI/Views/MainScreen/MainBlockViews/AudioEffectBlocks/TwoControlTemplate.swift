@@ -60,7 +60,6 @@ struct TwoControlTemplate: View {
                             //Knob 2
                             VStack(spacing: 0)
                             {
-                                
                                 // Text - Value Display
                                 Text(self.twoControlAudioEffect.control2.display)
                                     .textStyle(ShrinkTextStyle())

@@ -22,6 +22,7 @@ struct AudioEffectView: View {
             .frame(height: geometry.size.height * 0.1)*/
             
             VStack(spacing: 0){
+                
                 ZStack{
                     Rectangle()
                         .fill(LinearGradient(Color.darkStart,Color.darkGray))
@@ -33,10 +34,10 @@ struct AudioEffectView: View {
                 .frame(height: geometry.size.height * 0.08)
                 
                 Divider()
-                    
                 
                 ZStack{
                     LinearGradient(Color.darkStart,Color.darkGray)
+                    
                     HStack(spacing: 0){
                     ForEach(self.noise.allControlEffects , id: \.id){ effect in
                         effect.displayImage

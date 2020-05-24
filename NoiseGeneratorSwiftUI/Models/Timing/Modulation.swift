@@ -20,7 +20,8 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     var modulationValue = 0.0
     
-    var numberOfSteps = 200.0
+    var numberOfSteps = 100.0
+    //var refreshPerSecond = 60
     
     var timeOfLastTimerAction: Double = 0.0
     
@@ -302,7 +303,7 @@ class ModulationTarget : Equatable {
      var knobModel: KnobCompleteModel
     
     // Always between -1.0 and 1.0
-    var modulationRange: Double = 0.1 {
+    var modulationRange: Double = 0.0 {
     didSet {
         limitRange()
         }

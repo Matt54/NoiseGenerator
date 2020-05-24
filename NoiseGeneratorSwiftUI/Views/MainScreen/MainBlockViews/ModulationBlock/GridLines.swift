@@ -3,23 +3,14 @@ import SwiftUI
 struct GridLines: View {
     
     var numberOfGridLines: Int
+    var isVerticalOnly: Bool
     
     var body: some View {
         GeometryReader
         { geometry in
             ZStack{
                 
-                /*
-                Path{ path in
-                    
-                    path.addLine(to: CGPoint(x: 0,
-                    y: 0))
-                    path.addLine(to: CGPoint(x: geometry.size.width,
-                                             y: 0))
-                }
-                .stroke()
-                */
-                
+                // Vertical
                 Group{
                     ForEach((0...self.numberOfGridLines), id: \.self) { i in
                             Path{ path in
@@ -32,17 +23,22 @@ struct GridLines: View {
                         }
                 }
                 
-                Group{
-                    ForEach((0...self.numberOfGridLines), id: \.self) { i in
-                            Path{ path in
-                                path.move(to: CGPoint(x: 0,
-                                                      y: geometry.size.height * (CGFloat(i) / CGFloat(self.numberOfGridLines))))
-                                path.addLine(to: CGPoint(x: geometry.size.width,
-                                                         y: geometry.size.height * (CGFloat(i) / CGFloat(self.numberOfGridLines))))
+                
+                //Horizontal
+                if(!self.isVerticalOnly){
+                    Group{
+                        ForEach((0...self.numberOfGridLines), id: \.self) { i in
+                                Path{ path in
+                                    path.move(to: CGPoint(x: 0,
+                                                          y: geometry.size.height * (CGFloat(i) / CGFloat(self.numberOfGridLines))))
+                                    path.addLine(to: CGPoint(x: geometry.size.width,
+                                                             y: geometry.size.height * (CGFloat(i) / CGFloat(self.numberOfGridLines))))
+                                }
+                                .stroke()
                             }
-                            .stroke()
-                        }
+                    }
                 }
+                
             }
         }
     }
@@ -50,6 +46,6 @@ struct GridLines: View {
 
 struct GridLines_Previews: PreviewProvider {
     static var previews: some View {
-        GridLines(numberOfGridLines: 8)
+        GridLines(numberOfGridLines: 8, isVerticalOnly: true)
     }
 }

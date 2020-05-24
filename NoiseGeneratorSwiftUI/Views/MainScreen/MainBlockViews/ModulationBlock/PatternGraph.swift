@@ -16,7 +16,8 @@ struct PatternGraph: View {
             ZStack{
                 Color.white
                 
-                GridLines(numberOfGridLines: self.numberOfGridLines)
+                GridLines(numberOfGridLines: self.numberOfGridLines,
+                          isVerticalOnly: false)
                 
                 //Draw the Area Under the curve
                 VStack{

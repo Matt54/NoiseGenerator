@@ -68,9 +68,10 @@ struct AudioSourceView: View {
                 ForEach(self.noise.oscillatorControlSources.indices, id: \.self){ i in
                     VStack(spacing: 0){
                         if(self.noise.oscillatorControlSources[i].isDisplayed){
-                            MorphingOscillatorView(morphingOscillator: self.$noise.oscillatorControlSources[i],
+                            MorphingOscillatorView(morphingOscillator: self.$noise.oscillatorControlSources[i])
+                            /*,
                                                    knobModColor: self.$noise.knobModColor,
-                                                   specialSelection: self.$noise.specialSelection)
+                                                   specialSelection: self.$noise.specialSelection)*/
                                                    //modulationBeingAssigned: self.$noise.modulationBeingAssigned,
                                                    //modulationBeingDeleted: self.$noise.modulationBeingDeleted)
                         }
