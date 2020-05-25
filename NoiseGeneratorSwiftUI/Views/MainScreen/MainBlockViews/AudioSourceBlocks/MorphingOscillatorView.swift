@@ -37,16 +37,29 @@ struct MorphingOscillatorView: View {
                                 .textStyle(ShrinkTextStyle())
                                 .frame(height: geometry.size.height * 0.1)
                                 
-                                WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
+                                Button(action: {
+                                    self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
+                                }){
+                                     if(self.morphingOscillator.is3DView){
+                                         Wavetable3DView(oscillator: self.$morphingOscillator)
+                                     }
+                                     else{
+                                        WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
+                                    }
+                                }
                                 .padding(geometry.size.height * 0.01)
                                 .border(Color.black, width: geometry.size.height * 0.01)
-                                .frame(width: geometry.size.width * 0.85,
+                                .frame(width: geometry.size.width * 0.6,
                                        height: geometry.size.height * 0.4)
+                                
+                                
+                                
                             
                                 KnobVerticalStack(knobModel: self.$morphingOscillator.indexControl,
                                 removeValue: true)
+                                    .frame(width: geometry.size.width * 0.5)
                             }
-                            
+                            //.frame(width: geometry.size.width)
                             //.aspectRatio(1.0, contentMode: .fit)
                             //.padding(geometry.size.height * 0.05)
                             //.frame(height: geometry.size.height * 0.3)
@@ -102,7 +115,7 @@ struct MorphingOscillatorView: View {
                                 .padding(geometry.size.width * 0.05)
                                 .frame(width: geometry.size.width * 0.2)
                         }
-                        Spacer()
+                        //Spacer()
                         
                         /*
                         BlockDisplaySelect(selectedBlockDisplay: .constant(SelectedBlockDisplay.controls))

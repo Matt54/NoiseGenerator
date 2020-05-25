@@ -68,6 +68,7 @@
 		FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD334E6243E6410009B0DDF /* KnobControl.swift */; };
 		FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6505D245251D600B10110 /* RepeatingTimer.swift */; };
 		FADBBC70246FF1B5004C58B5 /* BluetoothIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADBBC6F246FF1B5004C58B5 /* BluetoothIcon.swift */; };
+		FAE0DD66247C15800090C3A2 /* Wavetable3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */; };
 		FAE707D62465DC3500F27B31 /* AudioSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D52465DC3500F27B31 /* AudioSource.swift */; };
 		FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D72465F80C00F27B31 /* AudioSourceView.swift */; };
 		FAE707DA2465F90200F27B31 /* AudioEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707D92465F90200F27B31 /* AudioEffectView.swift */; };
@@ -158,6 +159,7 @@
 		FAD334E6243E6410009B0DDF /* KnobControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobControl.swift; sourceTree = "<group>"; };
 		FAD6505D245251D600B10110 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
 		FADBBC6F246FF1B5004C58B5 /* BluetoothIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothIcon.swift; sourceTree = "<group>"; };
+		FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wavetable3DView.swift; sourceTree = "<group>"; };
 		FAE707D52465DC3500F27B31 /* AudioSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSource.swift; sourceTree = "<group>"; };
 		FAE707D72465F80C00F27B31 /* AudioSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSourceView.swift; sourceTree = "<group>"; };
 		FAE707D92465F90200F27B31 /* AudioEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffectView.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				FA9CFE152476B33800DAD510 /* ADSR.swift */,
 				FAAB7188246743C700B884B3 /* ExternalSourceView.swift */,
 				FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */,
+				FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */,
 			);
 			path = AudioSourceBlocks;
 			sourceTree = "<group>";
@@ -595,6 +598,7 @@
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
 				FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */,
 				FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */,
+				FAE0DD66247C15800090C3A2 /* Wavetable3DView.swift in Sources */,
 				FA7DA85D2469874600822786 /* MasterOutputView.swift in Sources */,
 				FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */,
 				FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */,

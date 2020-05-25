@@ -305,8 +305,17 @@ public class Voice{
 
 class MorphingOscillatorBank: MonoAudioSource{
     
-    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.triangle), AKTable(.square), AKTable(.sawtooth)]
+    //var waveforms : [AKTable] = [AKTable(.sine), AKTable(.triangle), AKTable(.square), AKTable(.sawtooth)]
+    
+    //REMEMBER THAT THIS MUST ALWAYS HAVE EXACTLY 4 TABLES (WE USE 1 AND 2)
+    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.sine), AKTable(.sine)]
     var displayWaveform : [Float] = [Float](AKTable(.sine))
+    
+    
+    var displayWaveTables : [DisplayWaveTable] = []
+    @Published var displayIndex: Int = 0
+    @Published var is3DView = false
+    var numberOf3DTables = 49
     
     //var waveforms = [AKTable(.sine), AKTable(.sawtooth)]
     
@@ -321,6 +330,7 @@ class MorphingOscillatorBank: MonoAudioSource{
             for voice in voices{
                 voice.oscillator.index = index// indexControl.realModValue * control1.range
             }
+            displayIndex = Int(index * numberOf3DTables)
         }
     }
     
@@ -388,7 +398,7 @@ class MorphingOscillatorBank: MonoAudioSource{
         
         indexControl.name = "Waveform"
         indexControl.handoffDelegate = self
-        indexControl.range = Double(waveforms.count - 1)
+        //indexControl.range = 1 //Double(waveforms.count - 1)
         setIndexControl()
         
         attackControl.name = "Attack"
@@ -418,6 +428,8 @@ class MorphingOscillatorBank: MonoAudioSource{
         name = "OSC 1"
         
         isSetup = true
+        
+        calculateAllWaveTables()
     }
     
     //This is handling both the on and the off events
@@ -523,7 +535,10 @@ class MorphingOscillatorBank: MonoAudioSource{
         }
         */
         
+        return [Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
+        
         //displayWaveform = result
+        /*
         if(index < 1){
             return [Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
         }
@@ -533,7 +548,7 @@ class MorphingOscillatorBank: MonoAudioSource{
         else{
             return [Float](vDSP.linearInterpolate([Float](waveforms[2]),[Float](waveforms[3]),using: Float(index - 2)))
         }
-        
+        */
         
         
         /*
@@ -547,6 +562,24 @@ class MorphingOscillatorBank: MonoAudioSource{
         
     }
     
+    func calculateAllWaveTables(){
+        displayWaveTables = []
+        for i in 0...numberOf3DTables{
+            let interpolatedIndex = Double(i) / Double(numberOf3DTables)
+            let table = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](waveforms[0]),
+                                                                        [Float](waveforms[1]),
+                                                                        using: Float(interpolatedIndex) ) ) )
+            displayWaveTables.append(table)
+        }
+    }
+    
+}
+
+class DisplayWaveTable{
+    var waveform : [Float]
+    init(_ waveform: [Float]){
+        self.waveform = waveform
+    }
 }
 
 public class NoiseSource: MonoAudioSource{

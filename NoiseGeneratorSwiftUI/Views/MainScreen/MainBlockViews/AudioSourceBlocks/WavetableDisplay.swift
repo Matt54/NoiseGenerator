@@ -116,14 +116,36 @@ class DrawView : UIView {
     
     var table: [Float] = []
     var absmax: Double = 0
+    var hasClearBackground = false
+    var isHighlightView = false
     
     @objc public init(_ wavetable: [Float], frame: CGRect = CGRect(x: 0, y: 0, width: 440, height: 150)) {
-        //self.table = []
         super.init(frame: frame)
         self.table = wavetable
-        let max = Double(table.max() ?? 1.0)
-        let min = Double(table.min() ?? -1.0)
-        absmax = [max, abs(min)].max() ?? 1.0
+        //let max = 1.0// Double(table.max() ?? 1.0)
+        //let min = -1.0// Double(table.min() ?? -1.0)
+        absmax = 1.0// [max, abs(min)].max() ?? 1.0
+    }
+    
+    @objc public init(_ wavetable: [Float], hasClearBackground: Bool, frame: CGRect = CGRect(x: 0, y: 0, width: 440, height: 150)) {
+        super.init(frame: frame)
+        self.hasClearBackground = hasClearBackground
+        self.table = wavetable
+        //let max = Double(table.max() ?? 1.0)
+        //let min = Double(table.min() ?? -1.0)
+        //absmax = [max, abs(min)].max() ?? 1.0
+        absmax = 1.0
+    }
+    
+    @objc public init(_ wavetable: [Float], hasClearBackground: Bool, isHighlightView: Bool, frame: CGRect = CGRect(x: 0, y: 0, width: 440, height: 150)) {
+        super.init(frame: frame)
+        self.hasClearBackground = hasClearBackground
+        self.isHighlightView = isHighlightView
+        self.table = wavetable
+        //let max = Double(table.max() ?? 1.0)
+        //let min = Double(table.min() ?? -1.0)
+        //absmax = [max, abs(min)].max() ?? 1.0
+        absmax = 1.0
     }
 
     
@@ -142,28 +164,53 @@ class DrawView : UIView {
         //darkGray = Color.init(red: 0.2, green: 0.2, blue: 0.2)
         
         let border = UIBezierPath(rect: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        let bgcolor = UIColor(red:0.2, green:0.2, blue:0.2, alpha: 1.0) //UIColor.white//AKStylist.sharedInstance.nextColor
-        bgcolor.setFill()
-        border.fill()
-        UIColor.black.setStroke()
-        border.lineWidth = 8
-        border.stroke()
         
-        /*
-        let midline = UIBezierPath()
-        midline.move(to: CGPoint(x: 0, y: frame.height / 2))
-        midline.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
-        UIColor.black.setStroke()
-        midline.lineWidth = 1
-        midline.stroke()
-        */
+        if(!hasClearBackground){
+            let bgcolor = UIColor(red:0.2, green:0.2, blue:0.2, alpha: 1.0) //UIColor.white//AKStylist.sharedInstance.nextColor
+            bgcolor.setFill()
+            border.fill()
+            UIColor.black.setStroke()
+            border.lineWidth =  CGFloat(width * 0.015) //8
+            border.stroke()
+            UIColor.white.setStroke()
+            UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7).setFill()
+        }
+        else{
+            if(!isHighlightView){
+                UIColor(red:1.0, green:1.0, blue:1.0, alpha:0.5).setStroke()
+                UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.025).setFill()
+            }
+            else{
+                
+                //neon yellow
+                UIColor(red:0.98, green:0.93, blue:0.15, alpha:1.0).setStroke()
+                UIColor(red:0.98, green:0.93, blue:0.15, alpha:0.4).setFill()
+                
+                //UIColor(red:0.4, green:0.1, blue:0.7, alpha:1.0).setStroke()
+                //UIColor(red:0.4, green:0.1, blue:0.7, alpha:0.4).setFill()
+                
+                //UIColor.init(red: 0.4, green: 0.1, blue: 0.7, alpha: 1.0)
+            }
+        }
 
         let bezierPath = UIBezierPath()
         
-        bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
-        
+        /*
+        if(!hasClearBackground){
+            // left side, mid y
+            bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
+            
+            //
+            bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
+        }
+        else{
+            bezierPath.move(to: CGPoint(x: 0.0,
+                                        y: (1.0 - table[0] / absmax * padding) * height))
+        }
+        */
+         bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
         bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
-
+            
         //for index in 1..<table.count {
         for index in stride(from: 1, to: table.count, by: 100){
 
@@ -177,22 +224,40 @@ class DrawView : UIView {
         bezierPath.addLine(to: CGPoint(x: Double(frame.width), y: (1.0 - table[table.count-1] / absmax * padding) * height))
         
         
+        if(!hasClearBackground){
+            bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
+            bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
+            //bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
+            bezierPath.fill()
+            bezierPath.lineWidth = CGFloat(width * 0.005) //2
+            bezierPath.stroke()
+        }
+        else{
+            bezierPath.lineWidth = CGFloat(width * 0.005) //2
+            bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
+            bezierPath.stroke()
+            UIColor.clear.setStroke()
+            bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
+            bezierPath.stroke()
+            //UIColor.black.setStroke()
+           //bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
+            bezierPath.stroke()
+            bezierPath.fill()
+        }
         
-        bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
-        bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
-
         
         
-        UIColor.white.setStroke()
+        
         //let fillColor = UIColor(red:0.07, green:0.44, blue:0.54, alpha:0.4)
         //let fillColor = UIColor(red:0.4, green:0.1, blue:0.7, alpha:0.4)
-        let fillColor = UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7)
-        fillColor.setFill()
-        bezierPath.fill()
-        bezierPath.lineWidth = 2
-        bezierPath.stroke()
+        //UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7).setFill()
+        //fillColor.setFill()
+        
+        
+        
     }
 }
+
 
 struct WavetableView: UIViewRepresentable {
     typealias UIViewType = DrawView
