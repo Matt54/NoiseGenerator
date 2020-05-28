@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AddEffectForm: View {
 
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     init(){
         UITableView.appearance().backgroundColor = UIColor.systemBackground
@@ -69,7 +69,7 @@ struct AddEffectForm: View {
 
 struct AddEffectForm_Previews: PreviewProvider {
     static var previews: some View {
-        AddEffectForm().environmentObject(NoiseModel.shared)
+        AddEffectForm().environmentObject(Conductor.shared)
         //.previewLayout(.fixed(width: 2688, height: 1242))
         .previewLayout(.fixed(width: 568, height: 320))
     }

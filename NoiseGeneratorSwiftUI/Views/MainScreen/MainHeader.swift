@@ -13,7 +13,7 @@ import AudioKitUI
 
 struct MainHeader: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     @State private var textRemember: String = ""
     
     private var decimalFormatter: NumberFormatter = {
@@ -166,7 +166,7 @@ struct MainHeader: View {
 
 struct MainHeader_Previews: PreviewProvider {
     static var previews: some View {
-        MainHeader().environmentObject(NoiseModel.shared)
+        MainHeader().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 1500, height: 100))
     }
 }

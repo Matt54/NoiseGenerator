@@ -10,6 +10,7 @@
 		DFEC090B9E0B6E83F8AE647D /* Pods_NoiseGeneratorSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */; };
 		FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */; };
 		FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */; };
+		FA01D7F6247EB02800BF9538 /* HeaderKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D7F5247EB02800BF9538 /* HeaderKeyboard.swift */; };
 		FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA093A352448A94A00BCD16C /* AudioEffect.swift */; };
 		FA0A68672469FF590016534A /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A68662469FF590016534A /* Tempo.swift */; };
 		FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A6868246A01ED0016534A /* MainHeader.swift */; };
@@ -32,7 +33,7 @@
 		FA377A4224317C3100CBE2C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA377A4024317C3100CBE2C4 /* LaunchScreen.storyboard */; };
 		FA377A4B24317C4500CBE2C4 /* AudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA377A4A24317C4500CBE2C4 /* AudioKit.framework */; };
 		FA377A4C24317C4500CBE2C4 /* AudioKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA377A4A24317C4500CBE2C4 /* AudioKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FA377A4F24317CAB00CBE2C4 /* NoiseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */; };
+		FA377A4F24317CAB00CBE2C4 /* Conductor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A4E24317CAB00CBE2C4 /* Conductor.swift */; };
 		FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A50243228DE00CBE2C4 /* TriangleControl.swift */; };
 		FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */; };
 		FA3CBB44246D7134009DE169 /* MorphingOscillatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */; };
@@ -41,6 +42,7 @@
 		FA6ACFBC24573D720009CC20 /* VolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6ACFBB24573D710009CC20 /* VolumeControl.swift */; };
 		FA791501244D333500C45D1A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA791500244D333500C45D1A /* ColorExtension.swift */; };
 		FA7AF36E2474BA9B00D0DA7F /* MainBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7AF36D2474BA9B00D0DA7F /* MainBlocks.swift */; };
+		FA7C8417247F1E5400F2B553 /* myKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7C8416247F1E5400F2B553 /* myKeyboard.swift */; };
 		FA7DA85D2469874600822786 /* MasterOutputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7DA85C2469874600822786 /* MasterOutputView.swift */; };
 		FA7DA85F2469C03000822786 /* StereoVolumeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7DA85E2469C03000822786 /* StereoVolumeDisplay.swift */; };
 		FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DF97245C6B4500473657 /* NoiseGenerator.swift */; };
@@ -48,6 +50,7 @@
 		FA81DFA5245CDAAD00473657 /* PatternGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81DFA4245CDAAD00473657 /* PatternGraph.swift */; };
 		FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA83C0232442EA8700568204 /* TwoControlTemplate.swift */; };
 		FA855A822442575D0024787D /* PresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA855A812442575D0024787D /* PresetPicker.swift */; };
+		FA89B9C6247CB34C002593C3 /* iPhoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */; };
 		FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B61C52461C04F0029DD68 /* Pattern.swift */; };
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
 		FA986B4C243B611000700156 /* Audiobus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA986B4B243B611000700156 /* Audiobus.swift */; };
@@ -98,6 +101,7 @@
 		8892154ED79F3C714BF7E533 /* Pods_NoiseGeneratorSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoiseGeneratorSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA00559B246AD78B000B16C7 /* KeyboardExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardExtensions.swift; sourceTree = "<group>"; };
 		FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyGestureRecognizer.swift; sourceTree = "<group>"; };
+		FA01D7F5247EB02800BF9538 /* HeaderKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderKeyboard.swift; sourceTree = "<group>"; };
 		FA093A352448A94A00BCD16C /* AudioEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffect.swift; sourceTree = "<group>"; };
 		FA0A68662469FF590016534A /* Tempo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		FA0A6868246A01ED0016534A /* MainHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHeader.swift; sourceTree = "<group>"; };
@@ -121,7 +125,7 @@
 		FA377A4124317C3100CBE2C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA377A4324317C3100CBE2C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA377A4A24317C4500CBE2C4 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = "../../AudioKit-iOS/AudioKit.framework"; sourceTree = "<group>"; };
-		FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseModel.swift; sourceTree = "<group>"; };
+		FA377A4E24317CAB00CBE2C4 /* Conductor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conductor.swift; sourceTree = "<group>"; };
 		FA377A50243228DE00CBE2C4 /* TriangleControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriangleControl.swift; sourceTree = "<group>"; };
 		FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriangleDrag.swift; sourceTree = "<group>"; };
 		FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorphingOscillatorView.swift; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 		FA6ACFBB24573D710009CC20 /* VolumeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeControl.swift; sourceTree = "<group>"; };
 		FA791500244D333500C45D1A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		FA7AF36D2474BA9B00D0DA7F /* MainBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBlocks.swift; sourceTree = "<group>"; };
+		FA7C8416247F1E5400F2B553 /* myKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myKeyboard.swift; sourceTree = "<group>"; };
 		FA7DA85C2469874600822786 /* MasterOutputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterOutputView.swift; sourceTree = "<group>"; };
 		FA7DA85E2469C03000822786 /* StereoVolumeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVolumeDisplay.swift; sourceTree = "<group>"; };
 		FA81DF97245C6B4500473657 /* NoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseGenerator.swift; sourceTree = "<group>"; };
@@ -137,6 +142,7 @@
 		FA81DFA4245CDAAD00473657 /* PatternGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGraph.swift; sourceTree = "<group>"; };
 		FA83C0232442EA8700568204 /* TwoControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoControlTemplate.swift; sourceTree = "<group>"; };
 		FA855A812442575D0024787D /* PresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPicker.swift; sourceTree = "<group>"; };
+		FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneModel.swift; sourceTree = "<group>"; };
 		FA8B61C52461C04F0029DD68 /* Pattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pattern.swift; sourceTree = "<group>"; };
 		FA922F922448D9E100C63DAD /* FourControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourControlTemplate.swift; sourceTree = "<group>"; };
 		FA986B4A243B604500700156 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
@@ -208,6 +214,7 @@
 				FA7AF36D2474BA9B00D0DA7F /* MainBlocks.swift */,
 				FA0987CC2476B16C0010047F /* MainBlockViews */,
 				FA1211A0246C31460077941E /* KeyBoard.swift */,
+				FA01D7F5247EB02800BF9538 /* HeaderKeyboard.swift */,
 			);
 			path = MainScreen;
 			sourceTree = "<group>";
@@ -250,7 +257,7 @@
 		FA220F632454848200AACE5B /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				FA377A4E24317CAB00CBE2C4 /* NoiseModel.swift */,
+				FA377A4E24317CAB00CBE2C4 /* Conductor.swift */,
 				FA3EAB222476AFCE003638C0 /* Graphical */,
 				FA3EAB212476AF99003638C0 /* Timing */,
 				FA3EAB202476AF7D003638C0 /* Helpers */,
@@ -258,6 +265,8 @@
 				FAE707D52465DC3500F27B31 /* AudioSource.swift */,
 				FA220F61245483C700AACE5B /* KnobCompleteModel.swift */,
 				FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */,
+				FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */,
+				FA7C8416247F1E5400F2B553 /* myKeyboard.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -324,12 +333,12 @@
 				FA377A3524317C3000CBE2C4 /* AppDelegate.swift */,
 				FA377A3724317C3000CBE2C4 /* SceneDelegate.swift */,
 				FA377A3924317C3000CBE2C4 /* ContentView.swift */,
+				FA220F64245484BD00AACE5B /* Views */,
+				FA220F632454848200AACE5B /* Models */,
 				FA377A3B24317C3100CBE2C4 /* Assets.xcassets */,
 				FA377A4024317C3100CBE2C4 /* LaunchScreen.storyboard */,
 				FA377A4324317C3100CBE2C4 /* Info.plist */,
 				FA377A3D24317C3100CBE2C4 /* Preview Content */,
-				FA220F632454848200AACE5B /* Models */,
-				FA220F64245484BD00AACE5B /* Views */,
 			);
 			path = NoiseGeneratorSwiftUI;
 			sourceTree = "<group>";
@@ -568,6 +577,7 @@
 			files = (
 				FA6ACFBA24573ADE0009CC20 /* SlidingTriangle.swift in Sources */,
 				FA27D2FF24743D9D008BC9D3 /* VolumeMixer.swift in Sources */,
+				FA7C8417247F1E5400F2B553 /* myKeyboard.swift in Sources */,
 				FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */,
 				FA1211A1246C31460077941E /* KeyBoard.swift in Sources */,
 				FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */,
@@ -605,6 +615,7 @@
 				FA855A822442575D0024787D /* PresetPicker.swift in Sources */,
 				FAAA3CC62468A42300CA2E47 /* MiniPattern.swift in Sources */,
 				FA81DFA5245CDAAD00473657 /* PatternGraph.swift in Sources */,
+				FA01D7F6247EB02800BF9538 /* HeaderKeyboard.swift in Sources */,
 				FAE707DA2465F90200F27B31 /* AudioEffectView.swift in Sources */,
 				FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */,
 				FA81DF9A245C87FF00473657 /* TitleBar.swift in Sources */,
@@ -619,7 +630,8 @@
 				FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */,
 				FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */,
 				FA27D301247480CF008BC9D3 /* BlockDisplaySelect.swift in Sources */,
-				FA377A4F24317CAB00CBE2C4 /* NoiseModel.swift in Sources */,
+				FA377A4F24317CAB00CBE2C4 /* Conductor.swift in Sources */,
+				FA89B9C6247CB34C002593C3 /* iPhoneModel.swift in Sources */,
 				FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */,
 				FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */,
 				FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */,

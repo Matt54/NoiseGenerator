@@ -4,10 +4,12 @@ import Combine
 import SwiftUI
 import Foundation
 
-final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandoff, AKMIDIListener{
+final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff, AKMIDIListener{
     
     // Single shared data model
-    static let shared = NoiseModel()
+    static let shared = Conductor()
+    
+    var deviceLayout = DeviceLayout()
     
     // Enum that changes to a different screen
     @Published var selectedScreen = SelectedScreen.main
@@ -85,26 +87,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
     // ON - modulation range and color is shown on knobs
     @Published var modulationSelected: Bool = true
     
-    // ON - modulation can be assigned and range can be adjusted
-    
-    /*
-    @Published var modulationBeingAssigned: Bool = false{
-        willSet{
-            if(modulationBeingDeleted){
-                modulationBeingDeleted = false
-            }
-        }
-    }
-    
-    // ON - modulation can be removed from knobs
-    @Published var modulationBeingDeleted: Bool = false{
-        willSet{
-            if(modulationBeingAssigned){
-                modulationBeingAssigned = false
-            }
-        }
-    }
-    */
     
     // Updates display for modulation apply, delete, and midi learn
     @Published var specialSelection : SpecialSelection = .none
@@ -115,7 +97,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
     // This controls the color of the modulation part of the knobs
     @Published var knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
     
-    @Published var keyboardViewController : KeyBoardViewController
+    @Published var keyboardViewController = KeyBoardViewController()
     @Published var firstOctave: Int = 2{
         didSet{
             keyboardViewController.keyboardView.firstOctave = firstOctave
@@ -143,9 +125,11 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         
         outputAmplitudeTimer = RepeatingTimer(timeInterval: screenUpdateTimeDuration)
         
-        keyboardViewController = KeyBoardViewController()
+        //keyboardViewController = KeyBoardViewController()
+        //keyboardViewController.ges
         keyboardViewController.keyboardView.delegate = self
-        
+        keyboardViewController.keyboardView.isExclusiveTouch = false
+        //keyboardViewController.keyboardView.isMultipleTouchEnabled = true
         masterVolumeControl.percentRotated = 0.7
         
         //create a filter to play with
@@ -202,6 +186,114 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         midi.openInput()
         midi.openOutput()
         midi.addListener(self)
+        
+        let screenSize: CGRect = UIScreen.main.bounds
+        print("Running on: \(UIDevice().type)")
+        var w = screenSize.width
+        var h = screenSize.height
+        print("Width: \(w)")
+        print("Height: \(h)")
+        var aspectRatio = screenSize.width / screenSize.height
+        print("Aspect Ratio: \(aspectRatio)")
+        // Desired aspect ratio = 2.1653333333333333
+        
+        calculateLayoutPadding()
+        
+        w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
+        h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
+        aspectRatio = w / h
+
+        print("Width: \(w)")
+        print("Height: \(h)")
+        print("Aspect Ratio: \(aspectRatio)")
+        // Could do 16:9?
+        // Desired aspect ratio = 1.77777777778
+    }
+    
+    // This variable is used to increase the size of the keyboard area on ipad
+    // Useful - because we can use more screen real estate without adjusting
+    //          the aspect ratio of the rest of the UI
+    var keyboardAdjust: CGFloat = 0.0
+    
+    func calculateLayoutPadding(){
+        
+        deviceLayout.padLeft = 0.0
+        deviceLayout.padRight = 0.0
+        deviceLayout.padTop = 0.0
+        deviceLayout.padBottom = 0.05
+        
+        
+        let screenSize: CGRect = UIScreen.main.bounds
+        //keyboardAdjust = screenSize.height * -0.1
+        
+        var w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
+        var h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
+        var aspectRatio = w / h
+        
+        var xLimits = false
+        var yLimits = false
+        
+        while (abs(16/9 - aspectRatio)) > 0.01 {
+            if(aspectRatio > 16/9){
+                //make aspectRatio smaller by increasing height / decreasing width
+                
+                //first try full screen on the height
+                if(!yLimits){
+                    
+                    //Always leave room for the bottom bar thing
+                    deviceLayout.padBottom = 0.05
+                    
+                    yLimits = true
+                }
+                else{
+                    deviceLayout.padLeft = deviceLayout.padLeft + 0.005
+                    deviceLayout.padRight = deviceLayout.padRight + 0.005
+                }
+            }
+            else{
+                //make aspectRatio bigger by increasing width / decreasing height
+                //first try full screen on the height
+               if(!xLimits){
+                
+                    //Always leave room for the bottom bar navigation control
+                    deviceLayout.padBottom = 0.05
+                
+                    //This is likely an ipad, so give it a top header too
+                    deviceLayout.padTop = 0.05
+                
+                   xLimits = true
+               }
+               else{
+                
+                    // Grow the keyboard size to some limit first,
+                    // then adjust the rest of the UI to the aspect ratio
+                    if(keyboardAdjust < screenSize.height * 0.25){
+                        keyboardAdjust = keyboardAdjust + 5
+                    }
+                    else{
+                        deviceLayout.padTop = deviceLayout.padTop + 0.005
+                        deviceLayout.padBottom = deviceLayout.padBottom + 0.005
+                    }
+                
+                
+               }
+            }
+            w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
+            h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
+            aspectRatio = w / h
+            print("Aspect Ratio: \(aspectRatio)")
+        }
+    }
+    
+    func setupDeviceLayout(){
+        switch UIDevice().type {
+            case .iPhoneSE, .iPhone5, .iPhone5S:
+                print("default value")
+            case .iPhone6, .iPhone7, .iPhone8, .iPhone6S, .iPhoneX:
+                deviceLayout.padLeft = 0.0
+                deviceLayout.padRight = 0.0
+            default: break
+        }
     }
     
     func hideSources(){
@@ -319,7 +411,7 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
     //var timeOfLastScreenUpdate : Double
     var timeOfLastScreenUpdate: Double = 0.0
     //var allowFasterScreenUpdate = true
-    var screenUpdateSetting = ScreenUpdateSetting.custom
+    var screenUpdateSetting = ScreenUpdateSetting.slowest
     
     @objc func getOutputAmplitude(){
         DispatchQueue.main.async {
@@ -856,8 +948,6 @@ final class NoiseModel : ObservableObject, ModulationDelegateUI, ParameterHandof
         }
     }
 
-    
-    
 }
 
 public enum MIDISupportedBytes: MIDIByte{
@@ -877,7 +967,7 @@ public class MIDILearnMapping{
 }
 
 // Keyboard protocol conformance
-extension NoiseModel: AKKeyboardDelegate {
+extension Conductor: AKKeyboardDelegate {
     
     func noteOn(note: MIDINoteNumber) {
         playNote(note: note, velocity: 80, channel: MIDIChannel())
@@ -908,4 +998,11 @@ public enum SpecialSelection{
     var name: String {
         return "\(self)"
     }
+}
+
+class DeviceLayout{
+    var padTop : CGFloat = 0.0
+    var padBottom : CGFloat = 0.05
+    var padLeft : CGFloat = 0.05
+    var padRight: CGFloat = 0.05
 }

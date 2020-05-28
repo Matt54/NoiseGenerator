@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MainBlocks: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
@@ -114,7 +114,7 @@ struct MainBlocks: View {
 
 struct MainBlocks_Previews: PreviewProvider {
     static var previews: some View {
-        MainBlocks().environmentObject(NoiseModel.shared)
+        MainBlocks().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 568, height: 250))
     }
 }

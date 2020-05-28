@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MasterOutputView: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader
@@ -50,7 +50,7 @@ struct MasterOutputView: View {
 
 struct MasterOutputView_Previews: PreviewProvider {
     static var previews: some View {
-        MasterOutputView().environmentObject(NoiseModel.shared)
+        MasterOutputView().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 500, height: 300))
     }
 }

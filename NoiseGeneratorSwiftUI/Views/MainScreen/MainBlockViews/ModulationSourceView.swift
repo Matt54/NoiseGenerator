@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ModulationSourceView: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
@@ -156,7 +156,7 @@ struct ModulationSourceView: View {
 
 struct ModulationSourceView_Previews: PreviewProvider {
     static var previews: some View {
-        ModulationSourceView().environmentObject(NoiseModel.shared)
+        ModulationSourceView().environmentObject(Conductor.shared)
             .previewLayout(.fixed(width: 568, height: 568))
     }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AudioEffectView: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
@@ -165,7 +165,7 @@ struct AudioEffectView: View {
 
 struct AudioEffectView_Previews: PreviewProvider {
     static var previews: some View {
-        AudioEffectView().environmentObject(NoiseModel.shared)
+        AudioEffectView().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 568, height: 568))
     }
 }

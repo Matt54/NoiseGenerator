@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AddInputDeviceForm: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
@@ -61,7 +61,7 @@ struct AddInputDeviceForm: View {
 
 struct AddInputDeviceForm_Previews: PreviewProvider {
     static var previews: some View {
-        AddInputDeviceForm().environmentObject(NoiseModel.shared)
+        AddInputDeviceForm().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 568, height: 320))
     }
 }

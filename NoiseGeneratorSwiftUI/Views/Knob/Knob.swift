@@ -61,7 +61,7 @@ struct Knob: View {
                             )
                         )
                 //User touches the circle and drags it to a new location
-                .gesture(DragGesture()
+                .simultaneousGesture(DragGesture()
                     
                     // event fires when there is drag translation
                     .onChanged{

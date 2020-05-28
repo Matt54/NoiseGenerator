@@ -13,27 +13,15 @@ import AudioKitUI
 
 struct KeyBoard: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
             VStack(spacing: 0){
                 
-                VStack(spacing: 0){
-                    Rectangle()
-                    .overlay(
-                        LinearGradient(gradient:
-                                        Gradient(colors:
-                                            [Color.init(red: 0.7, green: 0.7, blue: 0.7),
-                                             Color.lightWood,
-                                             Color.darkWood]),
-                                       startPoint: .top,
-                                       endPoint: .bottom)
-                    )
-                }
-                .frame(height:geometry.size.width * (0.005))
                 
                 
+                /*
                 HStack(spacing: 0){
                 
                     //Down Octave
@@ -85,10 +73,10 @@ struct KeyBoard: View {
                                  
                              Image(systemName: "minus")
                                 //.resizable()
-                                .padding(geometry.size.height * 0.02)
+                                //.padding(geometry.size.height * 0.02)
                                 .foregroundColor(Color.white)
                                 .aspectRatio(1.0, contentMode: .fit)
-                                .frame(height: geometry.size.height * 0.1)
+                                //.frame(height: geometry.size.height * 0.1)
                                 
                                 
                                 
@@ -140,9 +128,11 @@ struct KeyBoard: View {
                     .frame(width: geometry.size.height * 0.4)
                     .padding(.trailing, geometry.size.width * 0.01)
                 }
-                .frame(height: geometry.size.height * 0.2)
+                .frame(height: geometry.size.width * 0.04)
                 .background(LinearGradient(Color.lightWood,Color.darkWood))
-                
+                */
+ 
+ 
                 HStack(spacing: 0){
                     
                      Rectangle()
@@ -161,6 +151,20 @@ struct KeyBoard: View {
                     //Keyboard
                     self.noise.keyboardViewController
                         .border(Color.black, width: geometry.size.height * 0.02)
+                        /*
+                        .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                        .onChanged{
+                                value in
+                            print("we got it!")
+                    //value.
+                                    }
+                        )*/
+                        
+                            
+                            
+                            
+                        
+                        
                         //.frame(width: geometry.size.width,height: geometry.size.height * 0.8)
                         
                     
@@ -187,8 +191,17 @@ struct KeyBoard: View {
 struct KeyBoard_Previews: PreviewProvider {
     static var previews: some View {
         KeyBoard()
-            .previewLayout(.fixed(width: 1000, height: 100))
-            .environmentObject(NoiseModel.shared)
+            .previewLayout(.fixed(width: 1000, height: 200))
+            .environmentObject(Conductor.shared)
+    }
+}
+
+extension AKKeyboardView{
+    
+    
+    
+    open override var editingInteractionConfiguration: UIEditingInteractionConfiguration {
+        return .none
     }
 }
 
@@ -219,6 +232,16 @@ struct KeyBoardViewController: UIViewRepresentable {
         
         keyboardView.whiteKeyOff = UIColor.init(red: 1.0, green: 1.0, blue: 245/255, alpha: 1.0)
         
+        
+        
+        //keyboardView.delegate = context.coordinator
+        
+        
+        //let gRecognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.triggerTouchAction(gestureReconizer:)))
+        
+        //keyboardView.addGestureRecognizer(gRecognizer)
+        
+        
         return keyboardView
     }
 
@@ -229,25 +252,73 @@ struct KeyBoardViewController: UIViewRepresentable {
         keyboardView.firstOctave = firstOctave
         keyboardView.octaveCount = octaveCount
         
-        
+        //keyboardView.
     }
     
-    /*
+    
     class Coordinator: NSObject, AKKeyboardDelegate {
+        
         func noteOn(note: MIDINoteNumber) {
-            <#code#>
+            print("Got note on!")
+        }
+          
+        func noteOff(note: MIDINoteNumber) {
+            print("Got note off!")
         }
         
-        func noteOff(note: MIDINoteNumber) {
-            <#code#>
+        var control: KeyBoardViewController
+        
+        init(_ control: KeyBoardViewController) {
+            self.control = control
+        }
+        
+        @objc func doSomething(sender: AKKeyboardView) {
+            print("GOT IT!")
+        }
+        
+        @objc func triggerTouchAction(gestureReconizer: UITapGestureRecognizer) {
+              //Add alert to show it works
+            print("Hello, tap!")
         }
         
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(self)
     }
-    */
-    
 
+}
+
+struct OverlayButton<Content: View>: View {
+  
+  private let content: Content
+  
+  init(
+    @ViewBuilder _ content: () -> Content
+  ) {
+    self.content = content()
+  }
+  
+  var body: some View {
+    Button(action: {}) { content }
+      .buttonStyle(_ButtonStyle())
+  }
+  
+  private struct _ButtonStyle: ButtonStyle {
+    
+    func makeBody(configuration: Self.Configuration) -> AnyView {
+      if configuration.isPressed {
+        return AnyView(
+          configuration.label
+            .background(Color(white: 0.96))
+        )
+      } else {
+        return AnyView(
+          configuration.label
+            .background(Color(white: 1, opacity: 0.0001))
+        )
+      }
+    }
+  }
+  
 }

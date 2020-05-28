@@ -12,7 +12,7 @@ import AudioKitUI
 
 struct MorphingOscillatorView: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     @Binding var morphingOscillator: MorphingOscillatorBank
     
     //@Binding var knobModColor: Color
@@ -146,7 +146,7 @@ struct MorphingOscillatorView: View {
 struct MorphingOscillatorView_Previews: PreviewProvider {
     static var previews: some View {
         MorphingOscillatorView(morphingOscillator: .constant(MorphingOscillatorBank()))
-        .environmentObject(NoiseModel.shared)
+        .environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 250, height: 200))
     }
 }

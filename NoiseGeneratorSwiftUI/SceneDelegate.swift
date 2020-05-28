@@ -16,15 +16,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate{
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: contentView.environmentObject(NoiseModel.shared))
+            window.rootViewController = UIHostingController(rootView: contentView.environmentObject(Conductor.shared))
             self.window = window
             window.makeKeyAndVisible()
+            //window.isExclusiveTouch = true
+            //window.isMultipleTouchEnabled = true
+            
+            
             
             let tapGesture = AnyGestureRecognizer(target: window, action:#selector(UIView.endEditing))
             tapGesture.requiresExclusiveTouchType = false
             tapGesture.cancelsTouchesInView = false
+            
             tapGesture.delegate = self //I don't use window as delegate to minimize possible side effects
             window.addGestureRecognizer(tapGesture)
+            
         }
     }
 

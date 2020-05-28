@@ -11,7 +11,7 @@ import CoreAudioKit
 
 struct BluetoothMidiView: View {
     
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in

@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct KnobVerticalStack: View {
-    @EnvironmentObject var noise: NoiseModel
+    @EnvironmentObject var noise: Conductor
     @Binding var knobModel : KnobCompleteModel
     var removeValue: Bool = false
     
@@ -52,7 +52,7 @@ struct KnobVerticalStack: View {
 struct KnobVerticalStack_Previews: PreviewProvider {
     static var previews: some View {
         KnobVerticalStack(knobModel: .constant(KnobCompleteModel()))
-            .environmentObject(NoiseModel.shared)
+            .environmentObject(Conductor.shared)
             .previewLayout(.fixed(width: 400, height: 600))
     }
 }
