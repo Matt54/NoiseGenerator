@@ -12,12 +12,17 @@ class DeviceLayout{
     var padLeft : CGFloat = 0.0
     var padRight: CGFloat = 0.0
     var padTop : CGFloat = 0.0
-    var padBottom : CGFloat = 0.05
+    var padBottom : CGFloat = 0.00
     
     // This variable is used to increase the size of the keyboard area on ipad
     // Useful - because we can use more screen real estate without adjusting
     //          the aspect ratio of the rest of the UI
     var keyboardAdjust: CGFloat = 0.0
+    
+    // Allows us to do a check on if we are already at the desired aspect ratio
+    // in which case we will not pad the bottom for the navigation bar
+    // since we are dealing with an iphone that uses push button navigation
+    var isFirstTimeThrough = true
     
     // Desired aspect ratio = 1.77777777778
     func calculateLayoutPadding(){
@@ -33,6 +38,11 @@ class DeviceLayout{
         var yLimits = false
         
         while (abs(16/9 - aspectRatio)) > 0.01 {
+            
+            if(isFirstTimeThrough){
+                padBottom = 0.05
+            }
+            
             if(aspectRatio > 16/9){
                 //make aspectRatio smaller by increasing height / decreasing width
                 
