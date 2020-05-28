@@ -35,10 +35,10 @@ struct ContentView: View {
                 VStack(spacing: 0){
                     
                     MainHeader()
-                        .frame(height: geometry.size.height * 0.1 - self.noise.keyboardAdjust * 1/6)
+                        .frame(height: geometry.size.height * 0.1 - self.noise.deviceLayout.keyboardAdjust * 1/6)
                     
                     MainBlocks()
-                        .frame(height: geometry.size.height * 0.6 - self.noise.keyboardAdjust * 5/6)
+                        .frame(height: geometry.size.height * 0.6 - self.noise.deviceLayout.keyboardAdjust * 5/6)
                     
                     
                     VStack(spacing: 0){
@@ -47,7 +47,7 @@ struct ContentView: View {
                             .frame(height: geometry.size.height * 0.075)
                         KeyBoard()
                             .frame(width: geometry.size.width,
-                                   height: geometry.size.height * 0.225 + self.noise.keyboardAdjust)
+                                   height: geometry.size.height * 0.225 + self.noise.deviceLayout.keyboardAdjust)
                         
                         //.simultaneousGesture(<#T##gesture: Gesture##Gesture#>)
                     }

@@ -55,6 +55,10 @@
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
 		FA986B4C243B611000700156 /* Audiobus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA986B4B243B611000700156 /* Audiobus.swift */; };
 		FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9CFE152476B33800DAD510 /* ADSR.swift */; };
+		FAA44E6E247FEC5A00F7ADB7 /* Conductor+MidiListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA44E6D247FEC5A00F7ADB7 /* Conductor+MidiListener.swift */; };
+		FAA44E70247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA44E6F247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift */; };
+		FAA44E72247FF3AE00F7ADB7 /* DeviceLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA44E71247FF3AE00F7ADB7 /* DeviceLayout.swift */; };
+		FAA44E74247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA44E73247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift */; };
 		FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */; };
 		FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC124687EEF00CA2E47 /* GridLines.swift */; };
 		FAAA3CC424689BC300CA2E47 /* PatternAdjust.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */; };
@@ -148,6 +152,10 @@
 		FA986B4A243B604500700156 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		FA986B4B243B611000700156 /* Audiobus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audiobus.swift; sourceTree = "<group>"; };
 		FA9CFE152476B33800DAD510 /* ADSR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADSR.swift; sourceTree = "<group>"; };
+		FAA44E6D247FEC5A00F7ADB7 /* Conductor+MidiListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conductor+MidiListener.swift"; sourceTree = "<group>"; };
+		FAA44E6F247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conductor+ParameterHandoff.swift"; sourceTree = "<group>"; };
+		FAA44E71247FF3AE00F7ADB7 /* DeviceLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLayout.swift; sourceTree = "<group>"; };
+		FAA44E73247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conductor+ModulationDelegateUI.swift"; sourceTree = "<group>"; };
 		FAA6F3FB2440D8BE0025DBFF /* TextPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPicker.swift; sourceTree = "<group>"; };
 		FAAA3CC124687EEF00CA2E47 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternAdjust.swift; sourceTree = "<group>"; };
@@ -258,6 +266,10 @@
 			isa = PBXGroup;
 			children = (
 				FA377A4E24317CAB00CBE2C4 /* Conductor.swift */,
+				FAA44E6D247FEC5A00F7ADB7 /* Conductor+MidiListener.swift */,
+				FAA44E73247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift */,
+				FAA44E6F247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift */,
+				FAA44E71247FF3AE00F7ADB7 /* DeviceLayout.swift */,
 				FA3EAB222476AFCE003638C0 /* Graphical */,
 				FA3EAB212476AF99003638C0 /* Timing */,
 				FA3EAB202476AF7D003638C0 /* Helpers */,
@@ -576,6 +588,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA6ACFBA24573ADE0009CC20 /* SlidingTriangle.swift in Sources */,
+				FAA44E72247FF3AE00F7ADB7 /* DeviceLayout.swift in Sources */,
 				FA27D2FF24743D9D008BC9D3 /* VolumeMixer.swift in Sources */,
 				FA7C8417247F1E5400F2B553 /* myKeyboard.swift in Sources */,
 				FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */,
@@ -587,12 +600,14 @@
 				FAAA3CC424689BC300CA2E47 /* PatternAdjust.swift in Sources */,
 				FA3CBB44246D7134009DE169 /* MorphingOscillatorView.swift in Sources */,
 				FA1C4B3C2459C7D700A7E442 /* EffectRow.swift in Sources */,
+				FAA44E70247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift in Sources */,
 				FA2A4FB92475EFEF00D246BD /* KnobVerticalStack.swift in Sources */,
 				FA4FDC71243F7C5600325F89 /* KnobComplete.swift in Sources */,
 				FA33B44C246595C100387F0B /* TextExtension.swift in Sources */,
 				FADBBC70246FF1B5004C58B5 /* BluetoothIcon.swift in Sources */,
 				FAB700DF24531CCE0053F13A /* Modulation.swift in Sources */,
 				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
+				FAA44E74247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift in Sources */,
 				FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
@@ -624,6 +639,7 @@
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,
+				FAA44E6E247FEC5A00F7ADB7 /* Conductor+MidiListener.swift in Sources */,
 				FAAE1EF42475C1D3007C0443 /* OscillatorTitleBar.swift in Sources */,
 				FA0A68672469FF590016534A /* Tempo.swift in Sources */,
 				FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */,

@@ -7,7 +7,7 @@ public class KnobCompleteModel : ObservableObject{
     
     @Published var percentRotated = 0.0{
     didSet {
-        print("percent rotated was updated: " + String(percentRotated))
+        //print("percent rotated was updated: " + String(percentRotated))
         calculateRealValue()
         calculateRealRange()
         }
@@ -92,13 +92,13 @@ public class KnobCompleteModel : ObservableObject{
     }
 
     func handoffKnobModel(){
-        print("handoffKnobModel")
+        //print("handoffKnobModel")
         //handoffDelegate?.KnobModelAssignToModulation(self)
         handoffDelegate?.KnobModelHandoff(self)
     }
     
     func removeKnobModel(){
-        print("removeModulation")
+        //print("removeModulation")
         handoffDelegate?.KnobModelHandoff(self)
         //handoffDelegate?.KnobModelRemoveModulation(self)
     }

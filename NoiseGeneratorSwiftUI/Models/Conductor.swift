@@ -4,11 +4,12 @@ import Combine
 import SwiftUI
 import Foundation
 
-final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff, AKMIDIListener{
+final class Conductor : ObservableObject{
     
     // Single shared data model
     static let shared = Conductor()
     
+    //Adjusts application padding around UI and size of keyboard (increases on ipad)
     var deviceLayout = DeviceLayout()
     
     // Enum that changes to a different screen
@@ -40,7 +41,6 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
     @Published var tempo = Tempo(bpm: 120)
     
     var volumeUpdateTimer : Double = 0.06
-    
     
     // Master Ouput Amplitude Tracker
     var outputAmplitudeTracker = AKAmplitudeTracker()
@@ -106,10 +106,7 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
     
     @Published var octaveCount: Int = 3{
         didSet{
-            //keyboardViewController.keyboardView.octaveCount = octaveCount
             keyboardViewController.setKeyboardOctave(octaveCount)
-            //keyboardViewController.octaveCount = octaveCount
-            //self.objectWillChange.send()
         }
     }
     
@@ -121,15 +118,25 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
     
     var limiter = AKPeakLimiter()
     
+    
+    let midi = AKMIDI()
+    //var midiSignalReceived = false
+    //var midiTypeReceived: MidiEventType = .noteNumber
+    var numberOfNotesOn: Int = 0
+    
+    // Maps midi cc to control
+    var midiLearnMappings : [MIDILearnMapping] = []
+    var isMIDISustained : Bool = false
+    var midiSustainedNotes: [ActiveMIDINotes] = []
+    
+    
     init(){
         
         outputAmplitudeTimer = RepeatingTimer(timeInterval: screenUpdateTimeDuration)
         
-        //keyboardViewController = KeyBoardViewController()
-        //keyboardViewController.ges
         keyboardViewController.keyboardView.delegate = self
         keyboardViewController.keyboardView.isExclusiveTouch = false
-        //keyboardViewController.keyboardView.isMultipleTouchEnabled = true
+
         masterVolumeControl.percentRotated = 0.7
         
         //create a filter to play with
@@ -138,9 +145,6 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
         AKSettings.bufferLength = .medium
         AKSettings.audioInputEnabled = true
         AKSettings.defaultToSpeaker = true
-        
-        //AKSettings.bufferLength = .longest
-        //AKSettings.BufferLength.
         
         // Allow audio to play while the iOS device is muted.
         AKSettings.playbackWhileMuted = true
@@ -166,7 +170,8 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
         setupOutputChain()
         
         outputAmplitudeTracker.setOutput(to: limiter)
-        AudioKit.output = limiter //mic //outputAmplitudeTracker//outputMixer
+        
+        AudioKit.output = limiter
 
         //START AUDIOKIT
         do{
@@ -181,119 +186,11 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
 
         createNewModulation()
         
-        midi.createVirtualInputPort(98909, name: "AKMidiReceiver")
-        midi.createVirtualOutputPort(97789, name: "AKMidiReceiver")
-        midi.openInput()
-        midi.openOutput()
-        midi.addListener(self)
+        setupMidi()
         
-        let screenSize: CGRect = UIScreen.main.bounds
-        print("Running on: \(UIDevice().type)")
-        var w = screenSize.width
-        var h = screenSize.height
-        print("Width: \(w)")
-        print("Height: \(h)")
-        var aspectRatio = screenSize.width / screenSize.height
-        print("Aspect Ratio: \(aspectRatio)")
-        // Desired aspect ratio = 2.1653333333333333
+        //Calculate the padding and size of the keyboard based on the aspect ratio
+        deviceLayout.calculateLayoutPadding()
         
-        calculateLayoutPadding()
-        
-        w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
-        h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
-        aspectRatio = w / h
-
-        print("Width: \(w)")
-        print("Height: \(h)")
-        print("Aspect Ratio: \(aspectRatio)")
-        // Could do 16:9?
-        // Desired aspect ratio = 1.77777777778
-    }
-    
-    // This variable is used to increase the size of the keyboard area on ipad
-    // Useful - because we can use more screen real estate without adjusting
-    //          the aspect ratio of the rest of the UI
-    var keyboardAdjust: CGFloat = 0.0
-    
-    func calculateLayoutPadding(){
-        
-        deviceLayout.padLeft = 0.0
-        deviceLayout.padRight = 0.0
-        deviceLayout.padTop = 0.0
-        deviceLayout.padBottom = 0.05
-        
-        
-        let screenSize: CGRect = UIScreen.main.bounds
-        //keyboardAdjust = screenSize.height * -0.1
-        
-        var w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
-        var h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
-        var aspectRatio = w / h
-        
-        var xLimits = false
-        var yLimits = false
-        
-        while (abs(16/9 - aspectRatio)) > 0.01 {
-            if(aspectRatio > 16/9){
-                //make aspectRatio smaller by increasing height / decreasing width
-                
-                //first try full screen on the height
-                if(!yLimits){
-                    
-                    //Always leave room for the bottom bar thing
-                    deviceLayout.padBottom = 0.05
-                    
-                    yLimits = true
-                }
-                else{
-                    deviceLayout.padLeft = deviceLayout.padLeft + 0.005
-                    deviceLayout.padRight = deviceLayout.padRight + 0.005
-                }
-            }
-            else{
-                //make aspectRatio bigger by increasing width / decreasing height
-                //first try full screen on the height
-               if(!xLimits){
-                
-                    //Always leave room for the bottom bar navigation control
-                    deviceLayout.padBottom = 0.05
-                
-                    //This is likely an ipad, so give it a top header too
-                    deviceLayout.padTop = 0.05
-                
-                   xLimits = true
-               }
-               else{
-                
-                    // Grow the keyboard size to some limit first,
-                    // then adjust the rest of the UI to the aspect ratio
-                    if(keyboardAdjust < screenSize.height * 0.25){
-                        keyboardAdjust = keyboardAdjust + 5
-                    }
-                    else{
-                        deviceLayout.padTop = deviceLayout.padTop + 0.005
-                        deviceLayout.padBottom = deviceLayout.padBottom + 0.005
-                    }
-                
-                
-               }
-            }
-            w = screenSize.width - screenSize.width * deviceLayout.padLeft - screenSize.width * deviceLayout.padRight
-            h = screenSize.height - screenSize.height * deviceLayout.padTop - screenSize.height * deviceLayout.padBottom - keyboardAdjust
-            aspectRatio = w / h
-            print("Aspect Ratio: \(aspectRatio)")
-        }
-    }
-    
-    func setupDeviceLayout(){
-        switch UIDevice().type {
-            case .iPhoneSE, .iPhone5, .iPhone5S:
-                print("default value")
-            case .iPhone6, .iPhone7, .iPhone8, .iPhone6S, .iPhoneX:
-                deviceLayout.padLeft = 0.0
-                deviceLayout.padRight = 0.0
-            default: break
-        }
     }
     
     func hideSources(){
@@ -407,11 +304,14 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
     }
     
     var outputAmplitudeTimer : RepeatingTimer
-    var screenUpdateTimeDuration = 0.06
-    //var timeOfLastScreenUpdate : Double
-    var timeOfLastScreenUpdate: Double = 0.0
-    //var allowFasterScreenUpdate = true
+    
+    //This enum determines how fast the screen will refresh
     var screenUpdateSetting = ScreenUpdateSetting.slowest
+    
+    //These are required to limit the screen to a custom refresh rate
+    var screenUpdateTimeDuration = 0.06
+    var timeOfLastScreenUpdate: Double = 0.0
+
     
     @objc func getOutputAmplitude(){
         DispatchQueue.main.async {
@@ -549,116 +449,6 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
         }
     }
     
-    func createNewModulation(){
-        let modulation = Modulation(tempo: tempo)
-        modulation.delegate = self
-        modulation.handoffDelegate = self
-        modulations.append(modulation)
-    }
-    
-    func stopModulations(){
-        for modulation in modulations{
-            modulation.stop()
-        }
-    }
-    
-    func startModulations(){
-        for modulation in modulations{
-            modulation.start()
-        }
-    }
-    
-    func updateModulations(){
-        for modulation in modulations{
-            modulation.setTimeInterval()
-        }
-    }
-    
-    func setModulationTriggers(){
-        for modulation in modulations{
-            modulation.isTriggered = isModulationTriggered
-        }
-    }
-    
-    // Updates UI when modulation timer triggers
-    func modulationUpdateUI(_ sender: Modulation) {
-        
-        // We could have a limit graphics refresh rate setting (or settings)
-        
-        // Sending this would make the UI update much faster
-        if(screenUpdateSetting == .custom){
-            let timeNow = Double(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
-            if( (timeNow - timeOfLastScreenUpdate) > screenUpdateTimeDuration){
-                timeOfLastScreenUpdate = timeNow
-                self.objectWillChange.send()
-            }
-        }
-        else if(screenUpdateSetting == .fastest){
-            self.objectWillChange.send()
-        }
-        
-        //
-    }
-    
-    func modulationDisplayChange(_ sender: Modulation) {
-        if(sender.isDisplayed){
-            knobModColor = sender.modulationColor
-            selectedPattern = sender.pattern
-        }
-        else{
-            knobModColor = Color.init(red: 0.9, green: 0.9, blue: 0.9)
-            //self.modulationBeingAssigned = false
-            
-            if( (self.specialSelection == .assignModulation) || (self.specialSelection == .deleteModulation) ){
-                self.specialSelection = .none
-            }
-        }
-        self.objectWillChange.send()
-    }
-    
-    func KnobModelHandoff(_ sender: KnobCompleteModel) {
-        if(specialSelection == .assignModulation){
-            print("we hit noise modulation assignment")
-            for modulation in modulations{
-                if(modulation.isDisplayed){
-                    modulation.addModulationTarget(newTarget: sender)
-                    print("knob assigned in noise")
-                }
-            }
-        }
-        else if(specialSelection == .deleteModulation){
-            print("we hit noise modulation delete")
-            for modulation in modulations{
-                if(modulation.isDisplayed){
-                    modulation.removeModulationTarget(removeTarget: sender)
-                    print("knob removed in noise")
-                }
-            }
-            sender.modSelected = false
-            sender.modulationValue = sender.percentRotated
-        }
-        else if(specialSelection == .midiLearn){
-            print("we hit noise midi learn")
-            
-            if selectedKnob != nil {
-                selectedKnob?.isMidiLearning = false
-            }
-            
-            selectedKnob = sender
-            selectedKnob?.isMidiLearning = true
-        }
-    }
-    
-    func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
-        if(specialSelection == .assignModulation){
-            for modulation in modulations{
-                if(modulation.isDisplayed){
-                    print("Range Should Adjust by " + String(adjust))
-                    modulation.adjustModulationRange(target: sender, val: adjust)
-                }
-            }
-        }
-    }
     
     // All Effects that can be added
     @Published var listedEffects = [
@@ -705,280 +495,8 @@ final class Conductor : ObservableObject, ModulationDelegateUI, ParameterHandoff
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
 
-    func playNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) {
-        handleMidiNote(note: note, velocity: velocity, channel: channel)
-        numberOfNotesOn = numberOfNotesOn + 1
-        if(!isModulationTriggered){
-            isModulationTriggered = true
-        }
-        if(isMIDISustained){
-            
-        }
-    }
-
-    func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
-        if(!isMIDISustained){
-            handleMidiNote(note: note, velocity: 0, channel: channel)
-            numberOfNotesOn = numberOfNotesOn - 1
-            if(numberOfNotesOn == 0){
-                isModulationTriggered = false
-            }
-        }
-        else{
-            midiSustainedNotes.append(ActiveMIDINotes(note: note, channel: channel))
-        }
-    }
-    
-    func releaseNotes(){
-        isMIDISustained = false
-        for midiSustainedNote in midiSustainedNotes{
-            stopNote(note: midiSustainedNote.note, channel: midiSustainedNote.channel)
-        }
-    }
-    
-    func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        for oscillator in oscillatorControlSources{
-            oscillator.play(note: note, velocity: velocity, channel: channel)
-            
-        }
-    }
-    
-    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
-        print("handlePitch in Noise")
-        for oscillator in oscillatorControlSources{
-            print("inside the for loop")
-            oscillator.handlePitchBend(pitchWheelValue: pitchWheelValue, channel: channel)
-        }
-    }
-    
-    enum MidiEventType: String {
-        case
-            noteNumber          = "Note Number",
-            continuousControl   = "Continuous Control",
-            programChange       = "Program Change"
-    }
-    let midi = AKMIDI()
-    var midiSignalReceived = false
-    var midiTypeReceived: MidiEventType = .noteNumber
-    
-    var numberOfNotesOn: Int = 0
-    
-    
-    var midiLearnMappings : [MIDILearnMapping] = []
-    var isMIDISustained : Bool = false
-    var midiSustainedNotes: [ActiveMIDINotes] = []
-    
-    public class ActiveMIDINotes{
-        var note: MIDINoteNumber
-        var channel: MIDIChannel
-        init(note: MIDINoteNumber, channel: MIDIChannel){
-            self.note = note
-            self.channel = channel
-        }
-    }
-
-    // Note On Number + Velocity + MIDI Channel
-    func receivedMIDINoteOn(noteNumber: MIDINoteNumber,
-                            velocity: MIDIVelocity,
-                            channel: MIDIChannel,
-                            portID: MIDIUniqueID? = nil,
-                            offset: MIDITimeStamp = 0) {
-        
-        /*
-        print("")
-        print("Got Note On!")
-        print("Note Number: " + String(noteNumber))
-        print("Velocity: " + String(velocity))
-        print("channel: " + String(channel))
-        */
-        
-        midiTypeReceived = .noteNumber
-        /*
-        let outputMIDIMessage = "\(midiTypeReceived.rawValue)\nChannel: \(channel+1)  noteOn: \(noteNumber)  velocity: \(velocity)"
-        print(outputMIDIMessage)
-        */
-        midiSignalReceived = true
-        playNote(note: noteNumber, velocity: velocity, channel: channel)
-        
-        DispatchQueue.main.async {
-            self.keyboardViewController.keyboardView.programmaticNoteOn(noteNumber)
-        }
-    }
-
-    // Note Off Number + Velocity + MIDI Channel
-    func receivedMIDINoteOff(noteNumber: MIDINoteNumber,
-                             velocity: MIDIVelocity,
-                             channel: MIDIChannel,
-                             portID: MIDIUniqueID? = nil,
-                             offset: MIDITimeStamp = 0) {
-        
-        /*
-        print("")
-        print("Got Note Off!")
-        print("Note Number: " + String(noteNumber))
-        print("Velocity: " + String(velocity))
-        print("channel: " + String(channel))
-        */
-        
-        midiTypeReceived = .noteNumber
-        midiSignalReceived = false
-        
-        stopNote(note: noteNumber, channel: channel)
-        DispatchQueue.main.async {
-            self.keyboardViewController.keyboardView.programmaticNoteOff(noteNumber)
-        }
-    }
-
-    // Controller Number + Value + MIDI Channel
-    func receivedMIDIController(_ controller: MIDIByte, value: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp) {
-        
-        /*
-        print("")
-        print("Got CC!")
-        print("Controller: " + String(controller))
-        print("Value: " + String(value))
-        print("channel: " + String(channel))
-        */
-        
-        midiTypeReceived = .continuousControl
-        midiSignalReceived = true
-        
-        if(specialSelection == .midiLearn){
-            
-            guard let selectedKnob = selectedKnob else {
-              return
-            }
-            
-            var knobPreviouslyMapped = false
-            
-            // Check if this knob is already assigned to anything
-            for midiLearnMapping in midiLearnMappings{
-                if(selectedKnob === midiLearnMapping.control){
-                    knobPreviouslyMapped = true
-                    midiLearnMapping.ccNumber = controller
-                    midiLearnMapping.channel = channel
-                    break
-                }
-            }
-            
-            if(!knobPreviouslyMapped){
-                let newMapping = MIDILearnMapping(control: selectedKnob, ccNumber: controller, channel: channel)
-                selectedKnob.midiAssignment = String(newMapping.ccNumber)
-                midiLearnMappings.append(newMapping)
-            }
-            
-        }
-        else{
-            
-            //catch the defined midi notes
-            if(controller == MIDISupportedBytes.damperOnOff.rawValue){
-                if(value > 63){
-                    isMIDISustained = true
-                }
-                else{
-                    releaseNotes()
-                }
-            }
-            
-            // adjust anything assigned to that cc number
-            for midiLearnMapping in midiLearnMappings{
-                if(midiLearnMapping.ccNumber == controller){
-                    midiLearnMapping.control.handfreeKnobRotate(Double(value) * (1.0 / 127.0))
-                }
-            }
-        }
-        
-        
-    }
-    
-    func receivedMIDIPitchWheel(_ pitchWheelValue: MIDIWord, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp){
-         /*
-         pitchWheelValue: MIDI Pitch Wheel Value (0-16383) [0 = max down, 8_192 = no bend, 16_383 = max up]
-         channel: MIDI Channel (1-16)
-         portID: MIDI Unique Port ID
-         offset: the offset in samples that this event occurs in the buffer
-         */
-        
-        /*
-        print("")
-        print("Got Pitch Wheel!")
-        print("Pitch Wheel Value: " + String(pitchWheelValue))
-        print("channel: " + String(channel))
-        */
-        
-        handlePitchBend(pitchWheelValue: pitchWheelValue, channel: channel)
-    }
-    
-    func receivedMIDISystemCommand(_ data: [MIDIByte], portID: MIDIUniqueID?, offset: MIDITimeStamp){
-        /*
-         Receive a MIDI system command (such as clock, sysex, etc)
-         data: Array of integers
-         portID: MIDI Unique Port ID
-         offset: the offset in samples that this event occurs in the buffer
-         */
-        
-        print("")
-        print("Got System Command!")
-        for byte in data{
-            print("Byte: " + String(byte))
-        }
-    }
-
-    // Program Change Number + MIDI Channel
-    func receivedMIDIProgramChange(_ program: MIDIByte, channel: MIDIChannel, portID: MIDIUniqueID?, offset: MIDITimeStamp) {
-        
-        print("")
-        print("Got Program Change!")
-        print("Program: " + String(program))
-        print("channel: " + String(channel))
-        
-        midiTypeReceived = .programChange
-        midiSignalReceived = true
-    }
-
-    func receivedMIDISetupChange() {
-        print("midi setup change")
-        print("midi.inputNames: \(midi.inputNames)")
-
-        let listInputNames = midi.inputNames
-
-        for inputNames in listInputNames {
-            print("inputNames: \(inputNames)")
-            midi.openInput(name: inputNames)
-        }
-    }
-
 }
-
-public enum MIDISupportedBytes: MIDIByte{
-    case modulationWheel = 1
-    case damperOnOff = 64
-}
-
-public class MIDILearnMapping{
-    var control: KnobCompleteModel
-    var ccNumber: MIDIByte
-    var channel: MIDIChannel
-    init(control: KnobCompleteModel, ccNumber: MIDIByte, channel: MIDIChannel){
-        self.control = control
-        self.ccNumber = ccNumber
-        self.channel = channel
-    }
-}
-
-// Keyboard protocol conformance
-extension Conductor: AKKeyboardDelegate {
-    
-    func noteOn(note: MIDINoteNumber) {
-        playNote(note: note, velocity: 80, channel: MIDIChannel())
-    }
-      
-    func noteOff(note: MIDINoteNumber) {
-        stopNote(note: note, channel: MIDIChannel())
-    }
-    
-}
-
+ 
 public enum ScreenUpdateSetting{
     case slowest, fastest, custom
     var name: String {
@@ -998,11 +516,4 @@ public enum SpecialSelection{
     var name: String {
         return "\(self)"
     }
-}
-
-class DeviceLayout{
-    var padTop : CGFloat = 0.0
-    var padBottom : CGFloat = 0.05
-    var padLeft : CGFloat = 0.05
-    var padRight: CGFloat = 0.05
 }
