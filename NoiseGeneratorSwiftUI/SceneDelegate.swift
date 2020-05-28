@@ -19,11 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate{
             window.rootViewController = UIHostingController(rootView: contentView.environmentObject(Conductor.shared))
             self.window = window
             window.makeKeyAndVisible()
-            //window.isExclusiveTouch = true
-            //window.isMultipleTouchEnabled = true
             
-            
-            
+            //This gesture allows for clickoff event to end editing (dismiss keyboard)
             let tapGesture = AnyGestureRecognizer(target: window, action:#selector(UIView.endEditing))
             tapGesture.requiresExclusiveTouchType = false
             tapGesture.cancelsTouchesInView = false
