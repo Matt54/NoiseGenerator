@@ -22,8 +22,9 @@ extension Conductor: AKMIDIListener {
     }
     
     func playNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) {
-        handleMidiNote(note: note, velocity: velocity, channel: channel)
         numberOfNotesOn = numberOfNotesOn + 1
+        handleMidiNote(note: note, velocity: velocity, channel: channel)
+        
         if(!isModulationTriggered){
             isModulationTriggered = true
         }
@@ -34,8 +35,9 @@ extension Conductor: AKMIDIListener {
 
     func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
         if(!isMIDISustained){
-            handleMidiNote(note: note, velocity: 0, channel: channel)
             numberOfNotesOn = numberOfNotesOn - 1
+            handleMidiNote(note: note, velocity: 0, channel: channel)
+            
             if(numberOfNotesOn == 0){
                 isModulationTriggered = false
             }
@@ -55,8 +57,15 @@ extension Conductor: AKMIDIListener {
     func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         for oscillator in oscillatorControlSources{
             oscillator.play(note: note, velocity: velocity, channel: channel)
-            
         }
+        
+        // This simply prevents noise off when there are still notes on
+        if( (velocity > 0)  || (numberOfNotesOn == 0) ){
+            for noiseGenerator in noiseControlSources{
+                noiseGenerator.play(note: note, velocity: velocity, channel: channel)
+            }
+        }
+        
     }
     
     func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){

@@ -77,7 +77,7 @@ struct MorphingOscillatorView: View {
                                     .textStyle(ShrinkTextStyle())
                                     .frame(height: geometry.size.height * 0.1)
                                 
-                                ADSR(attack: self.$morphingOscillator.attack,
+                                ADSR(attack: self.$morphingOscillator.attackDisplay,
                                      decay: self.$morphingOscillator.decay,
                                      sustain: self.$morphingOscillator.sustain,
                                      release: self.$morphingOscillator.releaseDisplay)

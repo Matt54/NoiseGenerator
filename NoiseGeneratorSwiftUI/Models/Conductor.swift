@@ -160,10 +160,10 @@ final class Conductor : ObservableObject{
         createMicrophoneInput(id: 1)
         
         //create a morphing oscillator to play with
-        createNewSource(sourceNumber: 2)
+        //createNewSource(sourceNumber: 2)
         
         //create a noise oscillator to play with
-        //createNewSource(sourceNumber: 1)
+        createNewSource(sourceNumber: 1)
         
         connectSourceToEffectChain()
         
