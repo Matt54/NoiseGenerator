@@ -10,6 +10,16 @@ public struct ShrinkTextStyle: ViewModifier {
     }
 }
 
+public struct ListTextStyle: ViewModifier {
+    public func body(content: Content) -> some View { content
+            .font(.system(size: 50))
+            .minimumScaleFactor(0.01)
+            .lineLimit(1)
+            //.multilineTextAlignment(.leading)
+            .scaledToFit()
+    }
+}
+
 public struct PreFrameTextStyle: ViewModifier {
     public func body(content: Content) -> some View { content
             .font(.system(size: 50))

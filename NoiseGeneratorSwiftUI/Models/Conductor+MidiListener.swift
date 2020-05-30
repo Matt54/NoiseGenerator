@@ -31,6 +31,8 @@ extension Conductor: AKMIDIListener {
         if(isMIDISustained){
             
         }
+        
+        checkForDeadModulation()
     }
 
     func stopNote(note: MIDINoteNumber, channel: MIDIChannel) {
@@ -270,7 +272,7 @@ extension Conductor: AKMIDIListener {
 extension Conductor: AKKeyboardDelegate {
     
     func noteOn(note: MIDINoteNumber) {
-        playNote(note: note, velocity: 80, channel: MIDIChannel())
+        playNote(note: note, velocity: 127, channel: MIDIChannel())
     }
       
     func noteOff(note: MIDINoteNumber) {

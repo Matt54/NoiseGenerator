@@ -75,4 +75,22 @@ extension Conductor: ModulationDelegateUI {
         }
     }
     
+    func checkForDeadModulation(){
+        
+        for modulation in modulations{
+            if(modulation.isTriggerOnly){
+                
+                if((Double(DispatchTime.now().uptimeNanoseconds) - modulation.timeOfLastTimerAction) / 1_000_000_000 > 0.1){
+                    print("found a dead modulation!")
+                    modulation.setTimeInterval(timeInterval: modulation.timeInterval)
+                }
+                
+                //let leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - modulation.timeOfLastTimerAction) / 1_000_000_000
+                //print(leftoverTime)
+            }
+        }
+         //use 0.01 for cutoff
+        
+    }
+    
 }

@@ -106,14 +106,23 @@ struct MorphingOscillatorView: View {
                         
                         
                         if(self.morphingOscillator.selectedBlockDisplay == .volume){
+                            //HStack(spacing: 0){
                             
-                            Rectangle()
-                                .border(Color.black, width: geometryOut.size.height * 0.01)
-                                .padding(geometry.size.height * 0.05)
+                            /*
+                                Rectangle()
+                                    .border(Color.black, width: geometryOut.size.height * 0.01)
+                                    .padding(geometry.size.height * 0.05)
+                            */
+                                
                             
-                            VolumeComplete(volumeMixer: self.$morphingOscillator.volumeMixer)
-                                .padding(geometry.size.width * 0.05)
-                                .frame(width: geometry.size.width * 0.2)
+                            OutputPlotView(inputNode: self.$morphingOscillator.volumeMixer.input)
+                                .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.85)
+                            
+                                
+                                VolumeComplete(volumeMixer: self.$morphingOscillator.volumeMixer)
+                                    .padding(geometry.size.width * 0.05)
+                                    .frame(width: geometry.size.width * 0.2)
+                            //}
                         }
                         //Spacer()
                         
@@ -157,10 +166,28 @@ struct OutputPlotView: UIViewRepresentable {
     //var UIView : AKNodeOutputPlot = AKNodeOutputPlot()
     
     //@EnvironmentObject var noise: NoiseModel
-    @State var nodeToPlot: AKMixer?
+    //@Binding var inputNode: AKInput
+    //@State var nodeToPlot: AKMixer = AKMixer()
+    
+    @Binding var inputNode: AKMixer
+    
     //@Binding var octave: Int
 
     func makeUIView(context: UIViewRepresentableContext<OutputPlotView>) -> AKNodeOutputPlot {
+        
+        //nodeToPlot.connect(to: inputNode)
+        //nodeToPlot = AKMixer(inputNode)
+        //inputNode.connect(to: nodeToPlot)
+        
+        let view = AKNodeOutputPlot(inputNode)
+        view.plotType = .buffer
+        view.shouldFill = false
+        view.shouldMirror = true
+        view.color = .systemPurple
+        view.backgroundColor = .clear
+        return view
+        
+        /*
         
         //This is hacky and there's got to be a reason why I got stuck here but,
         //my waveform plots don't work in preview.
@@ -170,7 +197,7 @@ struct OutputPlotView: UIViewRepresentable {
             view.shouldFill = false
             view.shouldMirror = true
             view.color = .blue
-            view.backgroundColor = .clear
+            view.backgroundColor = .black
             return view
         }
         else{
@@ -179,9 +206,11 @@ struct OutputPlotView: UIViewRepresentable {
             view.shouldFill = false
             view.shouldMirror = true
             view.color = .blue
-            view.backgroundColor = .clear
+            view.backgroundColor = .black
             return view
         }
+ 
+        */
 
     }
 

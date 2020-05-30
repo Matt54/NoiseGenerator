@@ -72,6 +72,7 @@
 		FAC0BD64243934C100E24C9A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC0BD63243934C100E24C9A /* AudioToolbox.framework */; };
 		FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC1F4A5245A4F39007E1331 /* PowerButton.swift */; };
 		FAC8B6B524807D4800C4C1C5 /* NoiseTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */; };
+		FAC8B6B724808F3100C4C1C5 /* EffectTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */; };
 		FAC8D75A243B758C0010078B /* Audiobus.txt in Resources */ = {isa = PBXBuildFile; fileRef = FAC8D759243B758C0010078B /* Audiobus.txt */; };
 		FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD334E6243E6410009B0DDF /* KnobControl.swift */; };
 		FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6505D245251D600B10110 /* RepeatingTimer.swift */; };
@@ -83,6 +84,9 @@
 		FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */; };
 		FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */; };
 		FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707E22466188900F27B31 /* InputDeviceRow.swift */; };
+		FAEED71324811C8A00B1F723 /* SourceCategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */; };
+		FAEED71524811DD800B1F723 /* SourceCategoriesForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */; };
+		FAEED717248129F600B1F723 /* AddOscillatorForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED716248129F600B1F723 /* AddOscillatorForm.swift */; };
 		FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFC1309243CF9AB009D1169 /* Knob.swift */; };
 /* End PBXBuildFile section */
 
@@ -171,6 +175,7 @@
 		FAC0BD63243934C100E24C9A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FAC1F4A5245A4F39007E1331 /* PowerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerButton.swift; sourceTree = "<group>"; };
 		FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseTitleBar.swift; sourceTree = "<group>"; };
+		FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectTitleBar.swift; sourceTree = "<group>"; };
 		FAC8D759243B758C0010078B /* Audiobus.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Audiobus.txt; sourceTree = "<group>"; };
 		FAD334E6243E6410009B0DDF /* KnobControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobControl.swift; sourceTree = "<group>"; };
 		FAD6505D245251D600B10110 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -182,6 +187,9 @@
 		FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationSourceView.swift; sourceTree = "<group>"; };
 		FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInputDeviceForm.swift; sourceTree = "<group>"; };
 		FAE707E22466188900F27B31 /* InputDeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputDeviceRow.swift; sourceTree = "<group>"; };
+		FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCategoryRow.swift; sourceTree = "<group>"; };
+		FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCategoriesForm.swift; sourceTree = "<group>"; };
+		FAEED716248129F600B1F723 /* AddOscillatorForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOscillatorForm.swift; sourceTree = "<group>"; };
 		FAFC1309243CF9AB009D1169 /* Knob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Knob.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -293,7 +301,7 @@
 				FA81DF9F245C966900473657 /* AddEffectScreen */,
 				FA81DF9C245C95F500473657 /* Knob */,
 				FA81DF9B245C959200473657 /* VolumeControl */,
-				FAE707E12466186500F27B31 /* AddInputDeviceScreen */,
+				FAE707E12466186500F27B31 /* AddSourceScreen */,
 				FA0987CE2476B1E30010047F /* Bluetooth */,
 				FA33B4472465952400387F0B /* Styles */,
 				FA0987CA2476B0DD0010047F /* Unused */,
@@ -451,6 +459,7 @@
 				FA81DF99245C87FF00473657 /* TitleBar.swift */,
 				FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */,
 				FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */,
+				FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */,
 			);
 			path = TitleBarControl;
 			sourceTree = "<group>";
@@ -486,13 +495,16 @@
 			path = Unused;
 			sourceTree = "<group>";
 		};
-		FAE707E12466186500F27B31 /* AddInputDeviceScreen */ = {
+		FAE707E12466186500F27B31 /* AddSourceScreen */ = {
 			isa = PBXGroup;
 			children = (
 				FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */,
 				FAE707E22466188900F27B31 /* InputDeviceRow.swift */,
+				FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */,
+				FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */,
+				FAEED716248129F600B1F723 /* AddOscillatorForm.swift */,
 			);
-			path = AddInputDeviceScreen;
+			path = AddSourceScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -614,6 +626,7 @@
 				FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
+				FAEED71524811DD800B1F723 /* SourceCategoriesForm.swift in Sources */,
 				FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */,
 				FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */,
 				FABEB093246E22AA00C2F424 /* BluetoothMidiView.swift in Sources */,
@@ -645,15 +658,18 @@
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,
 				FAA44E6E247FEC5A00F7ADB7 /* Conductor+MidiListener.swift in Sources */,
 				FAAE1EF42475C1D3007C0443 /* OscillatorTitleBar.swift in Sources */,
+				FAC8B6B724808F3100C4C1C5 /* EffectTitleBar.swift in Sources */,
 				FA0A68672469FF590016534A /* Tempo.swift in Sources */,
 				FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */,
 				FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */,
 				FAD6505E245251D600B10110 /* RepeatingTimer.swift in Sources */,
 				FA27D301247480CF008BC9D3 /* BlockDisplaySelect.swift in Sources */,
+				FAEED717248129F600B1F723 /* AddOscillatorForm.swift in Sources */,
 				FA377A4F24317CAB00CBE2C4 /* Conductor.swift in Sources */,
 				FA89B9C6247CB34C002593C3 /* iPhoneModel.swift in Sources */,
 				FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */,
 				FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */,
+				FAEED71324811C8A00B1F723 /* SourceCategoryRow.swift in Sources */,
 				FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */,
 				FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */,
 				FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */,

@@ -53,8 +53,16 @@ struct ContentView: View {
                                 AddEffectForm()
                                     .animation(.easeInOut(duration: 0.5))
                             }
+                            else if(self.noise.selectedScreen == .addSource){
+                                SourceCategoriesForm()
+                                    .animation(.easeInOut(duration: 0.5))
+                            }
                             else if(self.noise.selectedScreen == .addMicrophoneInput){
                                 AddInputDeviceForm()
+                                    .animation(.easeInOut(duration: 0.5))
+                            }
+                            else if(self.noise.selectedScreen == .addOscillator){
+                                AddOscillatorForm()
                                     .animation(.easeInOut(duration: 0.5))
                             }
                             else if(self.noise.selectedScreen == .adjustPattern){

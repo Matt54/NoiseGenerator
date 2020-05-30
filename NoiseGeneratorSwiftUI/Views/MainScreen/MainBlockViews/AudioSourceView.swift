@@ -46,7 +46,7 @@ struct AudioSourceView: View {
                         
                         Button(action:{
                             print("Let's create a new audio source!")
-                            self.noise.selectedScreen = SelectedScreen.addMicrophoneInput
+                            self.noise.selectedScreen = SelectedScreen.addSource //SelectedScreen.addMicrophoneInput
                         }){
                             Image(systemName: "plus.circle")
                                 .resizable()

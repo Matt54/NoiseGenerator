@@ -160,10 +160,10 @@ final class Conductor : ObservableObject{
         createMicrophoneInput(id: 1)
         
         //create a morphing oscillator to play with
-        //createNewSource(sourceNumber: 2)
+        createNewSource(sourceNumber: 2)
         
         //create a noise oscillator to play with
-        createNewSource(sourceNumber: 1)
+        //createNewSource(sourceNumber: 1)
         
         connectSourceToEffectChain()
         
@@ -201,6 +201,11 @@ final class Conductor : ObservableObject{
     func hideEffects(){
         for effect in allControlEffects{
             effect.isDisplayed = false
+        }
+    }
+    func changeEffectsDisplay(){
+        for effect in allControlEffects{
+            effect.selectedBlockDisplay = .controls
         }
     }
     func hideModulations(){
@@ -341,6 +346,7 @@ final class Conductor : ObservableObject{
     }
     
     public func createNewSource(sourceNumber: Int){
+        hideSources()
         let audioSource = getSourceType(sourceNumber: sourceNumber)
         addSourceToControlArray(source: audioSource)
         allControlSources.append(audioSource)
@@ -452,48 +458,96 @@ final class Conductor : ObservableObject{
     
     // All Effects that can be added
     @Published var listedEffects = [
-        ListedEffect(id: 1,
+        ListedDevice(id: 1,
                      display: "Moog Filter",
                      symbol: Image(systemName: "f.circle.fill"),
                      description: "Digital Implementation of the Moog Ladder Filter",
                      parameters: ["Cutoff", "Resonance"]
         ),
-        ListedEffect(id: 2,
+        ListedDevice(id: 2,
                      display: "Tremelo",
                      symbol: Image(systemName: "t.circle.fill"),
                      description: "A Variation in Amplitude",
                      parameters: ["Depth", "Frequency"]
         ),
-        ListedEffect(id: 3,
+        ListedDevice(id: 3,
                      display: "Reverb",
                      symbol: Image(systemName: "r.circle.fill"),
                      description: "Apple's Reverb Audio Unit",
                      parameters: ["Preset", "Dry/Wet"]
         ),
-        ListedEffect(id: 4,
+        ListedDevice(id: 4,
                      display: "Delay",
                      symbol: Image(systemName: "d.circle.fill"),
                      description: "Apple's Delay Audio Unit",
                      parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
         ),
-        ListedEffect(id: 5,
+        ListedDevice(id: 5,
                      display: "Chorus",
                      symbol: Image(systemName: "c.circle.fill"),
                      description: "Delays/Pitch Modulates the Signal",
                      parameters: ["Time","Feedback","LP Cutoff","Dry/Wet"]
         ),
-        ListedEffect(id: 6,
+        ListedDevice(id: 6,
                      display: "Bit Crusher",
                      symbol: Image(systemName: "b.circle.fill"),
                      description: "Reduces Resolution/Bandwidth of Signal",
                      parameters: ["Bit Depth","Sample Rate"]
         ),
-        ListedEffect(id: 7,
+        ListedDevice(id: 7,
                      display: "Flanger",
                      symbol: Image(systemName: "l.circle.fill"),
                      description: "Swept Comb Filter Effect",
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
     ]
+    
+    // All Categories of Audio Sources
+    @Published var listedSourceCategories = [
+        ListedCategory(id: 1,
+                     display: "Audio Input",
+                     symbol: Image(systemName: "mic.circle.fill"),
+                     description: "Available Input Audio Sources"
+        ),
+        ListedCategory(id: 2,
+                     display: "Oscillator",
+                     symbol: Image(systemName: "waveform.circle.fill"),
+                     description: "Oscillator Audio Sources"
+        ),
+        ListedCategory(id: 3,
+                     display: "Physical Model",
+                     symbol: Image(systemName: "pesosign.circle.fill"),
+                     description: "Physically Modeled Audio Sources"
+        ),
+    ]
+    
+    func setSourceCategory(id: Int){
+        if(id == 1){
+            self.selectedScreen = .addMicrophoneInput
+        }
+        else if(id == 2){
+            self.selectedScreen = .addOscillator
+        }
+        else{
+            
+        }
+    }
+    
+    // All Oscillator Sources that can be added
+    @Published var listedOscillators = [
+        ListedDevice(id: 2,
+                     display: "Morphing Oscillator",
+                     symbol: Image(systemName: "waveform.circle.fill"),
+                     description: "Digital Implementation of the Moog Ladder Filter",
+                     parameters: ["Amplitude", "Waveform"]
+        ),
+        ListedDevice(id: 1,
+                     display: "Noise Generator",
+                     symbol: Image(systemName: "nairasign.circle.fill"),
+                     description: "A Variation in Amplitude",
+                     parameters: ["Amplitude", "White Value", "Pink Value", "Brown Value"]
+        )
+    ]
+    
 
 }
  
@@ -505,7 +559,7 @@ public enum ScreenUpdateSetting{
 }
 
 public enum SelectedScreen{
-    case main, addEffect, addMicrophoneInput, adjustPattern, bluetoothMIDI, settings
+    case main, addEffect, addSource, addOscillator, addMicrophoneInput, adjustPattern, bluetoothMIDI, settings
     var name: String {
         return "\(self)"
     }

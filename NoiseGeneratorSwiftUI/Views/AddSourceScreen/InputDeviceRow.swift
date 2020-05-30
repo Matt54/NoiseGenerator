@@ -9,21 +9,25 @@ struct InputDeviceRow: View {
         GeometryReader{ geometry in
         ZStack(alignment: .leading){
             Color.init(red: 0.9, green: 0.9, blue: 0.9)
-            HStack{
-                Image(systemName: "mic.circle.fill")
-                    .resizable()
-                    .frame(width: geometry.size.height * 0.8,
-                           height: geometry.size.height * 0.8,
-                           alignment: .center)
-                    .padding(.trailing, geometry.size.height * 0.1)
-                    .foregroundColor(Color.black)
+            ZStack{
+                HStack{
+                    
+                    Image(systemName: "mic.circle.fill")
+                        .resizable()
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(height: geometry.size.height * 0.8)
+                        //.padding(.trailing, geometry.size.width * 0.05)
+                        .foregroundColor(Color.black)
+                    
+                    Spacer()
+                }
                     
                 VStack(alignment: .center, spacing: 0) {
                     Text(self.deviceID)
                         //.font(.headline)
                         .fontWeight(.bold)
                         .textStyle(ShrinkTextStyle())
-                        .frame(height: geometry.size.height * 0.3)
+                        .frame(height: geometry.size.height * 0.4)
                         .foregroundColor(Color.black)
                         //.fontWeight(.bold)
                         .lineLimit(2)
@@ -31,13 +35,16 @@ struct InputDeviceRow: View {
                     
                     Text(self.description)
                         .textStyle(ShrinkTextStyle())
-                        .frame(height: geometry.size.height * 0.2)
+                        .frame(height: geometry.size.height * 0.25)
                         .foregroundColor(Color.black)
                 }
-                .padding(.horizontal, geometry.size.height * 0.1)
+                .frame(height: geometry.size.height * 0.8)
+                
+                //Spacer()
             }
             .padding(geometry.size.height * 0.1)
         }
+        .frame(width: geometry.size.width)
         .clipShape(RoundedRectangle(cornerRadius: geometry.size.height * 0.2))
     }
     }
@@ -48,6 +55,6 @@ struct InputDeviceRow_Previews: PreviewProvider {
         InputDeviceRow(deviceID: "Built-In Microphone Bottom",
                        description: "<Device: iPhone Microphone (Built-In Microphone Bottom)>")
         //.previewLayout(.fixed(width: 568, height: 320))
-        .previewLayout(.fixed(width: 1250, height: 225))
+        .previewLayout(.fixed(width: 700, height: 100))
     }
 }

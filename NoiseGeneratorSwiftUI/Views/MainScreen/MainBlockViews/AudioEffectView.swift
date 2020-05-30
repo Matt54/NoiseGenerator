@@ -59,6 +59,10 @@ struct AudioEffectView: View {
                             }
                     }
                     Button(action:{
+                        
+                        //This prevents crash from volume screen graph
+                        self.noise.changeEffectsDisplay()
+                        
                         self.noise.selectedScreen = SelectedScreen.addEffect
                     }){
                         Image(systemName: "plus.circle")

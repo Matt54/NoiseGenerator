@@ -1,13 +1,16 @@
+//
+//  SourceCategoriesForm.swift
+//  NoiseGeneratorSwiftUI
+//
+//  Created by Macbook on 5/29/20.
+//  Copyright © 2020 Matt Pfeiffer. All rights reserved.
+//
+
 import SwiftUI
 
-struct AddEffectForm: View {
-
-    @EnvironmentObject var noise: Conductor
+struct SourceCategoriesForm: View {
     
-    init(){
-        UITableView.appearance().backgroundColor = UIColor.systemBackground
-        UITableView.appearance().separatorColor = UIColor.systemBackground
-    }
+    @EnvironmentObject var noise: Conductor
     
     var body: some View {
         GeometryReader{ geometry in
@@ -31,8 +34,7 @@ struct AddEffectForm: View {
                 }
                 .padding(.leading, geometry.size.width * 0.015)
                 
-                Text("Add Audio Effect")
-                    //.font(.title)
+                Text("Add Audio Source")
                     .fontWeight(.bold)
                     .textStyle(ShrinkTextStyle())
                     .frame(width: geometry.size.width * 0.3,
@@ -43,18 +45,18 @@ struct AddEffectForm: View {
             
         ScrollView {
             VStack(spacing: geometry.size.height * 0.05){
-                ForEach(self.noise.listedEffects , id: \.id){ i in
+                ForEach(self.noise.listedSourceCategories , id: \.id){ i in
                     Button(action: {
                         print("You pressed: " + String(i.id))
-                        self.noise.selectedScreen = SelectedScreen.main
-                        self.noise.createNewEffect(pos: self.noise.allControlEffects.count, effectNumber: i.id)
+                        //self.noise.selectedScreen = SelectedScreen.main
+                        //self.noise.createMicrophoneInput(id: i.id)
+                        self.noise.setSourceCategory(id: i.id)
                     })
                     {
-                        EffectRow(title: i.display,
-                                  image: i.symbol,
-                                  description: i.description,
-                                  parameters: i.parameters)
-                        .frame(height: geometry.size.height * 0.225)
+                        SourceCategoryRow(categoryID: i.display,
+                                          image: i.symbol,
+                                          description: i.description)
+                                        .frame(height: geometry.size.height * 0.225)
                     }
                     .padding(.horizontal, geometry.size.width * 0.02)
                     }
@@ -67,10 +69,9 @@ struct AddEffectForm: View {
     }
 }
 
-struct AddEffectForm_Previews: PreviewProvider {
+struct SourceCategoriesForm_Previews: PreviewProvider {
     static var previews: some View {
-        AddEffectForm().environmentObject(Conductor.shared)
-        //.previewLayout(.fixed(width: 2688, height: 1242))
+        SourceCategoriesForm().environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 700, height: 375))
     }
 }

@@ -710,3 +710,23 @@ public class adsrSourceWithoutControl{
     }
 
 }
+
+
+public class ListedCategory{
+    @Published var id: Int
+    @Published var display: String
+    @Published var symbol: Image
+    @Published var description: String = ""
+    
+    init(id: Int, display: String, symbol: Image){
+        self.id = id
+        self.display = display
+        self.symbol = symbol
+    }
+    init(id: Int, display: String, symbol: Image, description: String){
+        self.id = id
+        self.display = display
+        self.symbol = symbol
+        self.description = description
+    }
+}

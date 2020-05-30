@@ -68,8 +68,8 @@ struct NoiseGenerator: View {
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
             }
-            .padding(geometryOut.size.height * 0.02)
-            .border(Color.black, width: geometryOut.size.height * 0.02)
+            //.padding(geometryOut.size.height * 0.02)
+            //.border(Color.black, width: geometryOut.size.height * 0.02)
             
         }
     }

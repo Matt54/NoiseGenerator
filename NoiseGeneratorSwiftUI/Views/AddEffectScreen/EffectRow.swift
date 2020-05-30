@@ -11,25 +11,35 @@ struct EffectRow: View {
         GeometryReader{ geometry in
             ZStack(){
                 Color.init(red: 0.9, green: 0.9, blue: 0.9)
-                HStack(spacing: 0){
+                
+                ZStack(){
+                    
+                    HStack{
                     self.image
                         .resizable()
-                        .frame(width: geometry.size.height * 0.7,
-                               height: geometry.size.height * 0.7,
-                               alignment: .center)
-                        .padding(geometry.size.height * 0.15)
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(height: geometry.size.height * 0.8)
+                        .padding(.trailing, geometry.size.width * 0.05)
                         .foregroundColor(Color.black)
-                    VStack(alignment: .leading,spacing: 0) {
+                        
+                        Spacer()
+                    }
+                    
+                    VStack(alignment: .center,spacing: 0) {
                         Text(self.title)
                             .fontWeight(.heavy)
                             .textStyle(ShrinkTextStyle())
                             .frame(height: geometry.size.height * 0.35)
                             .foregroundColor(Color.black)
                         
+                        
                         Text(self.description)
-                            .textStyle(ShrinkTextStyle())
+                            //.kerning(0)
+                            //.tracking(0)
+                            .textStyle(ListTextStyle())
+                            .frame(height: geometry.size.height * 0.25)
                             .foregroundColor(Color.black)
-                            .padding(.bottom, geometry.size.height * 0.02)
+                            
                         
                         HStack {
                             ForEach(self.parameters, id: \.self) { parameter in
@@ -41,16 +51,20 @@ struct EffectRow: View {
                                         
                                         .frame(height: geometry.size.height * 0.2)
                                         .padding(geometry.size.height * 0.02)
+                                        
                                         .background(Color.green)
                                         .cornerRadius(geometry.size.height * 0.02)
                                 }
                             }
-                            .padding(.bottom, geometry.size.height * 0.1)
+                            .padding(.vertical, geometry.size.height * 0.05)
                         }
                     }
+                    .frame(height: geometry.size.height * 0.84)
                     Spacer()
                 }
+                .padding(geometry.size.height * 0.1)
             }
+            .frame(width: geometry.size.width)
             .clipShape(RoundedRectangle(cornerRadius: geometry.size.height * 0.2))
         }
     }
@@ -58,12 +72,12 @@ struct EffectRow: View {
 
 struct EffectRow_Previews: PreviewProvider {
     static var previews: some View {
-        EffectRow(title: "Flanger",
+        EffectRow(title: "Moog Filter",
                   image: Image(systemName: "l.circle.fill"),
-                  description: "Swept Comb Filter Effect.",
-                  parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
+                  description: "Digital Implementation of a Moog Ladder Filter.",
+                  parameters: ["Cutoff","Resonance"])
         //.previewLayout(.fixed(width: 2688, height: 600))
-        .previewLayout(.fixed(width: 500, height: 90))
+        .previewLayout(.fixed(width: 812, height: 50))
     }
 }
 

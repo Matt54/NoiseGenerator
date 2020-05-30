@@ -4,6 +4,8 @@ import SwiftUI
 
 public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     
+    @Published var selectedBlockDisplay = SelectedBlockDisplay.volume
+    
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")
     @Published var displayOnImage = Image(systemName: "heart.circle")
@@ -17,6 +19,8 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     
     @Published var inputVolumeMixer = VolumeMixer(isRightHanded: false)
     @Published var outputVolumeMixer = VolumeMixer()
+    
+    @Published var dummyMixer = AKMixer()
     
     @Published var isBypassed = false{
         didSet{
@@ -54,7 +58,15 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
 
     func setupAudioRouting(){
         inputVolumeMixer.output.setOutput(to: effect)
-        effect.setOutput(to: outputVolumeMixer.output)
+        //effect.setOutput(to: outputVolumeMixer.output)
+        
+        effect.connect(to: dummyMixer)
+        dummyMixer.connect(to: outputVolumeMixer.output)
+        
+        dummyMixer.volume = 1.0
+        
+        //effect.connect(to: outputVolumeMixer.output)
+        //outputVolumeMixer.output.co//connect(to: effect)
     }
     
     func readAmplitudes(){
@@ -538,7 +550,7 @@ public class AppleReverbAudioEffect: OneControlWithPresetsAudioEffect{
     }
 }
 
-public class ListedEffect{
+public class ListedDevice{
     @Published var id: Int
     @Published var display: String
     @Published var symbol: Image

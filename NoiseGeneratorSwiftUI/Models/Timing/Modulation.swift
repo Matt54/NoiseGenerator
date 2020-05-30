@@ -23,7 +23,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     var numberOfSteps = 100.0
     //var refreshPerSecond = 60
     
-    var timeOfLastTimerAction: Double = 0.0
+    public var timeOfLastTimerAction: Double = 0.0
     
     var isTriggerOnly: Bool = false
     var isTriggered: Bool = false{

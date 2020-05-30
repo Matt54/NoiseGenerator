@@ -33,7 +33,7 @@ struct AddInputDeviceForm: View {
                            height: geometry.size.height * 0.1)
             }
             .frame(width: geometry.size.width,
-                   height: geometry.size.height * 0.1)
+                   height: geometry.size.height * 0.175)
             
         ScrollView {
             VStack(spacing: geometry.size.height * 0.05){
@@ -46,9 +46,9 @@ struct AddInputDeviceForm: View {
                     {
                         InputDeviceRow(deviceID: i.device.deviceID,
                                        description: i.device.description)
-                                        .frame(height: geometry.size.height * 0.25)
+                                        .frame(height: geometry.size.height * 0.225)
                     }
-                    .padding(.horizontal, geometry.size.width * 0.01)
+                    .padding(.horizontal, geometry.size.width * 0.02)
                     }
                 }
             }
@@ -62,6 +62,6 @@ struct AddInputDeviceForm: View {
 struct AddInputDeviceForm_Previews: PreviewProvider {
     static var previews: some View {
         AddInputDeviceForm().environmentObject(Conductor.shared)
-        .previewLayout(.fixed(width: 568, height: 320))
+        .previewLayout(.fixed(width: 700, height: 375))
     }
 }
