@@ -11,7 +11,7 @@ import SwiftUI
 struct BasicSourceView: View {
     
     @EnvironmentObject var noise: Conductor
-    @Binding var adsrAudioSource: RhodesPianoBank
+    @Binding var adsrAudioSource: adsrPolyphonicController
     
     //@Binding var knobModColor: Color
     //@Binding var specialSelection: SpecialSelection
@@ -87,7 +87,7 @@ struct BasicSourceView: View {
 
 struct BasicSourceView_Previews: PreviewProvider {
     static var previews: some View {
-        BasicSourceView(adsrAudioSource: .constant(RhodesPianoBank()))
+        BasicSourceView(adsrAudioSource: .constant(adsrPolyphonicController()))
         .environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 250, height: 200))
     }

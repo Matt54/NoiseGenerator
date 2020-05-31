@@ -78,10 +78,10 @@ struct AudioSourceView: View {
                     }
                 }
                 
-                ForEach(self.noise.pianoControlSources.indices, id: \.self){ i in
+                ForEach(self.noise.basicSourceControllers.indices, id: \.self){ i in
                     VStack(spacing: 0){
-                        if(self.noise.pianoControlSources[i].isDisplayed){
-                            BasicSourceView(adsrAudioSource: self.$noise.pianoControlSources[i])
+                        if(self.noise.basicSourceControllers[i].isDisplayed){
+                            BasicSourceView(adsrAudioSource: self.$noise.basicSourceControllers[i])
                         }
                     }
                 }

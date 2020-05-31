@@ -228,6 +228,11 @@ public class adsrPolyphonicController: MonoAudioSource{
         didSet{ setReleaseControl() }
     }
     
+    init(){
+        let mixer = AKMixer()
+        super.init(toggle: mixer, node: mixer)
+    }
+    
     override init(toggle: AKToggleable, node: AKInput ){
         
         super.init(toggle: toggle, node: node )
@@ -298,6 +303,10 @@ public class adsrPolyphonicController: MonoAudioSource{
         releaseControl.display = String(format: "%.2f", releaseDisplay) + " s"
     }
     
+    func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        fatalError("This method must be overriden")
+    }
+    
 }
 
 
@@ -314,7 +323,7 @@ public class adsrSourceMono: adsrPolyphonicController{
         setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
     }
     
-    init(){
+    override init(){
         super.init(toggle: output, node: output)
         self.selectedBlockDisplay = .adsr
     }
@@ -373,7 +382,7 @@ public class NoiseSource: adsrSourceMono{
     }
     
     //This is handling both the on and the off events
-    func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+    override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         if(velocity > 0){
             play()
         }
@@ -455,13 +464,13 @@ public class VoiceBank: adsrPolyphonicController{
     var voices : [Voice] = []
     var oscillatorMixer = AKMixer()
     
-    init(){
+    override init(){
         super.init(toggle: oscillatorMixer, node: oscillatorMixer)
         name = "VoiceBank"
     }
     
     //This is handling both the on and the off events
-    func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+    override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         if(velocity > 0){
             let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
             newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
@@ -520,9 +529,7 @@ public class VoiceBank: adsrPolyphonicController{
         checkControlsADSR(sender)
     }
     
-    func checkCustomControls(_ sender: KnobCompleteModel){
-        fatalError("This method must be overridden")
-    }
+    func checkCustomControls(_ sender: KnobCompleteModel){}
     
 }
 
@@ -620,7 +627,7 @@ public class MorphingOscillatorBank: VoiceBank{
     
 }
 
-/// A container for many morphing voices (oscillators with waveform, pitch, and adsr control)
+/// A container for many piano voices
 public class RhodesPianoBank: VoiceBank{
     override init(){
         super.init()
@@ -636,8 +643,78 @@ public class RhodesPianoBank: VoiceBank{
     override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
         return RhodesPianoVoice(note: note, velocity: velocity, channel: channel)
     }
+}
+
+/// A container for many flute voices
+public class FluteBank: VoiceBank{
+    override init(){
+        super.init()
+        
+        displayOnImage = Image(systemName: "f.circle.fill")
+        displayOffImage = Image(systemName: "f.circle")
+        setDisplayImage()
+
+        selectedBlockDisplay = SelectedBlockDisplay.adsr
+        name = "Flute 1"
+    }
     
-    override func checkCustomControls(_ sender: KnobCompleteModel){}
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        return FluteVoice(note: note, velocity: velocity, channel: channel)
+    }
+}
+
+/// A container for many flute voices
+public class StringBank: VoiceBank{
+    override init(){
+        super.init()
+        
+        displayOnImage = Image(systemName: "s.circle.fill")
+        displayOffImage = Image(systemName: "s.circle")
+        setDisplayImage()
+
+        selectedBlockDisplay = SelectedBlockDisplay.adsr
+        name = "String 1"
+    }
+    
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        return StringVoice(note: note, velocity: velocity, channel: channel)
+    }
+}
+
+/// A container for many clarinet voices
+public class ClarinetBank: VoiceBank{
+    override init(){
+        super.init()
+        
+        displayOnImage = Image(systemName: "c.circle.fill")
+        displayOffImage = Image(systemName: "c.circle")
+        setDisplayImage()
+
+        selectedBlockDisplay = SelectedBlockDisplay.adsr
+        name = "Clarinet 1"
+    }
+    
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        return ClarinetVoice(note: note, velocity: velocity, channel: channel)
+    }
+}
+
+/// A container for many bell voices
+public class BellBank: VoiceBank{
+    override init(){
+        super.init()
+        
+        displayOnImage = Image(systemName: "b.circle.fill")
+        displayOffImage = Image(systemName: "b.circle")
+        setDisplayImage()
+
+        selectedBlockDisplay = SelectedBlockDisplay.adsr
+        name = "Bell 1"
+    }
+    
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        return BellVoice(note: note, velocity: velocity, channel: channel)
+    }
 }
 
 /// An audio sources that implements ADSR but does not itself have parameter controls (such as voices).
@@ -751,31 +828,151 @@ public class Voice: adsrSourceWithoutControl{
 
 /// An audio source that represents a rhodes piano
 public class RhodesPianoVoice: Voice{
-    var piano : AKRhodesPiano
+    var source : AKRhodesPiano
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        piano = AKRhodesPiano()
-        piano.rampDuration = 0.001
-        super.init(note: note, velocity: velocity, channel: channel, sourceNode: piano)
+        source = AKRhodesPiano()
+        source.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: source)
     }
     
     override func play(){
-        piano.start()
-        piano.trigger(frequency: frequency, amplitude: amplitude)
+        source.start()
+        source.trigger(frequency: frequency, amplitude: amplitude)
         output.start()
     }
 
     override func killSourceNode(){
-        self.piano.stop()
-        self.piano.disconnectOutput()
-        self.piano.detach()
+        self.source.stop()
+        self.source.disconnectOutput()
+        self.source.detach()
     }
     
     override func setSourceAmplitude(){
-        self.piano.amplitude = self.amplitude
+        self.source.amplitude = self.amplitude
     }
     override func setSourceFrequency(){
-        self.piano.frequency = self.frequency
+        self.source.frequency = self.frequency
+    }
+}
+
+/// An audio source that represents a flute
+public class FluteVoice: Voice{
+    var source : AKFlute
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        source = AKFlute()
+        source.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: source)
+    }
+    
+    override func play(){
+        source.start()
+        source.trigger(frequency: frequency, amplitude: amplitude)
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.source.stop()
+        self.source.disconnectOutput()
+        self.source.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        self.source.amplitude = self.amplitude
+    }
+    override func setSourceFrequency(){
+        self.source.frequency = self.frequency
+    }
+}
+
+/// An audio source that represents a plucked string
+public class StringVoice: Voice{
+    var source : AKPluckedString
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        source = AKPluckedString()
+        source.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: source)
+    }
+    
+    override func play(){
+        source.start()
+        source.trigger(frequency: frequency, amplitude: amplitude)
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.source.stop()
+        self.source.disconnectOutput()
+        self.source.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        self.source.amplitude = self.amplitude
+    }
+    override func setSourceFrequency(){
+        self.source.frequency = self.frequency
+    }
+}
+
+/// An audio source that represents a plucked string
+public class BellVoice: Voice{
+    var source : AKTubularBells
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        source = AKTubularBells()
+        source.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: source)
+    }
+    
+    override func play(){
+        source.start()
+        source.trigger(frequency: frequency, amplitude: amplitude)
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.source.stop()
+        self.source.disconnectOutput()
+        self.source.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        self.source.amplitude = self.amplitude
+    }
+    override func setSourceFrequency(){
+        self.source.frequency = self.frequency
+    }
+}
+
+/// An audio source that represents a clarinet
+public class ClarinetVoice: Voice{
+    var source : AKClarinet
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        source = AKClarinet()
+        source.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: source)
+    }
+    
+    override func play(){
+        source.start()
+        source.trigger(frequency: frequency, amplitude: amplitude)
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.source.stop()
+        self.source.disconnectOutput()
+        self.source.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        self.source.amplitude = self.amplitude
+    }
+    override func setSourceFrequency(){
+        self.source.frequency = self.frequency
     }
 }
 

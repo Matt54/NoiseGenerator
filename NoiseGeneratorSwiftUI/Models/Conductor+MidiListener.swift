@@ -57,6 +57,12 @@ extension Conductor: AKMIDIListener {
     }
     
     func handleMidiNote(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        
+        for source in adsrPolyphonicControllers{
+            source.play(note: note, velocity: velocity, channel: channel)
+        }
+        
+        /*
         for oscillator in oscillatorControlSources{
             oscillator.play(note: note, velocity: velocity, channel: channel)
         }
@@ -64,6 +70,7 @@ extension Conductor: AKMIDIListener {
         for piano in pianoControlSources{
             piano.play(note: note, velocity: velocity, channel: channel)
         }
+        */
         
         // This simply prevents noise off when there are still notes on
         if( (velocity > 0)  || (numberOfNotesOn == 0) ){

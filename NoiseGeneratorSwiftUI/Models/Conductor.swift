@@ -57,10 +57,15 @@ final class Conductor : ObservableObject{
     
     // Audio Sources
     @Published var allControlSources = [AudioSource]()
+    
+    @Published var adsrPolyphonicControllers = [adsrPolyphonicController]()
+    
+    @Published var basicSourceControllers = [adsrPolyphonicController]()
+    
     @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
     @Published var microphoneSources = [MicrophoneSource]()
-    @Published var pianoControlSources = [RhodesPianoBank]()
+    //@Published var pianoControlSources = [RhodesPianoBank]()
     
     @Published var noiseSource = NoiseSource()
     
@@ -161,13 +166,12 @@ final class Conductor : ObservableObject{
         createMicrophoneInput(id: 1)
         
         //create a morphing oscillator to play with
-        //createNewSource(sourceNumber: 2)
+        createNewSource(sourceNumber: 2)
         
         //create a noise oscillator to play with
         //createNewSource(sourceNumber: 1)
         
-        //create a morphing oscillator to play with
-        createNewSource(sourceNumber: 3)
+        //createNewSource(sourceNumber: 6)
         
         connectSourceToEffectChain()
         
@@ -253,10 +257,7 @@ final class Conductor : ObservableObject{
     
     /// Connects the audio source to it's Volume Mixer
     func fixInternalAudioRouting(){
-        for source in oscillatorControlSources{
-            source.setupInputRouting()
-        }
-        for source in pianoControlSources{
+        for source in adsrPolyphonicControllers{
             source.setupInputRouting()
         }
     }
@@ -286,6 +287,7 @@ final class Conductor : ObservableObject{
         }
     }
     
+    
     func setupEffectAudioChain(){
         
         // Break all current connections
@@ -306,6 +308,7 @@ final class Conductor : ObservableObject{
     }
 
     
+    /// connects the output mixer to the amplitude tracker and begins tracking amplitude
     func setupOutputChain(){
         outputMixer.volume = masterVolume
         outputAmplitudeTracker = AKAmplitudeTracker(outputMixer)
@@ -351,6 +354,7 @@ final class Conductor : ObservableObject{
         }
     }
     
+    /// Does all the setup required to create the specific audio source based on the number provided
     public func createNewSource(sourceNumber: Int){
         hideSources()
         let audioSource = getSourceType(sourceNumber: sourceNumber)
@@ -360,6 +364,7 @@ final class Conductor : ObservableObject{
         audioSource.handoffDelegate = self
     }
     
+    /// Returns the specific audio source based on the number provided
     func getSourceType(sourceNumber: Int) -> AudioSource{
         switch sourceNumber{
         case 1:
@@ -368,24 +373,35 @@ final class Conductor : ObservableObject{
             return MorphingOscillatorBank()
         case 3:
             return RhodesPianoBank()
+        case 4:
+            return FluteBank()
+        case 5:
+            return StringBank()
+        case 6:
+            return ClarinetBank()
+        case 7:
+            return BellBank()
         default:
             print("I have an unexpected case.")
             return NoiseSource()
         }
     }
     
+    /// Adds the audio source to a control array
     func addSourceToControlArray(source: AudioSource){
         if let mySource = source as? NoiseSource {
             noiseControlSources.append(mySource)
         }
-        if let mySource = source as? MorphingOscillatorBank {
+        else if let mySource = source as? MorphingOscillatorBank {
             oscillatorControlSources.append(mySource)
+            adsrPolyphonicControllers.append(mySource)
         }
-        if let mySource = source as? RhodesPianoBank {
-            pianoControlSources.append(mySource)
-        }
-        if let mySource = source as? MicrophoneSource {
+        else if let mySource = source as? MicrophoneSource {
             microphoneSources.append(mySource)
+        }
+        else if let mySource = source as? adsrPolyphonicController {
+            adsrPolyphonicControllers.append(mySource)
+            basicSourceControllers.append(mySource)
         }
     }
     
@@ -423,6 +439,7 @@ final class Conductor : ObservableObject{
         }
     }
     
+    /// Does all the setup required to create the specific audio effect based on the number provided
     public func createNewEffect(pos: Int, effectNumber: Int){
         hideEffects()
         let audioEffect = getEffectType(pos: pos, effectNumber: effectNumber)
@@ -432,6 +449,7 @@ final class Conductor : ObservableObject{
         audioEffect.handoffDelegate = self
     }
     
+    /// Returns the specific audio effect based on the number provided
     func getEffectType(pos: Int, effectNumber: Int) -> AudioEffect{
         switch effectNumber{
         case 1:
@@ -568,6 +586,30 @@ final class Conductor : ObservableObject{
                      display: "Rhodes Piano",
                      symbol: Image(systemName: "rublesign.circle.fill"),
                      description: "STK Fender Rhodes-like Electric Piano",
+                     parameters: ["Amplitude"]
+        ),
+        ListedDevice(id: 4,
+                     display: "Flute",
+                     symbol: Image(systemName: "f.circle.fill"),
+                     description: "STK Flute",
+                     parameters: ["Amplitude"]
+        ),
+        ListedDevice(id: 5,
+                     display: "String",
+                     symbol: Image(systemName: "s.circle.fill"),
+                     description: "Karplus-Strong plucked string instrument",
+                     parameters: ["Amplitude"]
+        ),
+        ListedDevice(id: 6,
+                     display: "Clarinet",
+                     symbol: Image(systemName: "c.circle.fill"),
+                     description: "STK Clarinet",
+                     parameters: ["Amplitude"]
+        ),
+        ListedDevice(id: 7,
+                     display: "Tubular Bell",
+                     symbol: Image(systemName: "b.circle.fill"),
+                     description: "STK Tubular Bells",
                      parameters: ["Amplitude"]
         )
     ]
