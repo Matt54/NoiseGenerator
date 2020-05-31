@@ -9,15 +9,36 @@ struct ExternalSourceView: View {
         { geometryOut in
             GeometryReader
             { geometry in
+                
                 VStack(spacing: 0){
+                    
+                    HStack(spacing: 0){
+                        if(self.microphoneSource.selectedBlockDisplay == .volume){
+                            OutputPlotView(inputNode: self.$microphoneSource.volumeMixer.input)
+                            //Rectangle()
+                                .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.85)
+                                
+                            VolumeComplete(volumeMixer: self.$microphoneSource.volumeMixer)
+                                .padding(geometry.size.width * 0.05)
+                                .frame(width: geometry.size.width * 0.2)
+                        }
+                    }
+                    .frame(height: geometry.size.height * 0.85)
+                    
+                    /*
                     VolumeComplete(volumeMixer: self.$microphoneSource.volumeMixer)
                         .padding(geometry.size.width * 0.08)
                         .frame(width: geometry.size.width * 0.27,
                                height:geometry.size.height * 0.85)
-                    TitleBar(title: self.$microphoneSource.name, isBypassed: self.$microphoneSource.isBypassed)
+                    */
+                    
+                    InputTitleBar(title: self.$microphoneSource.name, selectedBlockDisplay: self.$microphoneSource.selectedBlockDisplay)
                         .frame(height:geometry.size.height * 0.15)
+                    
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
+                
+                
             }
             .padding(geometryOut.size.height * 0.02)
             .border(Color.black, width: geometryOut.size.height * 0.02)

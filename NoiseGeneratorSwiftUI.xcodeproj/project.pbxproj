@@ -12,6 +12,9 @@
 		FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */; };
 		FA01D7F6247EB02800BF9538 /* HeaderKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D7F5247EB02800BF9538 /* HeaderKeyboard.swift */; };
 		FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA093A352448A94A00BCD16C /* AudioEffect.swift */; };
+		FA0A491C248403A000B5E790 /* InputTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A491B248403A000B5E790 /* InputTitleBar.swift */; };
+		FA0A491E2484084700B5E790 /* BasicSourceTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A491D2484084700B5E790 /* BasicSourceTitleBar.swift */; };
+		FA0A4920248408AB00B5E790 /* BasicSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A491F248408AB00B5E790 /* BasicSourceView.swift */; };
 		FA0A68672469FF590016534A /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A68662469FF590016534A /* Tempo.swift */; };
 		FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A6868246A01ED0016534A /* MainHeader.swift */; };
 		FA1211A1246C31460077941E /* KeyBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1211A0246C31460077941E /* KeyBoard.swift */; };
@@ -71,6 +74,7 @@
 		FABEB093246E22AA00C2F424 /* BluetoothMidiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABEB092246E22AA00C2F424 /* BluetoothMidiView.swift */; };
 		FAC0BD64243934C100E24C9A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC0BD63243934C100E24C9A /* AudioToolbox.framework */; };
 		FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC1F4A5245A4F39007E1331 /* PowerButton.swift */; };
+		FAC7922B2482D631006E5811 /* AddInstrumentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC7922A2482D631006E5811 /* AddInstrumentForm.swift */; };
 		FAC8B6B524807D4800C4C1C5 /* NoiseTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */; };
 		FAC8B6B724808F3100C4C1C5 /* EffectTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */; };
 		FAC8D75A243B758C0010078B /* Audiobus.txt in Resources */ = {isa = PBXBuildFile; fileRef = FAC8D759243B758C0010078B /* Audiobus.txt */; };
@@ -112,6 +116,9 @@
 		FA00559D246ADA22000B16C7 /* AnyGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyGestureRecognizer.swift; sourceTree = "<group>"; };
 		FA01D7F5247EB02800BF9538 /* HeaderKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderKeyboard.swift; sourceTree = "<group>"; };
 		FA093A352448A94A00BCD16C /* AudioEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEffect.swift; sourceTree = "<group>"; };
+		FA0A491B248403A000B5E790 /* InputTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTitleBar.swift; sourceTree = "<group>"; };
+		FA0A491D2484084700B5E790 /* BasicSourceTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSourceTitleBar.swift; sourceTree = "<group>"; };
+		FA0A491F248408AB00B5E790 /* BasicSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSourceView.swift; sourceTree = "<group>"; };
 		FA0A68662469FF590016534A /* Tempo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		FA0A6868246A01ED0016534A /* MainHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHeader.swift; sourceTree = "<group>"; };
 		FA1211A0246C31460077941E /* KeyBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBoard.swift; sourceTree = "<group>"; };
@@ -174,6 +181,7 @@
 		FAC0BD62243934C100E24C9A /* NoiseGeneratorSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoiseGeneratorSwiftUI.entitlements; sourceTree = "<group>"; };
 		FAC0BD63243934C100E24C9A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FAC1F4A5245A4F39007E1331 /* PowerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerButton.swift; sourceTree = "<group>"; };
+		FAC7922A2482D631006E5811 /* AddInstrumentForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInstrumentForm.swift; sourceTree = "<group>"; };
 		FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseTitleBar.swift; sourceTree = "<group>"; };
 		FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectTitleBar.swift; sourceTree = "<group>"; };
 		FAC8D759243B758C0010078B /* Audiobus.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Audiobus.txt; sourceTree = "<group>"; };
@@ -253,12 +261,11 @@
 		FA0987CD2476B1AE0010047F /* AudioSourceBlocks */ = {
 			isa = PBXGroup;
 			children = (
+				FA0A491A248402E200B5E790 /* MorphingOscillator */,
 				FA81DF9E245C962500473657 /* NoiseGeneratorBlock */,
-				FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */,
 				FA9CFE152476B33800DAD510 /* ADSR.swift */,
 				FAAB7188246743C700B884B3 /* ExternalSourceView.swift */,
-				FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */,
-				FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */,
+				FA0A491F248408AB00B5E790 /* BasicSourceView.swift */,
 			);
 			path = AudioSourceBlocks;
 			sourceTree = "<group>";
@@ -270,6 +277,16 @@
 				FABEB092246E22AA00C2F424 /* BluetoothMidiView.swift */,
 			);
 			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		FA0A491A248402E200B5E790 /* MorphingOscillator */ = {
+			isa = PBXGroup;
+			children = (
+				FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */,
+				FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */,
+				FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */,
+			);
+			path = MorphingOscillator;
 			sourceTree = "<group>";
 		};
 		FA220F632454848200AACE5B /* Models */ = {
@@ -460,6 +477,8 @@
 				FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */,
 				FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */,
 				FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */,
+				FA0A491B248403A000B5E790 /* InputTitleBar.swift */,
+				FA0A491D2484084700B5E790 /* BasicSourceTitleBar.swift */,
 			);
 			path = TitleBarControl;
 			sourceTree = "<group>";
@@ -503,6 +522,7 @@
 				FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */,
 				FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */,
 				FAEED716248129F600B1F723 /* AddOscillatorForm.swift */,
+				FAC7922A2482D631006E5811 /* AddInstrumentForm.swift */,
 			);
 			path = AddSourceScreen;
 			sourceTree = "<group>";
@@ -624,8 +644,10 @@
 				FA81DF98245C6B4500473657 /* NoiseGenerator.swift in Sources */,
 				FAA44E74247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift in Sources */,
 				FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */,
+				FA0A491E2484084700B5E790 /* BasicSourceTitleBar.swift in Sources */,
 				FA377A51243228DE00CBE2C4 /* TriangleControl.swift in Sources */,
 				FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */,
+				FAC7922B2482D631006E5811 /* AddInstrumentForm.swift in Sources */,
 				FAEED71524811DD800B1F723 /* SourceCategoriesForm.swift in Sources */,
 				FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */,
 				FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */,
@@ -653,6 +675,8 @@
 				FAC8B6B524807D4800C4C1C5 /* NoiseTitleBar.swift in Sources */,
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,
 				FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */,
+				FA0A4920248408AB00B5E790 /* BasicSourceView.swift in Sources */,
+				FA0A491C248403A000B5E790 /* InputTitleBar.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */,
 				FAB700E1245328790053F13A /* ModulationView.swift in Sources */,

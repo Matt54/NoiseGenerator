@@ -61,6 +61,10 @@ extension Conductor: AKMIDIListener {
             oscillator.play(note: note, velocity: velocity, channel: channel)
         }
         
+        for piano in pianoControlSources{
+            piano.play(note: note, velocity: velocity, channel: channel)
+        }
+        
         // This simply prevents noise off when there are still notes on
         if( (velocity > 0)  || (numberOfNotesOn == 0) ){
             for noiseGenerator in noiseControlSources{

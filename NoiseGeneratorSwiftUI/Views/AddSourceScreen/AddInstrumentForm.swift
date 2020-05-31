@@ -1,14 +1,14 @@
 //
-//  AddOscillatorForm.swift
+//  AddInstrumentForm.swift
 //  NoiseGeneratorSwiftUI
 //
-//  Created by Macbook on 5/29/20.
+//  Created by Macbook on 5/30/20.
 //  Copyright © 2020 Matt Pfeiffer. All rights reserved.
 //
 
 import SwiftUI
 
-struct AddOscillatorForm: View {
+struct AddInstrumentForm: View {
 
     @EnvironmentObject var noise: Conductor
     
@@ -39,7 +39,7 @@ struct AddOscillatorForm: View {
                 }
                 .padding(.leading, geometry.size.width * 0.015)
                 
-                Text("Add Oscillator Source")
+                Text("Add Physical Instrument")
                     //.font(.title)
                     .fontWeight(.bold)
                     .textStyle(ShrinkTextStyle())
@@ -51,7 +51,7 @@ struct AddOscillatorForm: View {
             
         ScrollView {
             VStack(spacing: geometry.size.height * 0.05){
-                ForEach(self.noise.listedOscillators , id: \.id){ i in
+                ForEach(self.noise.listedInstruments , id: \.id){ i in
                     Button(action: {
                         print("You pressed: " + String(i.id))
                         self.noise.selectedScreen = SelectedScreen.main
@@ -75,9 +75,9 @@ struct AddOscillatorForm: View {
     }
 }
 
-struct AddOscillatorForm_Previews: PreviewProvider {
+struct AddInstrumentForm_Previews: PreviewProvider {
     static var previews: some View {
-        AddOscillatorForm().environmentObject(Conductor.shared)
+        AddInstrumentForm().environmentObject(Conductor.shared)
         //.previewLayout(.fixed(width: 2688, height: 1242))
         .previewLayout(.fixed(width: 812, height: 375))
     }

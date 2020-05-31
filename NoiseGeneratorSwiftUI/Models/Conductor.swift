@@ -60,6 +60,7 @@ final class Conductor : ObservableObject{
     @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
     @Published var microphoneSources = [MicrophoneSource]()
+    @Published var pianoControlSources = [RhodesPianoBank]()
     
     @Published var noiseSource = NoiseSource()
     
@@ -160,10 +161,13 @@ final class Conductor : ObservableObject{
         createMicrophoneInput(id: 1)
         
         //create a morphing oscillator to play with
-        createNewSource(sourceNumber: 2)
+        //createNewSource(sourceNumber: 2)
         
         //create a noise oscillator to play with
         //createNewSource(sourceNumber: 1)
+        
+        //create a morphing oscillator to play with
+        createNewSource(sourceNumber: 3)
         
         connectSourceToEffectChain()
         
@@ -245,13 +249,15 @@ final class Conductor : ObservableObject{
         
         fixInternalAudioRouting()
         
-        
     }
     
+    /// Connects the audio source to it's Volume Mixer
     func fixInternalAudioRouting(){
         for source in oscillatorControlSources{
             source.setupInputRouting()
-            //source.setupAudioRouting()
+        }
+        for source in pianoControlSources{
+            source.setupInputRouting()
         }
     }
     
@@ -360,6 +366,8 @@ final class Conductor : ObservableObject{
             return NoiseSource()
         case 2:
             return MorphingOscillatorBank()
+        case 3:
+            return RhodesPianoBank()
         default:
             print("I have an unexpected case.")
             return NoiseSource()
@@ -372,6 +380,9 @@ final class Conductor : ObservableObject{
         }
         if let mySource = source as? MorphingOscillatorBank {
             oscillatorControlSources.append(mySource)
+        }
+        if let mySource = source as? RhodesPianoBank {
+            pianoControlSources.append(mySource)
         }
         if let mySource = source as? MicrophoneSource {
             microphoneSources.append(mySource)
@@ -527,6 +538,9 @@ final class Conductor : ObservableObject{
         else if(id == 2){
             self.selectedScreen = .addOscillator
         }
+        else if(id == 3){
+            self.selectedScreen = .addInstrument
+        }
         else{
             
         }
@@ -548,6 +562,15 @@ final class Conductor : ObservableObject{
         )
     ]
     
+    // All Physical Sources that can be added
+    @Published var listedInstruments = [
+        ListedDevice(id: 3,
+                     display: "Rhodes Piano",
+                     symbol: Image(systemName: "rublesign.circle.fill"),
+                     description: "STK Fender Rhodes-like Electric Piano",
+                     parameters: ["Amplitude"]
+        )
+    ]
 
 }
  
@@ -559,7 +582,7 @@ public enum ScreenUpdateSetting{
 }
 
 public enum SelectedScreen{
-    case main, addEffect, addSource, addOscillator, addMicrophoneInput, adjustPattern, bluetoothMIDI, settings
+    case main, addEffect, addSource, addOscillator, addInstrument, addMicrophoneInput, adjustPattern, bluetoothMIDI, settings
     var name: String {
         return "\(self)"
     }

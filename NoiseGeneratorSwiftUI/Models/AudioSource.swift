@@ -102,7 +102,6 @@ public class MonoAudioSource: AudioSource{
     var input: AKInput
     
     override func setupInputRouting(){
-        //input.setOutput(to: outputMixer)
         input.setOutput(to:volumeMixer.input)
     }
     
@@ -129,7 +128,7 @@ public class StereoAudioSource: AudioSource{
     }
 }
 
-//This is currently Mono, that should toggle based on user preference
+/// Input Audio Source
 public class MicrophoneSource: AudioSource{
     
     var input: AKMicrophone! = AKMicrophone()
@@ -147,6 +146,7 @@ public class MicrophoneSource: AudioSource{
         
         self.name = device.deviceID
         
+        //This is currently Mono, that should toggle based on user preference
         let stereoFieldLimiter = AKStereoFieldLimiter(input)
         //stereoFieldLimiter.setOutput(to: outputMixer)
         stereoFieldLimiter.setOutput(to: volumeMixer.input)
@@ -154,6 +154,8 @@ public class MicrophoneSource: AudioSource{
         displayOnImage = Image(systemName: "mic.circle.fill")
         displayOffImage = Image(systemName: "mic.circle")
         setDisplayImage()
+        
+        selectedBlockDisplay = .volume
     }
     
     init(){
@@ -186,7 +188,7 @@ public class AvailableInputSource{
 }
 
 
-
+/// An audio source that controls ADSR, but doesn not itself implement it (such as a oscillator bank that control individual voices)
 public class adsrPolyphonicController: MonoAudioSource{
     
     var attack: Double = 99{
@@ -298,6 +300,8 @@ public class adsrPolyphonicController: MonoAudioSource{
     
 }
 
+
+/// An audio source that controls and implements ADSR
 public class adsrSourceMono: adsrPolyphonicController{
     
     var output: AKAmplitudeEnvelope = AKAmplitudeEnvelope()
@@ -308,6 +312,11 @@ public class adsrSourceMono: adsrPolyphonicController{
         //sourceNode = node
         node.setOutput(to: output)
         setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
+    }
+    
+    init(){
+        super.init(toggle: output, node: output)
+        self.selectedBlockDisplay = .adsr
     }
     
     override func attackControlChange(){
@@ -338,6 +347,7 @@ public class adsrSourceMono: adsrPolyphonicController{
     
 }
 
+/// A noise generating audio source that controls and implements ADSR
 public class NoiseSource: adsrSourceMono{
     
     private let whiteNoise = AKWhiteNoise()
@@ -346,7 +356,7 @@ public class NoiseSource: adsrSourceMono{
     
     var noiseMixer = AKMixer()
     
-    init(){
+    override init(){
         super.init(toggle: noiseMixer, node: noiseMixer)
         stop()
         setNoiseRouting()
@@ -439,36 +449,39 @@ public class NoiseSource: adsrSourceMono{
     
 }
 
-
-public class MorphingOscillatorBank: adsrPolyphonicController{
-    
-    //var waveforms : [AKTable] = [AKTable(.sine), AKTable(.triangle), AKTable(.square), AKTable(.sawtooth)]
-    
-    //REMEMBER THAT THIS MUST ALWAYS HAVE EXACTLY 4 TABLES (WE USE 1 AND 2)
-    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.sine), AKTable(.sine)]
-    var displayWaveform : [Float] = [Float](AKTable(.sine))
-    
-    
-    var displayWaveTables : [DisplayWaveTable] = []
-    @Published var displayIndex: Int = 0
-    @Published var is3DView = false
-    var numberOf3DTables = 49
-    
-    //var waveforms = [AKTable(.sine), AKTable(.sawtooth)]
+/// A container for many voices with amplitude, pitch, and adsr control
+public class VoiceBank: adsrPolyphonicController{
     
     var voices : [Voice] = []
+    var oscillatorMixer = AKMixer()
     
-    var isSetup = false
+    init(){
+        super.init(toggle: oscillatorMixer, node: oscillatorMixer)
+        name = "VoiceBank"
+    }
     
-    var index: Double = 1.0{
-        didSet{
-            // I think we need to prevent voices from being destroyed until after this loop
-            // EXC_BAD_ACCESS(code=2, address=0x197a65fb8)
-            for voice in voices{
-                voice.oscillator.index = index// indexControl.realModValue * control1.range
-            }
-            displayIndex = Int(index * numberOf3DTables)
+    //This is handling both the on and the off events
+    func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        if(velocity > 0){
+            let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
+            newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
+            newVoice.output.setOutput(to: oscillatorMixer)
+            newVoice.play()
+            voices.append(newVoice)
+            print(AudioKit.engine.description)
         }
+        else{
+            let killVoices = voices.filter {$0.note == note}
+            for killVoice in killVoices{
+                killVoice.kill()
+            }
+            voices = voices.filter {$0.note != note}
+        }
+    }
+    
+    func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        let newVoice = Voice()
+        return newVoice
     }
     
     override func attackControlChange(){
@@ -492,17 +505,60 @@ public class MorphingOscillatorBank: adsrPolyphonicController{
          }
      }
     
-    var oscillatorMixer = AKMixer()
+    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
+        for voice in voices{
+            if(voice.channel.hex == channel.hex){
+                //print("same channel")
+                voice.pitchBend = pitchWheelValue
+            }
+        }
+    }
+    
+    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
+    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        checkCustomControls(sender)
+        checkControlsADSR(sender)
+    }
+    
+    func checkCustomControls(_ sender: KnobCompleteModel){
+        fatalError("This method must be overridden")
+    }
+    
+}
+
+/// A container for many morphing voices (oscillators with waveform, pitch, and adsr control)
+public class MorphingOscillatorBank: VoiceBank{
+
+    //REMEMBER THAT THIS MUST ALWAYS HAVE EXACTLY 4 TABLES (WE USE 1 AND 2)
+    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.square), AKTable(.triangle)]
+    var displayWaveform : [Float] = [Float](AKTable(.sine))
+    
+    var displayWaveTables : [DisplayWaveTable] = []
+    @Published var displayIndex: Int = 0
+    @Published var is3DView = false
+    var numberOf3DTables = 49
+    
+    //var voices : [Voice] = []
+    
+    //This is custom
+    var index: Double = 1.0{
+        didSet{
+            // I think we need to prevent voices from being destroyed until after this loop
+            // EXC_BAD_ACCESS(code=2, address=0x197a65fb8)
+            for voice in voices{
+                let oscillator = voice as! MorphingOscillatorVoice
+                oscillator.oscillator.index = index
+            }
+            displayIndex = Int(index * numberOf3DTables)
+        }
+    }
     
     @Published var indexControl = KnobCompleteModel(){
         didSet{ setIndexControl() }
     }
     
-    init(){
-        //displayWaveform = calculateDisplayWavetable()
-        //[Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
-        
-        super.init(toggle: oscillatorMixer, node: oscillatorMixer)
+    override init(){
+        super.init()
         
         displayOnImage = Image(systemName: "o.circle.fill")
         displayOffImage = Image(systemName: "o.circle")
@@ -515,64 +571,27 @@ public class MorphingOscillatorBank: adsrPolyphonicController{
 
         selectedBlockDisplay = SelectedBlockDisplay.controls
         name = "OSC 1"
-        
-        isSetup = true
-        
+
         calculateAllWaveTables()
     }
     
-    //This is handling both the on and the off events
-    func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        if(velocity > 0){
-            let newVoice = Voice(note: note, velocity: velocity, channel: channel, waveforms: waveforms)
-            newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
-            newVoice.oscillator.index = index
-            newVoice.output.setOutput(to: oscillatorMixer)
-            newVoice.play()
-            voices.append(newVoice)
-            //print(voices)
-            //print(AudioKit.engine.description)
-        }
-        else{
-            let killVoices = voices.filter {$0.note == note}
-            for killVoice in killVoices{
-                killVoice.kill()
-            }
-            voices = voices.filter {$0.note != note}
-            //print(voices)
-            
-        }
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        let newVoice = MorphingOscillatorVoice(note: note, velocity: velocity, channel: channel, waveforms: waveforms)
+        newVoice.oscillator.index = index
+        return newVoice
     }
     
-    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
-        //print("handlePitch")
-        
-        for voice in voices{
-            if(voice.channel.hex == channel.hex){
-                //print("same channel")
-                voice.pitchBend = pitchWheelValue
-            }
-        }
-        
-    }
-    
-    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
-    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+    override func checkCustomControls(_ sender: KnobCompleteModel){
         if(sender === indexControl){
             setIndexControl()
         }
-        checkControlsADSR(sender)
     }
     
     func setIndexControl(){
         index = indexControl.realModValue * indexControl.range
         indexControl.display = String(format: "%.2f",index)
-        
-        if(isSetup){
-            displayWaveform = calculateDisplayWavetable()
-        }
+        displayWaveform = calculateDisplayWavetable()
     }
-    
     
     func calculateDisplayWavetable() -> [Float]{
 
@@ -587,7 +606,7 @@ public class MorphingOscillatorBank: adsrPolyphonicController{
         }
 
     }
-    
+
     func calculateAllWaveTables(){
         displayWaveTables = []
         for i in 0...numberOf3DTables{
@@ -601,85 +620,27 @@ public class MorphingOscillatorBank: adsrPolyphonicController{
     
 }
 
-class DisplayWaveTable{
-    var waveform : [Float]
-    init(_ waveform: [Float]){
-        self.waveform = waveform
-    }
-}
-
-public class Voice: adsrSourceWithoutControl{
-    
-    var pitchBend: UInt16 = 16_384 / 2{
-        didSet{
-            //print("didSet pitchBend")
-            setOscillatorFrequency()
-        }
-    }
-    
-    var pitchBendRange: UInt16 = 24
-    
-    var oscillator : AKMorphingOscillator
-    var channel: MIDIChannel
-    var note: MIDINoteNumber
-    var index: Double = 0.8{
-        didSet{
-            oscillator.index = index
-        }
-    }
-    
-    //var output: AKAmplitudeEnvelope = AKAmplitudeEnvelope()
-    
-    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, waveforms: [AKTable]){
-        
-        oscillator = AKMorphingOscillator(waveformArray: waveforms)
-        
-        oscillator.rampDuration = 0.001
-        self.channel = channel
-        self.note = note
+/// A container for many morphing voices (oscillators with waveform, pitch, and adsr control)
+public class RhodesPianoBank: VoiceBank{
+    override init(){
         super.init()
-        setupNote(note: note, velocity: velocity)
-    }
-    
-    func setupNote(note: MIDINoteNumber, velocity: MIDIVelocity){
-        //convert midi note to frequency
-        setOscillatorFrequency()
         
-        //convert 0 to 127 range to 0 to 0.5 (because it's LOUD - maybe even go less)
-        oscillator.amplitude = Double(velocity) / 127.0 * 0.2
-        
-        //print("Amplitude: " + String(oscillator.amplitude))
-        
-        //oscillator.setOutput(to: output)
-        connectToADSR(oscillator)
+        displayOnImage = Image(systemName: "p.circle.fill")
+        displayOffImage = Image(systemName: "p.circle")
+        setDisplayImage()
+
+        selectedBlockDisplay = SelectedBlockDisplay.adsr
+        name = "Piano 1"
     }
     
-    func setOscillatorFrequency(){
-        oscillator.frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
-        //print("Frequency: " + String(oscillator.frequency))
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+        return RhodesPianoVoice(note: note, velocity: velocity, channel: channel)
     }
     
-    func getFrequencyFromNoteAndPitchBend(note: MIDINoteNumber, pitchBend: UInt16) -> Double {
-        return 440.0 * pow(2.0, (((Double(note) - 69.0) / 12.0)
-            + Double(pitchBendRange) * (Double(pitchBend) - 8192.0) / (4096.0 * 12.0)))
-    }
-    
-    func play(){
-        oscillator.start()
-        output.start()
-    }
-    
-    override func killSourceNode(){
-        self.oscillator.stop()
-        self.oscillator.detach()
-    }
-    
-    deinit{
-        //print("killed the voice")
-    }
-    
+    override func checkCustomControls(_ sender: KnobCompleteModel){}
 }
 
+/// An audio sources that implements ADSR but does not itself have parameter controls (such as voices).
 public class adsrSourceWithoutControl{
     
     var output: AKAmplitudeEnvelope = AKAmplitudeEnvelope()
@@ -694,6 +655,7 @@ public class adsrSourceWithoutControl{
             
             self.killSourceNode()
             
+            //self.output.disconnect()
             self.output.detach()
         }
     }
@@ -711,6 +673,151 @@ public class adsrSourceWithoutControl{
 
 }
 
+/// An audio sources containing a sound source with individual pitch control and ADSR.
+public class Voice: adsrSourceWithoutControl{
+    
+    var sourceNode : AKNode
+    var amplitude : Double = 0{
+        didSet{
+            setSourceAmplitude()
+        }
+    }
+    
+    var frequency : Double = 100{
+        didSet{
+            setSourceFrequency()
+        }
+    }
+    
+    var pitchBendRange: UInt16 = 24
+
+    var pitchBend: UInt16 = 16_384 / 2{
+        didSet{
+            frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        }
+    }
+    
+    var channel: MIDIChannel
+    var note: MIDINoteNumber
+    
+    override init(){
+        fatalError("Voice Object should never be created this way")
+    }
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, sourceNode: AKNode){
+        self.note = note
+        self.channel = channel
+        self.sourceNode = sourceNode
+        super.init()
+        setupNote(note: note, velocity: velocity)
+    }
+    
+    func setupNote(note: MIDINoteNumber, velocity: MIDIVelocity){
+        //convert midi note to frequency
+        setOscillatorFrequency()
+        
+        //convert 0 to 127 range to 0 to 0.5 (because it's LOUD - maybe even go less)
+        amplitude = Double(velocity) / 127.0
+        
+        //oscillator.setOutput(to: output)
+        connectToADSR(sourceNode)
+    }
+    
+    func setOscillatorFrequency(){
+        frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        //print("Frequency: " + String(oscillator.frequency))
+    }
+    
+    func getFrequencyFromNoteAndPitchBend(note: MIDINoteNumber, pitchBend: UInt16) -> Double {
+        return 440.0 * pow(2.0, (((Double(note) - 69.0) / 12.0)
+            + Double(pitchBendRange) * (Double(pitchBend) - 8192.0) / (4096.0 * 12.0)))
+    }
+    
+    deinit{
+        print("killed the voice")
+    }
+    
+    func setSourceAmplitude(){
+        fatalError("This method must be overridden by the subclass")
+    }
+    func setSourceFrequency(){
+        fatalError("This method must be overridden by the subclass")
+    }
+    func play(){
+        fatalError("This method must be overridden by the subclass")
+    }
+
+}
+
+/// An audio source that represents a rhodes piano
+public class RhodesPianoVoice: Voice{
+    var piano : AKRhodesPiano
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        piano = AKRhodesPiano()
+        piano.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: piano)
+    }
+    
+    override func play(){
+        piano.start()
+        piano.trigger(frequency: frequency, amplitude: amplitude)
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.piano.stop()
+        self.piano.disconnectOutput()
+        self.piano.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        self.piano.amplitude = self.amplitude
+    }
+    override func setSourceFrequency(){
+        self.piano.frequency = self.frequency
+    }
+}
+
+/// An audio sources containing an oscillator with individual pitch control and ADSR.
+public class MorphingOscillatorVoice: Voice{
+    
+    var oscillator : AKMorphingOscillator
+
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, waveforms: [AKTable]){
+        oscillator = AKMorphingOscillator(waveformArray: waveforms)
+        oscillator.rampDuration = 0.001
+        super.init(note: note, velocity: velocity, channel: channel, sourceNode: oscillator)
+    }
+
+    override func play(){
+        oscillator.start()
+        output.start()
+    }
+
+    override func killSourceNode(){
+        self.oscillator.stop()
+        self.oscillator.disconnectOutput()
+        self.oscillator.detach()
+    }
+    
+    override func setSourceAmplitude(){
+        // it's loud if we don't factor this down
+        self.oscillator.amplitude = self.amplitude * 0.2
+    }
+    override func setSourceFrequency(){
+        self.oscillator.frequency = self.frequency
+    }
+    
+}
+
+/// A wrapper for a [Float]
+class DisplayWaveTable{
+    var waveform : [Float]
+    init(_ waveform: [Float]){
+        self.waveform = waveform
+    }
+}
 
 public class ListedCategory{
     @Published var id: Int

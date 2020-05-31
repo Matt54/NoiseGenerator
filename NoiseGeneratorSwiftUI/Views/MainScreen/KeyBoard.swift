@@ -196,14 +196,13 @@ struct KeyBoard_Previews: PreviewProvider {
     }
 }
 
+/*
 extension AKKeyboardView{
-    
-    
-    
     open override var editingInteractionConfiguration: UIEditingInteractionConfiguration {
         return .none
     }
 }
+*/
 
 struct KeyBoardViewController: UIViewRepresentable {
     typealias UIViewType = AKKeyboardView
@@ -289,6 +288,7 @@ struct KeyBoardViewController: UIViewRepresentable {
 
 }
 
+/*
 struct OverlayButton<Content: View>: View {
   
   private let content: Content
@@ -322,3 +322,4 @@ struct OverlayButton<Content: View>: View {
   }
   
 }
+*/

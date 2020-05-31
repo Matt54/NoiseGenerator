@@ -4,7 +4,7 @@ import SwiftUI
 
 public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     
-    @Published var selectedBlockDisplay = SelectedBlockDisplay.volume
+    @Published var selectedBlockDisplay = SelectedBlockDisplay.controls
     
     // We should never see a heart
     @Published var displayImage = Image(systemName: "heart.circle")

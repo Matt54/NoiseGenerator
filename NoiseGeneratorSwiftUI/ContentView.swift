@@ -57,6 +57,10 @@ struct ContentView: View {
                                 SourceCategoriesForm()
                                     .animation(.easeInOut(duration: 0.5))
                             }
+                            else if(self.noise.selectedScreen == .addInstrument){
+                                AddInstrumentForm()
+                                    .animation(.easeInOut(duration: 0.5))
+                            }
                             else if(self.noise.selectedScreen == .addMicrophoneInput){
                                 AddInputDeviceForm()
                                     .animation(.easeInOut(duration: 0.5))
