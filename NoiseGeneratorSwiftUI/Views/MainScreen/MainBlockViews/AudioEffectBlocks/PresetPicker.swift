@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct PresetPicker: View {
+struct PresetPicker: View
+{
     
     @Binding var oneControlEffect : OneControlWithPresetsAudioEffect
     @Binding var knobModColor: Color
@@ -11,165 +12,169 @@ struct PresetPicker: View {
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
-    var body: some View {
-        GeometryReader{ geometry in
-            
-        VStack{
-            if(self.showPresets)
+    var body: some View
+    {
+    GeometryReader
+        { geometry in
+        VStack(spacing: 0)
             {
-            ScrollView(.vertical, showsIndicators: false){
-                VStack {
-                    ForEach(0 ..< self.oneControlEffect.presets.count){ n in
-                        Button(action: {
-                            self.oneControlEffect.presetIndex = n
-                            self.showPresets.toggle()
-                        }, label: {
-                            Text(self.oneControlEffect.presets[n])
-                                .font(.system(size: 20))
-                                .bold()
-                                .foregroundColor(Color.white)
-                        })
-                        .padding()
-                        .frame(minWidth: 0,maxWidth: .infinity, maxHeight: 40)
-                        .background(Color.gray)
-                        .border(Color.white, width: 1)
+                //Controls - Volumes and Knobs
+                HStack(spacing: 0)
+                {
+                    if(self.oneControlEffect.selectedBlockDisplay == .volume){
+                        //Input Volume
+                        VStack{
+                            VolumeComplete(volumeMixer: self.$oneControlEffect.inputVolumeMixer)
+                                .padding(geometry.size.width * 0.05)
+                                .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
+                        }
+                        .frame(width:geometry.size.width * 0.2)
+                        
+                        OutputPlotView(inputNode: self.$oneControlEffect.dummyMixer)
+                            .frame(width:geometry.size.width * 0.6,
+                                   height: geometry.size.height * 0.6)
+
+                    
+                        //Output Volume
+                        VStack{
+                            VolumeComplete(volumeMixer: self.$oneControlEffect.outputVolumeMixer)
+                                .padding(geometry.size.width * 0.05)
+                                .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
+                            
+                        }
+                        .frame(width:geometry.size.width * 0.2)
+                    }
+                        
+                if(self.oneControlEffect.selectedBlockDisplay == .controls){
+                
+                
+                if(self.showPresets)
+                {
+                    ScrollView(.vertical, showsIndicators: false)
+                    {
+                        VStack(spacing: 0)
+                            {
+                            ForEach(0 ..< self.oneControlEffect.presets.count){ n in
+                                Button(action: {
+                                    self.oneControlEffect.presetIndex = n
+                                    self.showPresets.toggle()
+                                }, label: {
+                                    Text(self.oneControlEffect.presets[n])
+                                        .font(.system(size: 20))
+                                        .bold()
+                                        .foregroundColor(Color.white)
+                                })
+                                .padding()
+                                .frame(minWidth: 0,maxWidth: .infinity, maxHeight: 40)
+                                .background(Color.gray)
+                                .border(Color.white, width: 1)
+                            }
+                        }
                     }
                 }
-            }
-            }
-            else{
-                ZStack
+                else
                 {
+                    //ZStack
+                    //{
 
-                VStack{
-                    HStack {
+                    VStack(spacing: 0)
+                        {
                         
-                        Button(action: {
-                            if(self.oneControlEffect.presetIndex > 0)
-                            {
-                                self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex - 1
-                            }
-                        }){
+                        //Preset selections
+                        HStack(spacing: 0) {
                             
-                            //Text("Prev.")
-                            Image(systemName: "arrowtriangle.left.fill")
-                                .font(.system(size: 16))
-                                .foregroundColor(Color.white)
-                        }
-                        .frame(minWidth: 50)
-                        Spacer()
-                        Button(action: {
-                            self.showPresets.toggle()
-                        }, label: {
-                            Text(self.oneControlEffect.presets[self.oneControlEffect.presetIndex])
-                                .font(.system(size: 16))
-                                .bold()
-                                .foregroundColor(Color.white)
-                        })
-                        .frame(minWidth: 0,maxWidth: .infinity)
-                        Spacer()
-                        Button(action: {
-                            if(self.oneControlEffect.presetIndex < self.oneControlEffect.presets.count - 1)
-                            {
-                                self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex + 1
+                            Button(action: {
+                                if(self.oneControlEffect.presetIndex > 0)
+                                {
+                                    self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex - 1
+                                }
+                            }){
+                                Image(systemName: "arrowtriangle.left.fill")
+                                    .resizable()
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .padding(geometry.size.height * 0.03)
+                                    //.font(.system(size: 16))
+                                    .foregroundColor(Color.white)
                             }
-                        }, label: {
-                            //Text("Next")
-                            Image(systemName: "arrowtriangle.right.fill")
-                                .font(.system(size: 16))
-                                .foregroundColor(Color.white)
-                        })
-                        .frame(minWidth: 50)
-                        //.frame(minWidth: 0,maxWidth: 40)
-                    }
-                    .frame(minHeight: 30)
-                    .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
-                    
-                    //Knob
-                    Spacer()
-                    VStack {
-                        Text(self.oneControlEffect.control1.display)
-                            .font(.system(size: 14))
-                        KnobComplete(knobModel: self.$oneControlEffect.control1,
-                                     knobModColor: self.$knobModColor,
-                                     specialSelection: self.$specialSelection)
-                                     //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                     //modulationBeingDeleted: .constant(false))
-                            .frame(minWidth:geometry.size.width * 0.275,                           maxWidth:geometry.size.width * 0.275,
-                                   minHeight:geometry.size.width * 0.275,
-                                   maxHeight: geometry.size.width * 0.275)
-                        Text(self.oneControlEffect.control1.name)
-                            .font(.system(size: 14))
-                            .bold()
-                        //.foregroundColor(Color.black)
+                            .frame(height: geometry.size.height * 0.15)
+                            
+                            Button(action: {
+                                self.showPresets.toggle()
+                            }, label: {
+                                Text(self.oneControlEffect.presets[self.oneControlEffect.presetIndex])
+                                    .bold()
+                                    .foregroundColor(Color.white)
+                            })
+                            .frame(minWidth: 0,maxWidth: .infinity)
+                            
+                            //Spacer()
+                            
+                            Button(action: {
+                                if(self.oneControlEffect.presetIndex < self.oneControlEffect.presets.count - 1)
+                                {
+                                    self.oneControlEffect.presetIndex = self.oneControlEffect.presetIndex + 1
+                                }
+                            }, label: {
+                                Image(systemName: "arrowtriangle.right.fill")
+                                    .resizable()
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .padding(geometry.size.height * 0.03)
+                                    .foregroundColor(Color.white)
+                            })
+                            .frame(height: geometry.size.height * 0.15)
+                            
                         }
-                        .frame(width:geometry.size.width * 0.35)
-                        Spacer()
-                    
-                
-                    HStack {
-                        Text(self.oneControlEffect.name)
-                            .font(.system(size: 16))
-                            .bold()
-                            .foregroundColor(Color.white)
-                    }
-                        .frame(minWidth: 0,maxWidth: .infinity, minHeight: geometry.size.height * 0.11 + 10)
+                        .frame(width: geometry.size.width, height:geometry.size.height * 0.15)
                         .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
-                    
-                
-                
-                    }
-                    
-                    // Power Button
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Button(action: {self.oneControlEffect.isBypassed.toggle()}){
-                                if(!self.oneControlEffect.isBypassed){
-                                Circle()
-                                    .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                    .frame(width:geometry.size.height * 0.11,
-                                           height:geometry.size.height * 0.11)
-                                    .overlay(
-                                    Image(systemName: "power")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(Color.yellow)
-                                    )
-                                }
-                                else{
-                                    Circle()
-                                    .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                    .frame(width:geometry.size.height * 0.11,
-                                           height:geometry.size.height * 0.11)
-                                    .overlay(
-                                    Image(systemName: "power")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(Color.gray)
-                                    )
-                                }
+                        
+                        //Knob 1
+                        VStack(spacing: 0)
+                            {
+                                
+                            Text(self.oneControlEffect.control1.display)
+                                .textStyle(ShrinkTextStyle())
+                                .frame(width: geometry.size.width * 0.2,
+                                       height: geometry.size.height * 0.1)
+                                
+                            KnobComplete(knobModel: self.$oneControlEffect.control1,
+                                         knobModColor: self.$knobModColor,
+                                         specialSelection: self.$specialSelection)
+                                .aspectRatio(1.0, contentMode: .fit)
+                                .frame(width:geometry.size.width * 0.175)
+                                .padding(.vertical, geometry.size.height * 0.05)
+                                
+                            Text(self.oneControlEffect.control1.name)
+                                .bold()
+                                .textStyle(ShrinkTextStyle())
+                                .frame(width: geometry.size.width * 0.2,
+                                       height: geometry.size.height * 0.1)
                             }
-                            Spacer()
-                        }
+                            .padding(geometry.size.width * 0.025)
+                            .frame(height: geometry.size.height * 0.7)
+                        
                         
                     }
-                    .padding(EdgeInsets(top: 0, leading: 3, bottom: 6, trailing: 0))
-                    
-            }
-            }
-            }
-            .padding(5)
-            .border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
-            
-        }
-    }
-}
+                    }//VStack
+                }
+                }
+                
+                EffectTitleBar(title: self.$oneControlEffect.name,
+                               selectedBlockDisplay: self.$oneControlEffect.selectedBlockDisplay,
+                               isBypassed: self.$oneControlEffect.isBypassed)
+                .frame(height:geometry.size.height * 0.15)
+                
+            } //VStack pre if/else
+            //.padding(5)
+            //.border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
+        } //Geometry Reader
+    } //View
+} //Struct
 
 struct PresetPicker_Previews: PreviewProvider {
     static var previews: some View {
-        PresetPicker(oneControlEffect: .constant(OneControlWithPresetsAudioEffect()),
+        PresetPicker(oneControlEffect: .constant(AppleReverbAudioEffect(pos: 1)),
                      knobModColor: .constant(Color.yellow),
                      specialSelection: .constant(SpecialSelection.none))
-                     //modulationBeingAssigned: .constant(false))
         .previewLayout(.fixed(width: 280, height: 220))
     }
 }

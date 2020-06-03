@@ -41,6 +41,7 @@
 		FA377A992434CD7A00CBE2C4 /* TriangleDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */; };
 		FA3CBB44246D7134009DE169 /* MorphingOscillatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */; };
 		FA4FDC71243F7C5600325F89 /* KnobComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4FDC70243F7C5600325F89 /* KnobComplete.swift */; };
+		FA5BEC1C2486E01C0064E989 /* PowerButton2.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5BEC1B2486E01C0064E989 /* PowerButton2.swift */; };
 		FA6ACFBA24573ADE0009CC20 /* SlidingTriangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */; };
 		FA6ACFBC24573D720009CC20 /* VolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6ACFBB24573D710009CC20 /* VolumeControl.swift */; };
 		FA791501244D333500C45D1A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA791500244D333500C45D1A /* ColorExtension.swift */; };
@@ -74,6 +75,8 @@
 		FABEB093246E22AA00C2F424 /* BluetoothMidiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABEB092246E22AA00C2F424 /* BluetoothMidiView.swift */; };
 		FAC0BD64243934C100E24C9A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC0BD63243934C100E24C9A /* AudioToolbox.framework */; };
 		FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC1F4A5245A4F39007E1331 /* PowerButton.swift */; };
+		FAC46DD5248569BF003B3805 /* FMOscillatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC46DD4248569BF003B3805 /* FMOscillatorView.swift */; };
+		FAC46DD724856A23003B3805 /* FMWavetable3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC46DD624856A23003B3805 /* FMWavetable3DView.swift */; };
 		FAC7922B2482D631006E5811 /* AddInstrumentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC7922A2482D631006E5811 /* AddInstrumentForm.swift */; };
 		FAC8B6B524807D4800C4C1C5 /* NoiseTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */; };
 		FAC8B6B724808F3100C4C1C5 /* EffectTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */; };
@@ -146,6 +149,7 @@
 		FA377A982434CD7A00CBE2C4 /* TriangleDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriangleDrag.swift; sourceTree = "<group>"; };
 		FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorphingOscillatorView.swift; sourceTree = "<group>"; };
 		FA4FDC70243F7C5600325F89 /* KnobComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobComplete.swift; sourceTree = "<group>"; };
+		FA5BEC1B2486E01C0064E989 /* PowerButton2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerButton2.swift; sourceTree = "<group>"; };
 		FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingTriangle.swift; sourceTree = "<group>"; };
 		FA6ACFBB24573D710009CC20 /* VolumeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeControl.swift; sourceTree = "<group>"; };
 		FA791500244D333500C45D1A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
@@ -181,6 +185,8 @@
 		FAC0BD62243934C100E24C9A /* NoiseGeneratorSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoiseGeneratorSwiftUI.entitlements; sourceTree = "<group>"; };
 		FAC0BD63243934C100E24C9A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FAC1F4A5245A4F39007E1331 /* PowerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerButton.swift; sourceTree = "<group>"; };
+		FAC46DD4248569BF003B3805 /* FMOscillatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FMOscillatorView.swift; sourceTree = "<group>"; };
+		FAC46DD624856A23003B3805 /* FMWavetable3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FMWavetable3DView.swift; sourceTree = "<group>"; };
 		FAC7922A2482D631006E5811 /* AddInstrumentForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInstrumentForm.swift; sourceTree = "<group>"; };
 		FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseTitleBar.swift; sourceTree = "<group>"; };
 		FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectTitleBar.swift; sourceTree = "<group>"; };
@@ -285,6 +291,8 @@
 				FA3CBB43246D7134009DE169 /* MorphingOscillatorView.swift */,
 				FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */,
 				FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */,
+				FAC46DD4248569BF003B3805 /* FMOscillatorView.swift */,
+				FAC46DD624856A23003B3805 /* FMWavetable3DView.swift */,
 			);
 			path = MorphingOscillator;
 			sourceTree = "<group>";
@@ -473,6 +481,7 @@
 			isa = PBXGroup;
 			children = (
 				FAC1F4A5245A4F39007E1331 /* PowerButton.swift */,
+				FA5BEC1B2486E01C0064E989 /* PowerButton2.swift */,
 				FA81DF99245C87FF00473657 /* TitleBar.swift */,
 				FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */,
 				FAC8B6B424807D4800C4C1C5 /* NoiseTitleBar.swift */,
@@ -657,6 +666,7 @@
 				FA33B4492465953E00387F0B /* Styles.swift in Sources */,
 				FA7DA85F2469C03000822786 /* StereoVolumeDisplay.swift in Sources */,
 				FA377A3824317C3000CBE2C4 /* SceneDelegate.swift in Sources */,
+				FAC46DD724856A23003B3805 /* FMWavetable3DView.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
 				FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */,
@@ -693,10 +703,12 @@
 				FA89B9C6247CB34C002593C3 /* iPhoneModel.swift in Sources */,
 				FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */,
 				FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */,
+				FA5BEC1C2486E01C0064E989 /* PowerButton2.swift in Sources */,
 				FAEED71324811C8A00B1F723 /* SourceCategoryRow.swift in Sources */,
 				FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */,
 				FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */,
 				FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */,
+				FAC46DD5248569BF003B3805 /* FMOscillatorView.swift in Sources */,
 				FA6ACFBC24573D720009CC20 /* VolumeControl.swift in Sources */,
 				FAE707D62465DC3500F27B31 /* AudioSource.swift in Sources */,
 			);

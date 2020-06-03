@@ -42,7 +42,9 @@ struct ModulationSourceView: View {
                         ForEach(self.noise.modulations , id: \.id){ mod in
                             Button(action: {
                                 self.noise.objectWillChange.send()
-                                mod.toggleDisplayed()
+                                //mod.toggleDisplayed()
+                                self.noise.hideModulations()
+                                mod.isDisplayed = true
                             }){
                                 if(mod.isDisplayed){
                                     Image(systemName: "m.circle.fill")

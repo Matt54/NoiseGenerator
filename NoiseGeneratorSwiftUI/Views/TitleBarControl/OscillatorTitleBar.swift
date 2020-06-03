@@ -11,6 +11,7 @@ import SwiftUI
 struct OscillatorTitleBar: View {
     @Binding var title: String
     @Binding var selectedBlockDisplay: SelectedBlockDisplay
+    @Binding var isBypassed: Bool
     
     var body: some View {
         GeometryReader
@@ -21,11 +22,22 @@ struct OscillatorTitleBar: View {
                     .fill(LinearGradient(Color.darkStart,Color.darkGray))
                     
                     HStack(spacing: 0){
+                        
+                        //VStack{
+                            PowerButton2(isBypassed: self.$isBypassed)
+                                .padding(geometry.size.width * 0.02)
+                                .aspectRatio(1.0, contentMode: .fit)
+                                .frame(height: geometry.size.height)
+                        //}
+                        //.background(Color.lightGray)
+                        
+                            
+                        
                         Text(self.title)
                             .bold()
                             .textStyle(ShrinkTextStyle())
                             .foregroundColor(Color.white)
-                            .padding(.leading, geometry.size.width * 0.02)
+                            //.padding(.leading, geometry.size.width * 0.02)
                             .frame(height: geometry.size.height)
                         Spacer()
                         
@@ -128,8 +140,9 @@ struct OscillatorTitleBar: View {
 
 struct OscillatorTitleBar_Previews: PreviewProvider {
     static var previews: some View {
-        OscillatorTitleBar(title: .constant("Block Title"),
-                           selectedBlockDisplay: .constant(SelectedBlockDisplay.controls))
+        OscillatorTitleBar(title: .constant("OSC 1"),
+                           selectedBlockDisplay: .constant(SelectedBlockDisplay.controls),
+                            isBypassed: .constant(false))
         .previewLayout(.fixed(width: 150, height: 20))
     }
 }

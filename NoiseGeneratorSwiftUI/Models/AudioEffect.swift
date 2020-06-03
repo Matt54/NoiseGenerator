@@ -34,11 +34,11 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     @Published var position: Int
     
     // Is the effect currently shown on GUI
-    @Published var isDisplayed = true{
+    @Published var isDisplayed = true/*{
         didSet{
             setDisplayImage()
         }
-    }
+    }*/
     
     init(){
         self.toggleControls = AKMixer()
@@ -80,7 +80,7 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     func setDisplayImage(){
-        if(isDisplayed){
+        if(!isBypassed){
             displayImage = displayOnImage
         }
         else{
@@ -95,6 +95,7 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
         else{
             toggleControls.start()
         }
+        setDisplayImage()
     }
 
     // Called when any KnobCompleteModel notices a change
@@ -130,7 +131,7 @@ public class TwoControlAudioEffect: AudioEffect{
         didSet{ setControl2() }
     }
     
-    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
+    /// Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter
     override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
         if(sender === control1){
             setEffect1()
@@ -163,6 +164,10 @@ public class FourControlAudioEffect: AudioEffect{
     }
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
+        control1.handoffDelegate = self
+        control2.handoffDelegate = self
+        control3.handoffDelegate = self
+        control4.handoffDelegate = self
     }
     @Published var control1 = KnobCompleteModel(){
         didSet{ setControl1() }
@@ -176,10 +181,53 @@ public class FourControlAudioEffect: AudioEffect{
     @Published var control4 = KnobCompleteModel(){
         didSet{ setControl4() }
     }
+    
+    /// Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter
+    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        if(sender === control1){
+            setEffect1()
+        }
+        else if(sender === control2){
+            setEffect2()
+        }
+        else if(sender === control3){
+            setEffect3()
+        }
+        else if(sender === control4){
+            setEffect4()
+        }
+    }
+    
+    override func handsFreeTextUpdate(_ sender: KnobCompleteModel) {
+        if(sender === control1){
+            setDisplay1()
+        }
+        else if(sender === control2){
+            setDisplay2()
+        }
+        else if(sender === control3){
+            setDisplay3()
+        }
+        else if(sender === control4){
+            setDisplay4()
+        }
+    }
+    
     func setControl1(){}
     func setControl2(){}
     func setControl3(){}
     func setControl4(){}
+    
+    func setDisplay1(){}
+    func setDisplay2(){}
+    func setDisplay3(){}
+    func setDisplay4(){}
+    
+    func setEffect1(){}
+    func setEffect2(){}
+    func setEffect3(){}
+    func setEffect4(){}
+    
 }
 
 public class OneControlWithPresetsAudioEffect: AudioEffect{
@@ -188,6 +236,7 @@ public class OneControlWithPresetsAudioEffect: AudioEffect{
     }
     override init(pos: Int, toggle: AKToggleable, node: AKInput){
         super.init(pos: pos, toggle: toggle, node: node)
+        control1.handoffDelegate = self
     }
     @Published var control1 = KnobCompleteModel(){
         didSet{ setControl1() }
@@ -197,6 +246,8 @@ public class OneControlWithPresetsAudioEffect: AudioEffect{
         didSet{setPreset()}
     }
     func setControl1(){}
+    func setDisplay1(){}
+    func setEffect1(){}
     func setPreset(){}
 }
 
@@ -277,12 +328,73 @@ public class TremoloAudioEffect: TwoControlAudioEffect{
         control2.percentRotated = 0.4
     }
     override func setControl1(){
-        tremolo.depth = control1.realModValue * control1.range
-        control1.display = String(format: "%.1f", control1.percentRotated * control1.range) + control1.unit
+        setEffect1()
+        setDisplay1()
     }
     override func setControl2(){
-        tremolo.frequency = control2.realModValue * control2.range
-        control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+        setEffect2()
+        setDisplay2()
+    }
+    
+    override func setEffect1(){
+         tremolo.depth = control1.realModValue * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.1f", control1.percentRotated * control1.range) + control1.unit
+    }
+    
+    override func setEffect2(){
+         tremolo.frequency = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+    }
+}
+
+public class AutoWahAudioEffect: TwoControlAudioEffect{
+    var wah = AKAutoWah()
+    init(pos: Int){
+        super.init(pos: pos, toggle: wah, node: wah)
+        setDefaults()
+        setControl1()
+        setControl2()
+    }
+    func setDefaults(){
+        name = "Auto Wah"
+        displayOnImage = Image(systemName: "w.circle.fill")
+        displayOffImage = Image(systemName: "w.circle")
+        setDisplayImage()
+        
+        control1.name = "Wah"
+        control1.unit = " %"
+        
+        control2.name = "Dry/Wet"
+        control2.unit = " %"
+        control2.percentRotated = 1.0
+        
+        wah.amplitude = 0.5
+    }
+    override func setControl1(){
+        setEffect1()
+        setDisplay1()
+    }
+    override func setControl2(){
+        setEffect2()
+        setDisplay2()
+    }
+    
+    override func setEffect1(){
+         wah.wah = control1.realModValue * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+    }
+    
+    override func setEffect2(){
+         wah.mix = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
     }
 }
 
@@ -312,21 +424,36 @@ public class BitCrusherAudioEffect: TwoControlAudioEffect{
         control2.unit = " Hz"
         control2.percentRotated = 1.0
     }
+    
     override func setControl1(){
-        bitCrusher.bitDepth = 1 + control1.realModValue * control1.range
-        control1.display = String(format: "%.1f", 1 + control1.percentRotated * control1.range) + control1.unit
+        setEffect1()
+        setDisplay1()
     }
+    override func setEffect1(){
+         bitCrusher.bitDepth = 1 + control1.realModValue * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.1f", 1 + control1.percentRotated * control1.range) + control1.unit
+    }
+    
     override func setControl2(){
-        bitCrusher.sampleRate = 8 + pow(control2.realModValue, 5) * control2.range
-        
-        if(bitCrusher.sampleRate > 1000){
-            control2.unit = " kHz"
-            control2.display = String(format: "%.1f", (8 + pow(control2.percentRotated, 5) * control2.range) / 1000) + control2.unit
-        }
-        else{
-            control2.unit = " Hz"
-            control2.display = String(format: "%.1f", 8 + pow(control2.percentRotated, 5) * control2.range) + control2.unit
-        }
+        setEffect2()
+        setDisplay2()
+    }
+    override func setEffect2(){
+         bitCrusher.sampleRate = 8 + pow(control2.realModValue, 5) * control2.range
+    }
+    override func setDisplay2(){
+         let displayValue = 8 + pow(control2.percentRotated, 5) * control2.range
+         
+         if(displayValue > 1000){
+             control2.unit = " kHz"
+             control2.display = String(format: "%.1f", (8 + pow(control2.percentRotated, 5) * control2.range) / 1000) + control2.unit
+         }
+         else{
+             control2.unit = " Hz"
+             control2.display = String(format: "%.1f", 8 + pow(control2.percentRotated, 5) * control2.range) + control2.unit
+         }
     }
 }
 
@@ -364,20 +491,48 @@ public class ChorusAudioEffect: FourControlAudioEffect{
         control4.unit = "%"
     }
     override func setControl1(){
-        chorus.depth = control1.realModValue * control1.range
-        control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+        setEffect1()
+        setDisplay1()
     }
     override func setControl2(){
-        chorus.feedback = control2.realModValue * control2.range
-        control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+        setEffect2()
+        setDisplay2()
     }
     override func setControl3(){
-        chorus.frequency = 0.03 + pow(control3.realModValue, 5) * control3.range
-        control3.display = String(format: "%.2f", 0.03 + pow(control3.percentRotated, 5) * control3.range) + control3.unit
+        setEffect3()
+        setDisplay3()
     }
     override func setControl4(){
-        chorus.dryWetMix = control4.realModValue * control4.range
-        control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
+        setEffect4()
+        setDisplay4()
+    }
+    
+    override func setEffect1(){
+         chorus.depth = control1.realModValue * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+    }
+    
+    override func setEffect2(){
+         chorus.feedback = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+    }
+    
+    override func setEffect3(){
+         chorus.frequency = 0.03 + pow(control3.realModValue, 5) * control3.range
+    }
+    override func setDisplay3(){
+         control3.display = String(format: "%.2f", 0.03 + pow(control3.percentRotated, 5) * control3.range) + control3.unit
+    }
+    
+    override func setEffect4(){
+         chorus.dryWetMix = control4.realModValue * control4.range
+    }
+    override func setDisplay4(){
+         control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
     }
 }
 
@@ -414,21 +569,50 @@ public class FlangerAudioEffect: FourControlAudioEffect{
         control4.unit = "%"
         control4.percentRotated = 0.5
     }
+    
     override func setControl1(){
-        flanger.depth = control1.realModValue * control1.range
-        control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+        setEffect1()
+        setDisplay1()
     }
     override func setControl2(){
-        flanger.feedback = control2.realModValue * control2.range
-        control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+        setEffect2()
+        setDisplay2()
     }
     override func setControl3(){
-        flanger.frequency = 0.03 + pow(control3.realModValue, 5) * control3.range
-        control3.display = String(format: "%.2f", 0.03 + pow(control3.percentRotated, 5) * control3.range) + control3.unit
+        setEffect3()
+        setDisplay3()
     }
     override func setControl4(){
-        flanger.dryWetMix = control4.realModValue * control4.range
-        control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
+        setEffect4()
+        setDisplay4()
+    }
+    
+    override func setEffect1(){
+         flanger.depth = control1.realModValue * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+    }
+    
+    override func setEffect2(){
+         flanger.feedback = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+    }
+    
+    override func setEffect3(){
+         flanger.frequency = 0.03 + pow(control3.realModValue, 5) * control3.range
+    }
+    override func setDisplay3(){
+         control3.display = String(format: "%.2f", 0.03 + pow(control3.percentRotated, 5) * control3.range) + control3.unit
+    }
+    
+    override func setEffect4(){
+         flanger.dryWetMix = control4.realModValue * control4.range
+    }
+    override func setDisplay4(){
+         control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
     }
 }
 
@@ -466,29 +650,61 @@ public class AppleDelayAudioEffect: FourControlAudioEffect{
         control4.name = "Dry/Wet"
         control4.unit = "%"
     }
+    
     override func setControl1(){
-        delay.time = pow(control1.realModValue,5) * control1.range
-        control1.display = String(format: "%.3f", pow(control1.percentRotated,5) * control1.range) + control1.unit
+        setEffect1()
+        setDisplay1()
     }
     override func setControl2(){
-        delay.feedback = control2.realModValue * control2.range
-        control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+        setEffect2()
+        setDisplay2()
     }
     override func setControl3(){
-        delay.lowPassCutoff = control3.realModValue * control3.range
-        if(delay.lowPassCutoff > 1000){
-            control3.unit = " kHz"
-            control3.display = String(format: "%.2f", control3.percentRotated * control3.range / 1000) + control3.unit
-        }
-        else{
-            control3.unit = " Hz"
-            control3.display = String(format: "%.0f", control3.percentRotated * control3.range) + control3.unit
-        }
+        setEffect3()
+        setDisplay3()
     }
     override func setControl4(){
-        delay.dryWetMix = control4.realModValue * control4.range
-        control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
+        setEffect4()
+        setDisplay4()
     }
+    
+    override func setEffect1(){
+         delay.time = pow(control1.realModValue,5) * control1.range
+    }
+    override func setDisplay1(){
+         control1.display = String(format: "%.3f", pow(control1.percentRotated,5) * control1.range) + control1.unit
+    }
+    
+    override func setEffect2(){
+         delay.feedback = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.0f", control2.percentRotated * control2.range * 100) + control2.unit
+    }
+    
+    override func setEffect3(){
+         delay.lowPassCutoff = control3.realModValue * control3.range
+    }
+    override func setDisplay3(){
+         let displayValue = control3.realModValue * control3.range
+         
+         if(displayValue > 1000){
+             control3.unit = " kHz"
+             control3.display = String(format: "%.1f", (8 + pow(control3.percentRotated, 5) * control3.range) / 1000) + control3.unit
+         }
+         else{
+             control3.unit = " Hz"
+             control3.display = String(format: "%.1f", 8 + pow(control3.percentRotated, 5) * control3.range) + control3.unit
+         }
+    }
+    
+    override func setEffect4(){
+         delay.dryWetMix = control4.realModValue * control4.range
+    }
+    override func setDisplay4(){
+         control4.display = String(format: "%.0f", control4.percentRotated * control4.range * 100) + control4.unit
+    }
+    
 }
 
 public class AppleReverbAudioEffect: OneControlWithPresetsAudioEffect{
@@ -514,8 +730,16 @@ public class AppleReverbAudioEffect: OneControlWithPresetsAudioEffect{
 
     }
     override func setControl1(){
-        reverb.dryWetMix = control1.realModValue * control1.range
-        control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
+        setEffect1()
+        setDisplay1()
+    }
+    
+    override func setEffect1(){
+         reverb.dryWetMix = control1.realModValue * control1.range
+    }
+    
+    override func setDisplay1(){
+         control1.display = String(format: "%.0f", control1.percentRotated * control1.range * 100) + control1.unit
     }
 
     override func setPreset(){

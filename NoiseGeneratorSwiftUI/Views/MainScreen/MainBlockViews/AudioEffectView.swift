@@ -40,24 +40,30 @@ struct AudioEffectView: View {
                     
                     HStack(spacing: 0){
                     ForEach(self.noise.allControlEffects , id: \.id){ effect in
-                        effect.displayImage
-                            .resizable()
-                            .padding(geometry.size.height * 0.01)
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .frame(height: geometry.size.height * 0.1)
-                            .foregroundColor(Color.white)
-                            
-                            .onTapGesture(count: 1) {
-                                self.noise.objectWillChange.send()
-                                //effect.toggleDisplayed()
-                                let current = effect.isDisplayed
-                                self.noise.hideEffects()
-                                effect.isDisplayed = !current
+                        
+                        VStack{
+                            if(effect.isDisplayed){
+                                effect.displayImage
+                                    .resizable()
+                                    .padding(geometry.size.height * 0.02)
+                                    .foregroundColor(Color.yellow)
                             }
-                            .onLongPressGesture(minimumDuration: 0.5) {
-                                print("Long Press")
+                            else{
+                                effect.displayImage
+                                    .resizable()
+                                    .padding(geometry.size.height * 0.025)
+                                    .foregroundColor(Color.white)
                             }
-                    }
+                        }
+                                .frame(width: geometry.size.height * 0.14,
+                                       height: geometry.size.height * 0.14)
+                                .onTapGesture(count: 1) {
+                                    self.noise.objectWillChange.send()
+                                    self.noise.hideEffects()
+                                    effect.isDisplayed = true
+                                }
+                        }
+                    
                     Button(action:{
                         
                         //This prevents crash from volume screen graph
@@ -67,19 +73,60 @@ struct AudioEffectView: View {
                     }){
                         Image(systemName: "plus.circle")
                             .resizable()
-                            .padding(geometry.size.height * 0.01)
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .frame(height: geometry.size.height * 0.1)
+                            .padding(geometry.size.height * 0.025)
+                            .frame(width: geometry.size.height * 0.14,
+                                   height: geometry.size.height * 0.14)
                             .foregroundColor(Color.white)
                     }
                     Spacer()
                     }
+                    .padding(.leading, geometry.size.height * 0.025)
                 }
             }
-            .padding(geometry.size.height * 0.0)
-            .border(Color.black, width: geometry.size.height * 0.0)
             .frame(height: geometry.size.height * 0.22)
             
+            /*
+            ForEach(self.noise.allControlSources , id: \.id){ source in
+                VStack{
+                    if(source.isDisplayed){
+                        source.displayImage
+                            .resizable()
+                            .padding(geometry.size.height * 0.02)
+                            .foregroundColor(Color.yellow)
+                    }
+                    else{
+                        source.displayImage
+                            .resizable()
+                            .padding(geometry.size.height * 0.025)
+                            .foregroundColor(Color.white)
+                    }
+                }
+                        .frame(width: geometry.size.height * 0.14,
+                               height: geometry.size.height * 0.14)
+                        .onTapGesture(count: 1) {
+                            self.noise.objectWillChange.send()
+                            //let current = source.isDisplayed
+                            self.noise.hideSources()
+                            source.isDisplayed = true//!current
+                        }
+                }
+                
+                Button(action:{
+                    print("Let's create a new audio source!")
+                    self.noise.selectedScreen = SelectedScreen.addSource //SelectedScreen.addMicrophoneInput
+                }){
+                    Image(systemName: "plus.circle")
+                        .resizable()
+                        .padding(geometry.size.height * 0.025)
+                        .frame(width: geometry.size.height * 0.14,
+                               height: geometry.size.height * 0.14)
+                        .foregroundColor(Color.white)
+                }
+                
+                Spacer()
+            }
+            .padding(.leading, geometry.size.height * 0.025)
+            */
             
             // Add All Two Knob Effect Controls
             ForEach(self.noise.twoControlEffects.indices, id: \.self){ i in

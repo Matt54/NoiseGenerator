@@ -58,7 +58,8 @@ struct NoiseGenerator: View {
                     }
                     
                     NoiseTitleBar(title: self.$noiseSource.name,
-                                       selectedBlockDisplay: self.$noiseSource.selectedBlockDisplay)
+                                       selectedBlockDisplay: self.$noiseSource.selectedBlockDisplay,
+                                       isBypassed: self.$noiseSource.isBypassed)
                     .frame(height:geometry.size.height * 0.15)
                     
                     /*

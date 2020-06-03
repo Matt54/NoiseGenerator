@@ -62,6 +62,7 @@ final class Conductor : ObservableObject{
     
     @Published var basicSourceControllers = [adsrPolyphonicController]()
     
+    @Published var FMOscillatorControlSources = [MorphingFMOscillatorBank]()
     @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
     @Published var microphoneSources = [MicrophoneSource]()
@@ -166,7 +167,8 @@ final class Conductor : ObservableObject{
         createMicrophoneInput(id: 1)
         
         //create a morphing oscillator to play with
-        createNewSource(sourceNumber: 2)
+        //createNewSource(sourceNumber: 2)
+        createNewSource(sourceNumber: 8)
         
         //create a noise oscillator to play with
         //createNewSource(sourceNumber: 1)
@@ -381,6 +383,8 @@ final class Conductor : ObservableObject{
             return ClarinetBank()
         case 7:
             return BellBank()
+        case 8:
+            return MorphingFMOscillatorBank()
         default:
             print("I have an unexpected case.")
             return NoiseSource()
@@ -394,6 +398,10 @@ final class Conductor : ObservableObject{
         }
         else if let mySource = source as? MorphingOscillatorBank {
             oscillatorControlSources.append(mySource)
+            adsrPolyphonicControllers.append(mySource)
+        }
+        else if let mySource = source as? MorphingFMOscillatorBank {
+            FMOscillatorControlSources.append(mySource)
             adsrPolyphonicControllers.append(mySource)
         }
         else if let mySource = source as? MicrophoneSource {
@@ -466,6 +474,8 @@ final class Conductor : ObservableObject{
             return BitCrusherAudioEffect(pos: pos)
         case 7:
             return FlangerAudioEffect(pos: pos)
+        case 8:
+            return AutoWahAudioEffect(pos: pos)
         default:
             print("I have an unexpected case.")
             return MoogLadderAudioEffect(pos: effectNumber)
@@ -528,6 +538,12 @@ final class Conductor : ObservableObject{
                      symbol: Image(systemName: "l.circle.fill"),
                      description: "Swept Comb Filter Effect",
                      parameters: ["Depth","Feedback","Frequency","Dry/Wet"])
+        ,
+        ListedDevice(id: 8,
+                     display: "Auto Wah",
+                     symbol: Image(systemName: "w.circle.fill"),
+                     description: "An Automatic Wah Effect",
+                     parameters: ["Wah","Dry/Wet"])
     ]
     
     // All Categories of Audio Sources
@@ -569,15 +585,21 @@ final class Conductor : ObservableObject{
         ListedDevice(id: 2,
                      display: "Morphing Oscillator",
                      symbol: Image(systemName: "waveform.circle.fill"),
-                     description: "Digital Implementation of the Moog Ladder Filter",
+                     description: "A wavetable oscillator",
                      parameters: ["Amplitude", "Waveform"]
         ),
         ListedDevice(id: 1,
                      display: "Noise Generator",
                      symbol: Image(systemName: "nairasign.circle.fill"),
-                     description: "A Variation in Amplitude",
+                     description: "A noise generator",
                      parameters: ["Amplitude", "White Value", "Pink Value", "Brown Value"]
-        )
+        ),
+        ListedDevice(id: 8,
+                     display: "FM Oscillator",
+                     symbol: Image(systemName: "waveform.circle"),
+                     description: "A wavetable oscillator with FM",
+                     parameters: ["Amplitude", "Waveform"]
+        ),
     ]
     
     // All Physical Sources that can be added

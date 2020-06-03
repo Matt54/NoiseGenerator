@@ -1,19 +1,17 @@
 //
-//  MorphingOscillatorView.swift
+//  FMOscillatorView.swift
 //  NoiseGeneratorSwiftUI
 //
-//  Created by Macbook on 5/14/20.
+//  Created by Macbook on 6/1/20.
 //  Copyright © 2020 Matt Pfeiffer. All rights reserved.
 //
 
 import SwiftUI
-import AudioKit
-import AudioKitUI
 
-struct MorphingOscillatorView: View {
+struct FMOscillatorView: View {
     
     @EnvironmentObject var noise: Conductor
-    @Binding var morphingOscillator: MorphingOscillatorBank
+    @Binding var morphingOscillator: MorphingFMOscillatorBank
     
     //@Binding var knobModColor: Color
     //@Binding var specialSelection: SpecialSelection
@@ -32,18 +30,16 @@ struct MorphingOscillatorView: View {
                         if(self.morphingOscillator.selectedBlockDisplay == .controls){
                             VStack(spacing: geometry.size.height * 0.02){
                                 
-                                
                                 Text("Wavetable Plot")
                                 .bold()
                                 .textStyle(ShrinkTextStyle())
                                 .frame(height: geometry.size.height * 0.1)
                                 
-                                
                                 Button(action: {
                                     self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
                                 }){
                                      if(self.morphingOscillator.is3DView){
-                                         Wavetable3DView(oscillator: self.$morphingOscillator)
+                                         FMWavetable3DView(oscillator: self.$morphingOscillator)
                                      }
                                      else{
                                         WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
@@ -56,10 +52,16 @@ struct MorphingOscillatorView: View {
                                 
                                 
                                 
-                            
-                                KnobVerticalStack(knobModel: self.$morphingOscillator.indexControl,
-                                removeValue: true)
+                                HStack(spacing: 0){
+                                    
+                                    KnobVerticalStack(knobModel: self.$morphingOscillator.waveformIndexControl,
+                                                    removeValue: true)
                                     .frame(width: geometry.size.width * 0.5)
+                                    
+                                    KnobVerticalStack(knobModel: self.$morphingOscillator.modulationIndexControl,
+                                                      removeValue: true)
+                                    .frame(width: geometry.size.width * 0.5)
+                                }
                             }
                             //.frame(width: geometry.size.width)
                             //.aspectRatio(1.0, contentMode: .fit)
@@ -73,13 +75,11 @@ struct MorphingOscillatorView: View {
                         
                         
                         if(self.morphingOscillator.selectedBlockDisplay == .adsr){
-                            VStack(spacing: geometry.size.height * 0.05){
-                                /*
+                            VStack(spacing: geometry.size.height * 0.02){
                                 Text("ADSR Volume Envelope")
                                     .bold()
                                     .textStyle(ShrinkTextStyle())
                                     .frame(height: geometry.size.height * 0.1)
-                                */
                                 
                                 ADSR(attack: self.$morphingOscillator.attackDisplay,
                                      decay: self.$morphingOscillator.decay,
@@ -103,7 +103,7 @@ struct MorphingOscillatorView: View {
                                     removeValue: true)
                                     }
                             }
-                            .padding(geometry.size.height * 0.065)
+                            .padding(geometry.size.height * 0.05)
                         }
                         
                         //.frame(width: geometry.size.width * 0.65)
@@ -157,72 +157,10 @@ struct MorphingOscillatorView: View {
     }
 }
 
-struct MorphingOscillatorView_Previews: PreviewProvider {
+struct FMOscillatorView_Previews: PreviewProvider {
     static var previews: some View {
-        MorphingOscillatorView(morphingOscillator: .constant(MorphingOscillatorBank()))
+        FMOscillatorView(morphingOscillator: .constant(MorphingFMOscillatorBank()))
         .environmentObject(Conductor.shared)
         .previewLayout(.fixed(width: 250, height: 200))
     }
-}
-
-
-struct OutputPlotView: UIViewRepresentable {
-    typealias UIViewType = AKNodeOutputPlot
-    //var UIView : AKNodeOutputPlot = AKNodeOutputPlot()
-    
-    //@EnvironmentObject var noise: NoiseModel
-    //@Binding var inputNode: AKInput
-    //@State var nodeToPlot: AKMixer = AKMixer()
-    
-    @Binding var inputNode: AKMixer
-    
-    //@Binding var octave: Int
-
-    func makeUIView(context: UIViewRepresentableContext<OutputPlotView>) -> AKNodeOutputPlot {
-        
-        //nodeToPlot.connect(to: inputNode)
-        //nodeToPlot = AKMixer(inputNode)
-        //inputNode.connect(to: nodeToPlot)
-        
-        let view = AKNodeOutputPlot(inputNode)
-        view.plotType = .buffer
-        view.shouldFill = false
-        view.shouldMirror = true
-        view.color = .systemPurple
-        view.backgroundColor = .clear
-        return view
-        
-        /*
-        
-        //This is hacky and there's got to be a reason why I got stuck here but,
-        //my waveform plots don't work in preview.
-        if((ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"]) != "1"){
-            let view = AKNodeOutputPlot(nodeToPlot)
-            view.plotType = .buffer
-            view.shouldFill = false
-            view.shouldMirror = true
-            view.color = .blue
-            view.backgroundColor = .black
-            return view
-        }
-        else{
-            let view = AKNodeOutputPlot()
-            view.plotType = .buffer
-            view.shouldFill = false
-            view.shouldMirror = true
-            view.color = .blue
-            view.backgroundColor = .black
-            return view
-        }
- 
-        */
-
-    }
-
-    func updateUIView(_ uiView: AKNodeOutputPlot, context: UIViewRepresentableContext<OutputPlotView>) {
-        uiView.frame = CGRect(x:0, y:0, width: uiView.intrinsicContentSize.width, height: uiView.intrinsicContentSize.height)
-        uiView.sizeToFit()
-        //uiView.firstOctave = octave
-    }
-    
 }

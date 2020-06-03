@@ -122,20 +122,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         setBypass()
     }
     
-    func getColorForModulation(num: Int) -> Color{
-        switch num{
-        case 1:
-            return Color.init(red: 0, green: 1.0, blue: 0) //green
-        case 2:
-            return Color.init(red: 0, green: 0, blue: 1.0) //blue
-        case 3:
-            return Color.init(red: 1.0, green: 0, blue: 0) //red
-        case 4:
-            return Color.init(red: 1.0, green: 1.0, blue: 0) //yellow
-        default:
-            return Color.init(red: 1.0, green: 1.0, blue: 1.0) //white
-        }
-    }
+    
     
     // Modulation Targets (New)
     var modulationTargets : [ModulationTarget] = []
@@ -231,6 +218,8 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         }
     }
 
+    
+    /// Modulation's timer callback - a modulation step.
     @objc func timerAction(){
         
         if( !isTriggerOnly || isTriggered){
@@ -285,6 +274,22 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         
         //DONT FORGET TO CHANGE THIS IF YOU ALLOW MODS TO CHANGE MODS
         setTimeInterval()
+    }
+    
+    /// Returns a color for the modulation based on how many modulations are currently existing.
+    func getColorForModulation(num: Int) -> Color{
+        switch num{
+        case 1:
+            return Color.init(red: 0, green: 1.0, blue: 0) //green
+        case 2:
+            return Color.init(red: 0, green: 0, blue: 1.0) //blue
+        case 3:
+            return Color.init(red: 1.0, green: 0, blue: 0) //red
+        case 4:
+            return Color.init(red: 1.0, green: 1.0, blue: 0) //yellow
+        default:
+            return Color.init(red: 1.0, green: 1.0, blue: 1.0) //white
+        }
     }
     
 }

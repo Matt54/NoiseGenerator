@@ -32,7 +32,8 @@ struct ExternalSourceView: View {
                                height:geometry.size.height * 0.85)
                     */
                     
-                    InputTitleBar(title: self.$microphoneSource.name, selectedBlockDisplay: self.$microphoneSource.selectedBlockDisplay)
+                    InputTitleBar(title: self.$microphoneSource.name, selectedBlockDisplay: self.$microphoneSource.selectedBlockDisplay,
+                                  isBypassed: self.$microphoneSource.isBypassed)
                         .frame(height:geometry.size.height * 0.15)
                     
                 }
@@ -40,8 +41,8 @@ struct ExternalSourceView: View {
                 
                 
             }
-            .padding(geometryOut.size.height * 0.02)
-            .border(Color.black, width: geometryOut.size.height * 0.02)
+            .padding(geometryOut.size.height * 0.0)
+            .border(Color.black, width: geometryOut.size.height * 0.0)
         }
     }
 }

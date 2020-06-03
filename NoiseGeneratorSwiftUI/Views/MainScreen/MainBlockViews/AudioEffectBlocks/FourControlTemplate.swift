@@ -13,162 +13,165 @@ struct FourControlTemplate: View {
         {
         GeometryReader
             { geometry in
-            ZStack
-                {
                 //Everything else
-                VStack
+                VStack(spacing: 0)
                     {
-                    Spacer()
-                    HStack
-                        {
-                        //Knob 1
-                        Spacer()
-                        VStack
-                            {
-                            Text(self.fourControlEffect.control1.display)
-                                .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$fourControlEffect.control1,
-                                             knobModColor: self.$knobModColor,
-                                             specialSelection: self.$specialSelection)
-                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             //modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,
-                                       maxWidth:geometry.size.width * 0.175,
-                                       minHeight:geometry.size.width * 0.175,
-                                       maxHeight: geometry.size.width * 0.175)
-                            Text(self.fourControlEffect.control1.name)
-                                .font(.system(size: 14))
-                                .bold()
-                            }
-                            .frame(width:geometry.size.width * 0.2)
+                    HStack(spacing: 0){
                         
-                        //Knob 2
-                        Spacer()
-                        VStack
-                            {
-                            Text(self.fourControlEffect.control2.display)
-                                .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$fourControlEffect.control2,
-                                         knobModColor: self.$knobModColor,
-                                         specialSelection: self.$specialSelection)
-                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         //modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,
-                                       maxWidth:geometry.size.width * 0.175,
-                                       minHeight:geometry.size.width * 0.175,
-                                       maxHeight: geometry.size.width * 0.175)
-                            Text(self.fourControlEffect.control2.name)
-                                .font(.system(size: 14))
-                                .bold()
+                        if(self.fourControlEffect.selectedBlockDisplay == .volume){
+                            //Input Volume
+                            VStack{
+                                VolumeComplete(volumeMixer: self.$fourControlEffect.inputVolumeMixer)
+                                    .padding(geometry.size.width * 0.05)
+                                    .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                             }
                             .frame(width:geometry.size.width * 0.2)
                             
-                        //Knob 3
-                        Spacer()
-                        VStack
-                            {
-                            Text(self.fourControlEffect.control3.display)
-                                .font(.system(size: 14))
-                            KnobComplete(knobModel: self.$fourControlEffect.control3,
-                                         knobModColor: self.$knobModColor,
-                                         specialSelection: self.$specialSelection)
-                                         //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                         //modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,
-                                       maxWidth:geometry.size.width * 0.175,
-                                       minHeight:geometry.size.width * 0.175,
-                                       maxHeight: geometry.size.width * 0.175)
-                            Text(self.fourControlEffect.control3.name)
-                                .font(.system(size: 14))
-                                .bold()
-                            }
-                            .frame(width:geometry.size.width * 0.2)
-                            
-                        //Knob 4
-                        Spacer()
-                        VStack
-                            {
+                            OutputPlotView(inputNode: self.$fourControlEffect.dummyMixer)
+                                .frame(width:geometry.size.width * 0.6,
+                                       height: geometry.size.height * 0.6)
 
-                            Text(self.fourControlEffect.control4.display)
-                                .font(.system(size: 14))
-                                KnobComplete(knobModel: self.$fourControlEffect.control4,
-                                             knobModColor: self.$knobModColor,
-                                             specialSelection: self.$specialSelection)
-                                             //modulationBeingAssigned: self.$modulationBeingAssigned,
-                                             //modulationBeingDeleted: .constant(false))
-                                .frame(minWidth:geometry.size.width * 0.175,
-                                       maxWidth:geometry.size.width * 0.175,
-                                       minHeight:geometry.size.width * 0.175,
-                                       maxHeight: geometry.size.width * 0.175)
-                            Text(self.fourControlEffect.control4.name)
-                                .font(.system(size: 14))
-                                .bold()
-                                //.foregroundColor(Color.black)
+                        
+                            //Output Volume
+                            VStack{
+                                VolumeComplete(volumeMixer: self.$fourControlEffect.outputVolumeMixer)
+                                    .padding(geometry.size.width * 0.05)
+                                    .frame(width: geometry.size.width * 0.2,height:geometry.size.height * 0.85)
                                 
                             }
                             .frame(width:geometry.size.width * 0.2)
-                        Spacer()
                         }
                         
-                        //Buttom Bar
-                        Spacer()
-                        HStack
+                    if(self.fourControlEffect.selectedBlockDisplay == .controls){
+                    //Knobs
+                        HStack(spacing: 0)
                             {
-                            Text(self.fourControlEffect.name)
-                                .font(.system(size: 16))
-                                .bold()
-                                .foregroundColor(Color.white)
-                            }
-                        .frame(minWidth: 0,maxWidth: .infinity, minHeight: geometry.size.height * 0.15 + 10)
-                            .background(Color.init(red: 0.2, green: 0.2, blue: 0.2))
-                        }
-                    
-                    // Power Button
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Button(action: {self.fourControlEffect.isBypassed.toggle()}){
-                                if(!self.fourControlEffect.isBypassed){
-                                Circle()
-                                    .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                    .frame(width:geometry.size.height * 0.15,
-                                           height:geometry.size.height * 0.15)
-                                    .overlay(
-                                    Image(systemName: "power")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(Color.yellow)
-                                    )
+                                
+                            //Knob 1
+                            VStack(spacing: 0)
+                                {
+                                    
+                                Text(self.fourControlEffect.control1.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                    
+                                KnobComplete(knobModel: self.$fourControlEffect.control1,
+                                             knobModColor: self.$knobModColor,
+                                             specialSelection: self.$specialSelection)
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .frame(width:geometry.size.width * 0.175)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                    
+                                Text(self.fourControlEffect.control1.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
                                 }
-                                else{
-                                    Circle()
-                                    .fill(Color.init(red: 0.0, green: 0.0, blue: 0.0))
-                                    .frame(width:geometry.size.height * 0.15,
-                                           height:geometry.size.height * 0.15)
-                                    .overlay(
-                                    Image(systemName: "power")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(Color.gray)
-                                    )
+                                .padding(geometry.size.width * 0.025)
+                                .frame(height: geometry.size.height * 0.85)
+                            
+                            //Knob 2
+                            VStack(spacing: 0)
+                                {
+                                    
+                                Text(self.fourControlEffect.control2.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                    
+                                KnobComplete(knobModel: self.$fourControlEffect.control2,
+                                             knobModColor: self.$knobModColor,
+                                             specialSelection: self.$specialSelection)
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .frame(width:geometry.size.width * 0.175)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                    
+                                Text(self.fourControlEffect.control2.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
                                 }
+                                .padding(geometry.size.width * 0.025)
+                                .frame(height: geometry.size.height * 0.85)
+                                
+                                
+                            //Knob 3
+                            VStack(spacing: 0)
+                                {
+                                    
+                                Text(self.fourControlEffect.control3.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                    
+                                KnobComplete(knobModel: self.$fourControlEffect.control3,
+                                             knobModColor: self.$knobModColor,
+                                             specialSelection: self.$specialSelection)
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .frame(width:geometry.size.width * 0.175)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                    
+                                Text(self.fourControlEffect.control3.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                }
+                                .padding(geometry.size.width * 0.025)
+                                .frame(height: geometry.size.height * 0.85)
+                                
+                            //Knob 4
+                            VStack(spacing: 0)
+                                {
+                                    
+                                Text(self.fourControlEffect.control4.display)
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                    
+                                KnobComplete(knobModel: self.$fourControlEffect.control4,
+                                             knobModColor: self.$knobModColor,
+                                             specialSelection: self.$specialSelection)
+                                    .aspectRatio(1.0, contentMode: .fit)
+                                    .frame(width:geometry.size.width * 0.175)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+                                    
+                                Text(self.fourControlEffect.control4.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(width: geometry.size.width * 0.2,
+                                           height: geometry.size.height * 0.1)
+                                }
+                                .padding(geometry.size.width * 0.025)
+                                .frame(height: geometry.size.height * 0.85)
+                                
                             }
-                            Spacer()
                         }
                     }
-                    .padding(5)
-                    
-                    }//zstack
+                    .frame(height:geometry.size.height * 0.85)
+                        
+                        
+                    EffectTitleBar(title: self.$fourControlEffect.name,
+                                   selectedBlockDisplay: self.$fourControlEffect.selectedBlockDisplay,
+                                   isBypassed: self.$fourControlEffect.isBypassed)
+                    .frame(height:geometry.size.height * 0.15)
+                        
+                        
+                }//VStack
+                .background(LinearGradient(Color.white, Color.lightGray))
+                        
             }//georeader
-            .padding(5)
-            .border(Color.BlackWhiteColor(for: self.colorScheme), width: 5)
         }//view
     }//struct
 
 struct FourControlTemplate_Previews: PreviewProvider {
     static var previews: some View {
-        FourControlTemplate(fourControlEffect: .constant(FourControlAudioEffect()),
+        FourControlTemplate(fourControlEffect: .constant(AppleDelayAudioEffect(pos: 1)),
                             knobModColor: .constant(Color.yellow),
                             specialSelection: .constant(SpecialSelection.none))
-                            //modulationBeingAssigned: .constant(false))
-        .previewLayout(.fixed(width: 380, height: 170))
+        .previewLayout(.fixed(width: 500, height: 300))
     }
 }

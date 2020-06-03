@@ -32,11 +32,12 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     // Is the effect currently shown on GUI
-    @Published var isDisplayed = true{
+    @Published var isDisplayed = true
+    /*{
         didSet{
             setDisplayImage()
         }
-    }
+    }*/
     
     init(toggle: AKToggleable){
         toggleControls = toggle
@@ -60,10 +61,11 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
         else{
             toggleControls.start()
         }
+        setDisplayImage()
     }
     
     func setDisplayImage(){
-        if(isDisplayed){
+        if(!isBypassed){
             displayImage = displayOnImage
         }
         else{
@@ -374,10 +376,10 @@ public class NoiseSource: adsrSourceMono{
         
         displayOnImage = Image(systemName: "n.circle.fill")
         displayOffImage = Image(systemName: "n.circle")
-        setDisplayImage()
         
         name = "Noise"
         selectedBlockDisplay = .volume
+        
         isBypassed = false
     }
     
@@ -398,6 +400,7 @@ public class NoiseSource: adsrSourceMono{
         else{
             //toggleControls.start()
         }
+        setDisplayImage()
     }
     
     func play(){
@@ -458,10 +461,10 @@ public class NoiseSource: adsrSourceMono{
     
 }
 
-/// A container for many voices with amplitude, pitch, and adsr control
-public class VoiceBank: adsrPolyphonicController{
+/// A container for many adsr voices with amplitude, pitch, and adsr control
+public class ADSRVoiceBank: adsrPolyphonicController{
     
-    var voices : [Voice] = []
+    var voices : [ADSRVoice] = []
     var oscillatorMixer = AKMixer()
     
     override init(){
@@ -477,7 +480,7 @@ public class VoiceBank: adsrPolyphonicController{
             newVoice.output.setOutput(to: oscillatorMixer)
             newVoice.play()
             voices.append(newVoice)
-            print(AudioKit.engine.description)
+            //print(AudioKit.engine.description)
         }
         else{
             let killVoices = voices.filter {$0.note == note}
@@ -488,8 +491,8 @@ public class VoiceBank: adsrPolyphonicController{
         }
     }
     
-    func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
-        let newVoice = Voice()
+    func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
+        let newVoice = ADSRVoice()
         return newVoice
     }
     
@@ -534,7 +537,7 @@ public class VoiceBank: adsrPolyphonicController{
 }
 
 /// A container for many morphing voices (oscillators with waveform, pitch, and adsr control)
-public class MorphingOscillatorBank: VoiceBank{
+public class MorphingOscillatorBank: ADSRVoiceBank{
 
     //REMEMBER THAT THIS MUST ALWAYS HAVE EXACTLY 4 TABLES (WE USE 1 AND 2)
     var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.square), AKTable(.triangle)]
@@ -544,6 +547,7 @@ public class MorphingOscillatorBank: VoiceBank{
     @Published var displayIndex: Int = 0
     @Published var is3DView = false
     var numberOf3DTables = 49
+    
     
     //var voices : [Voice] = []
     
@@ -582,7 +586,7 @@ public class MorphingOscillatorBank: VoiceBank{
         calculateAllWaveTables()
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         let newVoice = MorphingOscillatorVoice(note: note, velocity: velocity, channel: channel, waveforms: waveforms)
         newVoice.oscillator.index = index
         return newVoice
@@ -601,7 +605,7 @@ public class MorphingOscillatorBank: VoiceBank{
     }
     
     func calculateDisplayWavetable() -> [Float]{
-
+        
         if(index <= 1){
             return [Float](vDSP.linearInterpolate([Float](waveforms[0]),[Float](waveforms[1]),using: Float(index)))
         }
@@ -615,6 +619,19 @@ public class MorphingOscillatorBank: VoiceBank{
     }
 
     func calculateAllWaveTables(){
+        /*
+        // Get the floating point's [Element] that makes a AKTable
+        let table = waveforms[0].content
+        
+        // it can be converted from [Element] to [Float]
+        let floats : [Float] = table
+        
+        // Creates a wavetable from [Float]
+        let newTable = AKTable(floats)
+        
+        waveforms[1] = newTable
+         */
+        
         displayWaveTables = []
         for i in 0...numberOf3DTables{
             let interpolatedIndex = Double(i) / Double(numberOf3DTables)
@@ -624,11 +641,233 @@ public class MorphingOscillatorBank: VoiceBank{
             displayWaveTables.append(table)
         }
     }
+}
+
+/// A container for many morphing voices with FM
+public class MorphingFMOscillatorBank: adsrPolyphonicController{
     
+    var voices : [FMOscillatorVoice] = []
+    var oscillatorMixer = AKMixer()
+    
+    var displayWaveform : [Float] = []
+
+    var waveforms : [AKTable] = []
+    var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
+    
+    var displayWaveTables : [DisplayWaveTable] = []
+    @Published var displayIndex: Int = 0
+    
+    @Published var is3DView = false
+    
+    var numberOfWavePositions = 255
+    
+    var isSetup = false
+    
+    //This is handling both the on and the off events
+    override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        if(velocity > 0){
+            let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
+            //newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
+            newVoice.source.setOutput(to: oscillatorMixer)
+            newVoice.play()
+            voices.append(newVoice)
+            //print(AudioKit.engine.description)
+        }
+        else{
+            let killVoices = voices.filter {$0.note == note}
+            for killVoice in killVoices{
+                killVoice.kill()
+            }
+            voices = voices.filter {$0.note != note}
+        }
+    }
+    
+    override func attackControlChange(){
+        for voice in voices{
+            voice.source.attackDuration = attack
+        }
+    }
+     override func decayControlChange(){
+         for voice in voices{
+             voice.source.decayDuration = decay
+         }
+     }
+     override func sustainControlChange(){
+         for voice in voices{
+             voice.source.sustainLevel = sustain
+         }
+     }
+     override func releaseControlChange(){
+         for voice in voices{
+             voice.source.releaseDuration = release
+         }
+     }
+    
+    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
+        for voice in voices{
+            if(voice.channel.hex == channel.hex){
+                //print("same channel")
+                voice.pitchBend = pitchWheelValue
+            }
+        }
+    }
+    
+    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
+    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        checkCustomControls(sender)
+        checkControlsADSR(sender)
+    }
+    
+    func checkCustomControls(_ sender: KnobCompleteModel){
+        if(sender === waveformIndexControl){
+            setWaveformIndexControl()
+        }
+        else if(sender === modulationIndexControl){
+            setModulationIndexControl()
+        }
+    }
+    
+    var wavePosition: Int = 0{
+        didSet{
+            for voice in voices{
+                voice.setWaveTable(table: waveforms[wavePosition])
+            }
+        }
+    }
+    
+    @Published var waveformIndexControl = KnobCompleteModel(){
+        didSet{
+            setWaveformIndexControl()
+        }
+    }
+    
+    @Published var modulationIndexControl = KnobCompleteModel(){
+        didSet{
+            setModulationIndexControl()
+        }
+    }
+    
+    override init(){
+        super.init(toggle: oscillatorMixer, node: oscillatorMixer)
+        
+        calculateAllWaveTables()
+        
+        isSetup = true
+        
+        displayOnImage = Image(systemName: "o.circle.fill")
+        displayOffImage = Image(systemName: "o.circle")
+        setDisplayImage()
+        
+        waveformIndexControl.name = "Waveform"
+        waveformIndexControl.handoffDelegate = self
+        setWaveformIndexControl()
+        
+        modulationIndexControl.name = "Mod Index"
+        modulationIndexControl.handoffDelegate = self
+        modulationIndexControl.range = 10
+        setModulationIndexControl()
+
+        selectedBlockDisplay = SelectedBlockDisplay.controls
+        name = "FM OSC 1"
+
+        
+    }
+    
+    func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> FMOscillatorVoice{
+        let newVoice = FMOscillatorVoice(note: note,
+                                         velocity: velocity,
+                                         channel: channel,
+                                         waveform: waveforms[wavePosition],
+                                         modulationIndex: modulationIndex,
+                                         attackDuration: attack,
+                                         decayDuration: decay,
+                                         sustainLevel: sustain,
+                                         releaseDuration: release)
+        //newVoice.oscillator.index = wavePosition
+        return newVoice
+    }
+    
+    
+    func setWaveformIndexControl(){
+        wavePosition = Int(waveformIndexControl.realModValue * waveformIndexControl.range * numberOfWavePositions)
+        waveformIndexControl.display = String(wavePosition)
+        if(isSetup){
+            displayWaveform = displayWaveTables[wavePosition].waveform //calculateDisplayWavetable()
+        }
+    }
+    
+    var modulationIndex: Double = 0.0{
+        didSet{
+            for voice in voices{
+                voice.source.modulationIndex = modulationIndex
+                //print(modulationIndex)
+            }
+        }
+    }
+    
+    func setModulationIndexControl(){
+        modulationIndex = modulationIndexControl.realModValue * modulationIndexControl.range
+        waveformIndexControl.display = String(modulationIndex)
+    }
+
+    func calculateAllWaveTables(){
+        
+        /*
+        // Get the floating point's [Element] that makes a AKTable
+        let table = waveforms[0].content
+        
+        // it can be converted from [Element] to [Float]
+        let floats : [Float] = table
+        
+        // Creates a wavetable from [Float]
+        let newTable = AKTable(floats)
+        
+        waveforms[1] = newTable
+         defaultWaves
+         */
+        
+        // 85 = 256 / 3
+        let rangeValue = (Double(numberOfWavePositions + 1) / Double(defaultWaves.count - 1)).rounded(.up)
+        
+        
+        displayWaveTables = []
+        waveforms = []
+        
+        // 0 -> 255 (256 total)
+        for i in 0...numberOfWavePositions{
+            
+            // this lets us grab the appropriate wavetables in an arbitrary array of tables
+            
+            // 0 = Int(37 / 85)
+            // 1 = Int(90 / 85)
+            // 2 = Int(170 / 85)
+            let waveformIndex = Int(i / rangeValue) // % defaultWaves.count
+            
+            // 0.4118 = 35 / 85 % 1.0
+            // 0.5882 = 135 / 85 % 1.0
+            let interpolatedIndex = (Double(i) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            
+            // calculate float values
+            let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](defaultWaves[waveformIndex]),
+                                                                        [Float](defaultWaves[waveformIndex+1]),
+                                                                        using: Float(interpolatedIndex) ) ) )
+            
+            displayWaveTables.append(tableElements)
+            
+            /*
+            for i in tableElements.waveform.indices {
+                tableElements.waveform[i] *= 0.1
+            }
+            */
+            
+            waveforms.append( AKTable(tableElements.waveform.map { $0 * 0.75 } ) )
+            
+        }
+    }
 }
 
 /// A container for many piano voices
-public class RhodesPianoBank: VoiceBank{
+public class RhodesPianoBank: ADSRVoiceBank{
     override init(){
         super.init()
         
@@ -640,13 +879,13 @@ public class RhodesPianoBank: VoiceBank{
         name = "Piano 1"
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         return RhodesPianoVoice(note: note, velocity: velocity, channel: channel)
     }
 }
 
 /// A container for many flute voices
-public class FluteBank: VoiceBank{
+public class FluteBank: ADSRVoiceBank{
     override init(){
         super.init()
         
@@ -658,13 +897,13 @@ public class FluteBank: VoiceBank{
         name = "Flute 1"
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         return FluteVoice(note: note, velocity: velocity, channel: channel)
     }
 }
 
 /// A container for many flute voices
-public class StringBank: VoiceBank{
+public class StringBank: ADSRVoiceBank{
     override init(){
         super.init()
         
@@ -676,13 +915,13 @@ public class StringBank: VoiceBank{
         name = "String 1"
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         return StringVoice(note: note, velocity: velocity, channel: channel)
     }
 }
 
 /// A container for many clarinet voices
-public class ClarinetBank: VoiceBank{
+public class ClarinetBank: ADSRVoiceBank{
     override init(){
         super.init()
         
@@ -694,13 +933,13 @@ public class ClarinetBank: VoiceBank{
         name = "Clarinet 1"
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         return ClarinetVoice(note: note, velocity: velocity, channel: channel)
     }
 }
 
 /// A container for many bell voices
-public class BellBank: VoiceBank{
+public class BellBank: ADSRVoiceBank{
     override init(){
         super.init()
         
@@ -712,7 +951,7 @@ public class BellBank: VoiceBank{
         name = "Bell 1"
     }
     
-    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> Voice{
+    override func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> ADSRVoice{
         return BellVoice(note: note, velocity: velocity, channel: channel)
     }
 }
@@ -750,8 +989,119 @@ public class adsrSourceWithoutControl{
 
 }
 
+/// An audio sources containing a sound source with individual pitch control.
+public class FMOscillatorVoice{
+    
+    var source : AKFMOscillatorBank
+    
+    var frequency : Double = 100
+    
+    var pitchBendRange: UInt16 = 24
+
+    var pitchBend: UInt16 = 16_384 / 2{
+        didSet{
+            frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        }
+    }
+    
+    var channel: MIDIChannel
+    var note: MIDINoteNumber
+    var velocity: MIDIVelocity
+    
+    init(){
+        fatalError("Voice Object should never be created this way")
+    }
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, sourceNode: AKFMOscillatorBank, waveform: AKTable){
+        self.note = note
+        self.channel = channel
+        self.source = sourceNode
+        self.velocity = velocity
+        
+        
+        source.waveform = waveform
+        //setupNote(note: note, velocity: velocity)
+    }
+    
+    init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel, waveform: AKTable, modulationIndex: Double, attackDuration: Double, decayDuration: Double, sustainLevel: Double, releaseDuration: Double){
+        self.note = note
+        self.channel = channel
+        self.source = AKFMOscillatorBank(waveform: waveform,
+                                         carrierMultiplier: 1.0,
+                                         modulatingMultiplier: 1.0,
+                                         modulationIndex: modulationIndex,
+                                         attackDuration: attackDuration,
+                                         decayDuration: decayDuration,
+                                         sustainLevel: sustainLevel,
+                                         releaseDuration: releaseDuration,
+                                         pitchBend: 0.0,
+                                         vibratoDepth: 0.0,
+                                         vibratoRate: 1.0)
+        self.velocity = velocity
+        
+        source.rampDuration = 0.0001
+        //source.modulationIndex = 0.0
+        //source.vibratoDepth = 0.0
+        
+        
+        
+        //source.waveform = waveform
+        //setupNote(note: note, velocity: velocity)
+    }
+    
+    /*
+    func setupNote(note: MIDINoteNumber, velocity: MIDIVelocity){
+        //convert midi note to frequency
+        setOscillatorFrequency()
+        
+        //convert 0 to 127 range to 0 to 0.5 (because it's LOUD - maybe even go less)
+        amplitude = Double(velocity) / 127.0
+        
+        //oscillator.setOutput(to: output)
+        //connectToADSR(sourceNode)
+    }
+    */
+    
+    func setADSR(attackDuration: Double, decayDuration: Double, sustainLevel: Double, releaseDuration: Double){
+        source.attackDuration = attackDuration
+        source.decayDuration = releaseDuration
+        source.sustainLevel = sustainLevel
+        source.releaseDuration = releaseDuration
+    }
+    
+    func kill(){
+        source.stop(noteNumber: note)
+        DispatchQueue.main.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
+            self.source.detach()
+        }
+    }
+    
+    func setOscillatorFrequency(){
+        frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        //print("Frequency: " + String(oscillator.frequency))
+    }
+    
+    func getFrequencyFromNoteAndPitchBend(note: MIDINoteNumber, pitchBend: UInt16) -> Double {
+        return 440.0 * pow(2.0, (((Double(note) - 69.0) / 12.0)
+            + Double(pitchBendRange) * (Double(pitchBend) - 8192.0) / (4096.0 * 12.0)))
+    }
+    
+    deinit{
+        print("killed the voice")
+    }
+    
+    func setWaveTable(table: AKTable){
+        source.waveform = table
+    }
+    
+    func play(){
+        //let frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        source.play(noteNumber: note, velocity: velocity, channel: channel)
+    }
+}
+
 /// An audio sources containing a sound source with individual pitch control and ADSR.
-public class Voice: adsrSourceWithoutControl{
+public class ADSRVoice: adsrSourceWithoutControl{
     
     var sourceNode : AKNode
     var amplitude : Double = 0{
@@ -827,7 +1177,7 @@ public class Voice: adsrSourceWithoutControl{
 }
 
 /// An audio source that represents a rhodes piano
-public class RhodesPianoVoice: Voice{
+public class RhodesPianoVoice: ADSRVoice{
     var source : AKRhodesPiano
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
@@ -857,7 +1207,7 @@ public class RhodesPianoVoice: Voice{
 }
 
 /// An audio source that represents a flute
-public class FluteVoice: Voice{
+public class FluteVoice: ADSRVoice{
     var source : AKFlute
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
@@ -887,7 +1237,7 @@ public class FluteVoice: Voice{
 }
 
 /// An audio source that represents a plucked string
-public class StringVoice: Voice{
+public class StringVoice: ADSRVoice{
     var source : AKPluckedString
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
@@ -917,7 +1267,7 @@ public class StringVoice: Voice{
 }
 
 /// An audio source that represents a plucked string
-public class BellVoice: Voice{
+public class BellVoice: ADSRVoice{
     var source : AKTubularBells
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
@@ -947,7 +1297,7 @@ public class BellVoice: Voice{
 }
 
 /// An audio source that represents a clarinet
-public class ClarinetVoice: Voice{
+public class ClarinetVoice: ADSRVoice{
     var source : AKClarinet
     
     init(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
@@ -977,7 +1327,7 @@ public class ClarinetVoice: Voice{
 }
 
 /// An audio sources containing an oscillator with individual pitch control and ADSR.
-public class MorphingOscillatorVoice: Voice{
+public class MorphingOscillatorVoice: ADSRVoice{
     
     var oscillator : AKMorphingOscillator
 
@@ -1005,7 +1355,6 @@ public class MorphingOscillatorVoice: Voice{
     override func setSourceFrequency(){
         self.oscillator.frequency = self.frequency
     }
-    
 }
 
 /// A wrapper for a [Float]
