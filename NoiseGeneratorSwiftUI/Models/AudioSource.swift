@@ -1071,9 +1071,24 @@ public class FMOscillatorVoice{
     
     func kill(){
         source.stop(noteNumber: note)
-        DispatchQueue.main.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
+        //DispatchQueue.main.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
+        /*
+        DispatchQueue.global.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
             self.source.detach()
         }
+        */
+        let queue = DispatchQueue(label: "source-killer-queue")
+        
+        queue.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
+            self.source.detach()
+        }
+        
+        //perform(#selector(killFM), with: nil, afterDelay: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0)
+    }
+    
+    
+    @objc func killFM(){
+        self.source.detach()
     }
     
     func setOscillatorFrequency(){

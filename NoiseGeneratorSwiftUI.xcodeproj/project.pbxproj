@@ -67,6 +67,7 @@
 		FAAA3CC224687EEF00CA2E47 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC124687EEF00CA2E47 /* GridLines.swift */; };
 		FAAA3CC424689BC300CA2E47 /* PatternAdjust.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */; };
 		FAAA3CC62468A42300CA2E47 /* MiniPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAA3CC52468A42300CA2E47 /* MiniPattern.swift */; };
+		FAAAD2262487CB21009D4E81 /* Conductor+TouchTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAAD2252487CB21009D4E81 /* Conductor+TouchTransfer.swift */; };
 		FAAB7189246743C700B884B3 /* ExternalSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAB7188246743C700B884B3 /* ExternalSourceView.swift */; };
 		FAAE1EF42475C1D3007C0443 /* OscillatorTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */; };
 		FAB33A9F2456344F00696E83 /* VolumeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */; };
@@ -176,6 +177,7 @@
 		FAAA3CC124687EEF00CA2E47 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FAAA3CC324689BC300CA2E47 /* PatternAdjust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternAdjust.swift; sourceTree = "<group>"; };
 		FAAA3CC52468A42300CA2E47 /* MiniPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPattern.swift; sourceTree = "<group>"; };
+		FAAAD2252487CB21009D4E81 /* Conductor+TouchTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conductor+TouchTransfer.swift"; sourceTree = "<group>"; };
 		FAAB7188246743C700B884B3 /* ExternalSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalSourceView.swift; sourceTree = "<group>"; };
 		FAAE1EF32475C1D3007C0443 /* OscillatorTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OscillatorTitleBar.swift; sourceTree = "<group>"; };
 		FAB33A9E2456344F00696E83 /* VolumeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeDisplay.swift; sourceTree = "<group>"; };
@@ -304,6 +306,7 @@
 				FAA44E6D247FEC5A00F7ADB7 /* Conductor+MidiListener.swift */,
 				FAA44E73247FF4F300F7ADB7 /* Conductor+ModulationDelegateUI.swift */,
 				FAA44E6F247FF28700F7ADB7 /* Conductor+ParameterHandoff.swift */,
+				FAAAD2252487CB21009D4E81 /* Conductor+TouchTransfer.swift */,
 				FAA44E71247FF3AE00F7ADB7 /* DeviceLayout.swift */,
 				FA3EAB222476AFCE003638C0 /* Graphical */,
 				FA3EAB212476AF99003638C0 /* Timing */,
@@ -686,6 +689,7 @@
 				FA83C0242442EA8700568204 /* TwoControlTemplate.swift in Sources */,
 				FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */,
 				FA0A4920248408AB00B5E790 /* BasicSourceView.swift in Sources */,
+				FAAAD2262487CB21009D4E81 /* Conductor+TouchTransfer.swift in Sources */,
 				FA0A491C248403A000B5E790 /* InputTitleBar.swift in Sources */,
 				FA791501244D333500C45D1A /* ColorExtension.swift in Sources */,
 				FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */,
