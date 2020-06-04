@@ -15,6 +15,7 @@ extension Conductor: ParameterHandoff {
             for modulation in modulations{
                 if(modulation.isDisplayed){
                     modulation.addModulationTarget(newTarget: sender)
+                    sender.addModulationTracker(modulation)
                     //print("knob assigned in noise")
                 }
             }
@@ -24,11 +25,16 @@ extension Conductor: ParameterHandoff {
             for modulation in modulations{
                 if(modulation.isDisplayed){
                     modulation.removeModulationTarget(removeTarget: sender)
+                    sender.removeModulationTracker(modulation)
                     //print("knob removed in noise")
+                    
+                    if(modulation.modulationTargets.count < 1){
+                        specialSelection = .none
+                    }
                 }
             }
             sender.modSelected = false
-            sender.modulationValue = sender.percentRotated
+            //sender.modulationValue = sender.percentRotated
         }
         else if(specialSelection == .midiLearn){
             //print("we hit noise midi learn")

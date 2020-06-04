@@ -72,6 +72,9 @@ public class KnobCompleteModel : ObservableObject{
             realModValue = 0.0
         }
         else{
+            //let _percentRotated = percentRotated
+            //let _modulationValue = modulationValue
+            //let _realModValue = modulationValue + percentRotated
             realModValue = modulationValue + percentRotated
         }
         handoffDelegate?.modulationValueWasChanged(self)
@@ -89,6 +92,7 @@ public class KnobCompleteModel : ObservableObject{
         else{
             realModulationRange = attemptedModulationRange
         }
+        
     }
 
     func handoffKnobModel(){
@@ -108,6 +112,66 @@ public class KnobCompleteModel : ObservableObject{
         handoffDelegate?.KnobModelRangeHandoff(self, adjust: adjust)
     }
     
+    var modulationTrackers: [ModulationTracker] = []
+
+    
+    func addModulationTracker(_ modulation: Modulation){
+        
+        var isFound = false
+        
+        for mod in modulationTrackers{
+            if(mod.modulationSource === modulation){
+                isFound = true
+            }
+        }
+        
+        if(!isFound){
+            print("modulation tracker added")
+            modulationTrackers.append(ModulationTracker(modulation))
+        }
+    }
+    
+    func removeModulationTracker(_ modulation: Modulation){
+        for i in 0..<modulationTrackers.count {
+            if(modulationTrackers[i].modulationSource === modulation){
+                print("modulation tracker removed")
+                modulationTrackers.remove(at: i)
+                break
+            }
+        }
+        sumModulations()
+    }
+    
+    func sumModulations(){
+        var sum = 0.0
+
+        for mod in modulationTrackers{
+            sum = sum + mod.valueAdjust
+        }
+
+        self.modulationValue = sum
+    }
+    
+    /// Recalculates the new sum of  all modulations on the parameter. Called when any modulation changes it's value.
+    func sumModulations(_ modulation: Modulation, newValueAdjust: Double){
+        
+        var sum = 0.0
+        
+        // sum the modulations
+        for mod in modulationTrackers{
+            
+            // change the value
+            if(mod.modulationSource === modulation){
+                mod.valueAdjust = newValueAdjust
+            }
+            
+            sum = sum + mod.valueAdjust
+        }
+        
+        //end result gives a new value to modulationValue
+        self.modulationValue = sum
+    }
+    
 }
 
 protocol KnobModelHandoff{
@@ -115,4 +179,14 @@ protocol KnobModelHandoff{
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
     func modulationValueWasChanged(_ sender: KnobCompleteModel)
     func handsFreeTextUpdate(_ sender: KnobCompleteModel)
+}
+
+
+class ModulationTracker{
+    var valueAdjust : Double = 0.0
+    var modulationSource : Modulation
+    
+    init(_ modulation: Modulation){
+        self.modulationSource = modulation
+    }
 }

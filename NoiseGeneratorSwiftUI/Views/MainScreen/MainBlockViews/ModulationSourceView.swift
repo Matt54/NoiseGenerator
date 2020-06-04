@@ -68,6 +68,7 @@ struct ModulationSourceView: View {
                         }
                         Button(action:{
                             print("Let's create a new modulation source!")
+                            self.noise.createNewModulation()
                         }){
                             Image(systemName: "plus.circle")
                                 .resizable()

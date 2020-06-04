@@ -61,7 +61,27 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     // Is the modulation currently shown on GUI
-    @Published var isDisplayed = false
+    @Published var isDisplayed = false{
+        didSet{
+            if(isDisplayed){
+                for target in modulationTargets{
+                    target.knobModel.modSelected = true
+                    target.updateTargetRange()
+                }
+            }
+            else{
+                for target in modulationTargets{
+                    target.knobModel.modSelected = false
+                    //target.updateTargetRange()
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.delegate?.modulationDisplayChange(self)
+            }
+            
+        }
+    }
     
     // Is the modulation currently shown on GUI
     @Published var isBypassed = true{
@@ -71,6 +91,8 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     @Published var pattern: Pattern
     
     func toggleDisplayed(){
+        isDisplayed = !isDisplayed
+        /*
         isDisplayed.toggle()
         
         if(isDisplayed){
@@ -87,7 +109,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         DispatchQueue.main.async {
             self.delegate?.modulationDisplayChange(self)
         }
-        
+        */
     }
     
     var timer = RepeatingTimer(timeInterval: 0.01)
@@ -138,7 +160,6 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
             newTarget.modSelected = true
             print("mod selected")
         }
-
     }
     
     func removeModulationTarget(removeTarget: KnobCompleteModel){
@@ -222,7 +243,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     /// Modulation's timer callback - a modulation step.
     @objc func timerAction(){
         
-        if( !isTriggerOnly || isTriggered){
+        if( ( !isTriggerOnly || isTriggered) && (modulationTargets.count > 0) ){
 
             // Calculate next x value
             xValue = xValue + CGFloat(1.0 / numberOfSteps)
@@ -240,7 +261,8 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
             // Relay the value to the targets
             for target in modulationTargets{
                 //print("Modulating knob: " + target.knobModel.name + " with value " + String(modulationValue))
-                target.calculateTargetModulation(modulationValue: modulationValue)
+                //target.calculateTargetModulation(modulationValue: modulationValue)
+                target.calculateTargetModulation(self, modulationValue: modulationValue)
             }
             
             // tell the UI to get new binding values
@@ -261,11 +283,11 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
-    handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
+        handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
     
     func modulationValueWasChanged(_ sender: KnobCompleteModel) {
-        print("we're trying to modulate a modulation.")
+        //print("we're trying to modulate a modulation.")
         // DONT FORGET THAT YOU SHOULDN'T ADD THIS WITHOUT SPLITTING DISPLAY FROM ACTUAL TIMEINTERVAL
     }
     
@@ -282,16 +304,17 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         case 1:
             return Color.init(red: 0, green: 1.0, blue: 0) //green
         case 2:
-            return Color.init(red: 0, green: 0, blue: 1.0) //blue
+            return Color.init(red: 0.4, green: 0.1, blue: 0.7) // purple
         case 3:
-            return Color.init(red: 1.0, green: 0, blue: 0) //red
-        case 4:
             return Color.init(red: 1.0, green: 1.0, blue: 0) //yellow
+        case 4:
+            return Color.init(red: 1.0, green: 0.14, blue: 0) // scarlet
+        case 5:
+            return Color.init(red: 0.26, green: 0.41, blue: 0.88) // royal blue
         default:
             return Color.init(red: 1.0, green: 1.0, blue: 1.0) //white
         }
     }
-    
 }
 
 protocol ModulationDelegateUI {
@@ -328,8 +351,14 @@ class ModulationTarget : Equatable {
         knobModel.attemptedModulationRange = modulationRange
     }
     
-    public func calculateTargetModulation(modulationValue: Double){
-        knobModel.modulationValue = modulationValue * modulationRange
+    public func calculateTargetModulation(_ modulation : Modulation, modulationValue: Double){
+        //knobModel.modulationValue = modulationValue * modulationRange
+        let newValueAdjust = modulationValue * modulationRange
+        knobModel.sumModulations(modulation, newValueAdjust: newValueAdjust)
+    }
+    
+    func updateTargetRange(){
+        limitRange()
     }
     
 }

@@ -53,28 +53,35 @@ struct ModulationView: View {
                             
                             Button(action: {
                                 //self.isDeletingModulation.toggle()
+                                //if(self.modulation.modulationTargets.count > 0){
                                 if(self.specialSelection == .none){
                                     self.specialSelection = .deleteModulation
                                 }
                                 else{
                                     self.specialSelection = .none
                                 }
+                                //}
+                                //else{
+                                //    print("no targets")
+                                //}
                             }){
                                 ZStack{
                                     Rectangle()
                                         .fill(LinearGradient(Color.darkEnd, Color.darkStart))
                                         .cornerRadius(geometry.size.height * 0.05)
                                         .padding(geometry.size.height * 0.03)
+                                        
                                     Text("REMOVE")
                                         .bold()
                                         .textStyle(ShrinkTextStyle())
-                                        .foregroundColor(Color.white)
+                                        //.foregroundColor(Color.white)
+                                        .accentColor(Color.white)
                                         .padding(geometry.size.height * 0.04)
                                 }
                                 .frame(width: geometry.size.width * 0.35,
                                        height:geometry.size.height * 0.2)
                             }
-                            
+                            .disabled(self.modulation.modulationTargets.count < 1)
                             
                             HStack(spacing: 0){
                                 
@@ -131,7 +138,9 @@ struct ModulationView: View {
                             }
                         }
                         .frame(width: geometry.size.width * 0.35,
-                               height: geometry.size.height * 0.85)
+                            height: geometry.size.height * 0.85)
+                        
+                        
                         
                         
                     //Knob 1

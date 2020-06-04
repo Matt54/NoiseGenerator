@@ -58,10 +58,11 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
 
     func setupAudioRouting(){
         inputVolumeMixer.output.setOutput(to: effect)
+        inputVolumeMixer.name = "IN"
         //effect.setOutput(to: outputVolumeMixer.output)
         
         effect.connect(to: dummyMixer)
-        dummyMixer.connect(to: outputVolumeMixer.output)
+        dummyMixer.connect(to: outputVolumeMixer.input)
         
         dummyMixer.volume = 1.0
         

@@ -28,7 +28,7 @@ struct TwoControlTemplate: View {
                         
                         OutputPlotView(inputNode: self.$twoControlAudioEffect.dummyMixer)
                             .frame(width:geometry.size.width * 0.6,
-                                   height: geometry.size.height * 0.6)
+                                   height: geometry.size.height * 0.5)
 
                     
                         //Output Volume
