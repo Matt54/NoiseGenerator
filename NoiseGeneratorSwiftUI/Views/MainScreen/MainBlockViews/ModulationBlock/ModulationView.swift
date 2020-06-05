@@ -16,22 +16,21 @@ struct ModulationView: View {
     {
     GeometryReader
         { geometry in
-        ZStack
-            {
+            
+            // Whole View
+            VStack(spacing: 0){
 
-            VStack(spacing: 0)
-                {
-                HStack(spacing: 0)
-                    {
-                        VStack(spacing: 0){
-                            
-                            Button(action: {
-                                if(self.specialSelection == .none){
-                                    self.specialSelection = .assignModulation
-                                }
-                                else{
-                                    self.specialSelection = .none
-                                }
+                if(self.modulation.selectedBlockDisplay == .list){
+                    HStack(spacing: 0){
+                        
+                        //Assign Button
+                        Button(action: {
+                            if(self.specialSelection == .none){
+                                self.specialSelection = .assignModulation
+                            }
+                            else{
+                                self.specialSelection = .none
+                            }
                                 
                             }){
                                 ZStack{
@@ -47,15 +46,16 @@ struct ModulationView: View {
                                 }
                                 .frame(width: geometry.size.width * 0.35,
                                        height:geometry.size.height * 0.2)
-                            }
+                        }
                             
-                            Button(action: {
-                                if(self.specialSelection == .none){
-                                    self.specialSelection = .deleteModulation
-                                }
-                                else{
-                                    self.specialSelection = .none
-                                }
+                        //Remove Button
+                        Button(action: {
+                            if(self.specialSelection == .none){
+                                self.specialSelection = .deleteModulation
+                            }
+                            else{
+                                self.specialSelection = .none
+                            }
                             }){
                                 ZStack{
                                     Rectangle()
@@ -71,36 +71,67 @@ struct ModulationView: View {
                                 }
                                 .frame(width: geometry.size.width * 0.35,
                                        height:geometry.size.height * 0.2)
-                            }
-                            .disabled(self.modulation.modulationTargets.count < 1)
-                            
-                            HStack(spacing: 0){
+                        }
+                        .disabled(self.modulation.modulationTargets.count < 1)
+      
+                    }
+                    .frame(height: geometry.size.height * 0.85)
+                }
+
+                if(self.modulation.selectedBlockDisplay == .controls){
+                    //Trigger and Clock BUttons
+                    VStack(spacing: 0){
+                        
+                        //Should be changed to:
+                        // - Envelope Toggle
+                        // - Retrigger Toggle
+                        // - Free Running Toggle
+                        
+                        Toggle(isOn: self.$modulation.isEnvelopeMode) {
+                            Text("Envelope:")
+                        }.toggleStyle(CheckboxToggleStyle())
+                        .padding(geometry.size.width * 0.05)
+                        
+                        Toggle(isOn: self.$modulation.isTriggerMode) {
+                            Text("Retrigger:")
+                        }.toggleStyle(CheckboxToggleStyle())
+                        .padding(geometry.size.width * 0.05)
+                        
+                        Toggle(isOn: self.$modulation.isFreeMode) {
+                            Text("Free Mode:")
+                        }.toggleStyle(CheckboxToggleStyle())
+                        .padding(geometry.size.width * 0.05)
+                        
+                                /*
+                        Button(action: {
+                            self.modulation.isTriggerOnly = !self.modulation.isTriggerOnly
                                 
-                                Button(action: {
-                                    self.modulation.isTriggerOnly = !self.modulation.isTriggerOnly
-                                }){
-                                    ZStack{
-                                        Rectangle()
-                                            .fill(LinearGradient(Color.darkEnd, Color.darkStart))
-                                            .cornerRadius(geometry.size.height * 0.05)
-                                            .padding(geometry.size.height * 0.03)
-                                        if(self.modulation.isTriggerOnly){
-                                            Image(systemName: "arrow.up.right.circle.fill")
-                                                .resizable()
-                                                .padding(geometry.size.height * 0.06)
-                                                .foregroundColor(Color.white)
-                                        }
-                                        else{
-                                            Image(systemName: "arrow.up.right.circle")
-                                            .resizable()
-                                            .padding(geometry.size.height * 0.05)
-                                            .foregroundColor(Color.white)
-                                        }
-                                    }
+                        }){
+                            ZStack{
+                                Rectangle()
+                                    .fill(LinearGradient(Color.darkEnd, Color.darkStart))
+                                    .cornerRadius(geometry.size.height * 0.05)
+                                    .padding(geometry.size.height * 0.03)
+                                        
+                                if(self.modulation.isTriggerOnly){
+                                    Image(systemName: "arrow.up.right.circle.fill")
+                                        .resizable()
+                                        .padding(geometry.size.height * 0.06)
+                                        .foregroundColor(Color.white)
                                 }
-                                .aspectRatio(1.0, contentMode: .fit)
-                                .frame(width: geometry.size.height * 0.2)
+                                else{
+                                    Image(systemName: "arrow.up.right.circle")
+                                    .resizable()
+                                    .padding(geometry.size.height * 0.05)
+                                    .foregroundColor(Color.white)
+                                }
+                            }
+                        }
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: geometry.size.height * 0.2)
+                        */
                                 
+                                /*
                                 Button(action: {
                                     self.modulation.isTempoSynced = !self.modulation.isTempoSynced
                                 }){
@@ -125,58 +156,85 @@ struct ModulationView: View {
                                 }
                                 .aspectRatio(1.0, contentMode: .fit)
                                 .frame(width: geometry.size.height * 0.2)
+                                */
                             
                             }
+                            .padding(geometry.size.width * 0.1)
+                            .frame(height: geometry.size.height * 0.85)
                         }
-                        .frame(width: geometry.size.width * 0.35,
-                            height: geometry.size.height * 0.85)
+                            
+                        //}
+                        //.frame(width: geometry.size.width * 0.35, height: geometry.size.height * 0.85)
 
-                    //Knob 1
-                        VStack(spacing: 0)
-                        {
-                            Text(self.modulation.timingControl.display)
-                            .textStyle(ShrinkTextStyle())
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
-                            
-                            // Knob Controller
-                            KnobComplete(knobModel: self.$modulation.timingControl,
-                                         knobModColor: self.$knobModColor,
-                                         specialSelection: self.$specialSelection)
-                                .frame(width:geometry.size.width * 0.25, height:geometry.size.width * 0.25)
-                                .padding(.vertical, geometry.size.height * 0.05)
-                            
-                            Text(self.modulation.timingControl.name)
-                                .bold()
-                                .textStyle(ShrinkTextStyle())
-                                .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.1)
-                        }
-                    .frame(width: geometry.size.width * 0.35,
-                           height: geometry.size.height * 0.85)
                         
-                        VStack(spacing: 0){
+                        if(self.modulation.selectedBlockDisplay == .pattern){
                             
-                            Text("Pattern View")
+                            
+                        HStack(spacing: 0){
+                            
+                            //Knob 1
+                            VStack(spacing: 0)
+                            {
+                                
+                                Text(self.modulation.timingControl.display)
                                 .textStyle(ShrinkTextStyle())
-                            
-                            Button(action: {
-                                self.screen = SelectedScreen.adjustPattern
-                            }){
-                                //Text("Click Me")
-                                MiniPattern(pattern: self.$pattern)
-                                    .padding(geometry.size.width * 0.02)
-                                    .border(Color.black,
-                                            width: geometry.size.width * 0.01)
-                                    .frame(width: geometry.size.width * 0.25,
-                                           height: geometry.size.width * 0.25)
+                                .frame(height: geometry.size.height * 0.1)
+                                
+                                // Knob Controller
+                                KnobComplete(knobModel: self.$modulation.timingControl,
+                                             knobModColor: self.$knobModColor,
+                                             specialSelection: self.$specialSelection)
+                                    //.frame(height:geometry.size.width * 0.25)
+                                    .padding(.vertical, geometry.size.height * 0.05)
+
+                                
+                                Text(self.modulation.timingControl.name)
+                                    .bold()
+                                    .textStyle(ShrinkTextStyle())
+                                    .frame(height: geometry.size.height * 0.1)
+                                
                             }
+                            .padding(geometry.size.width * 0.1)
+                            .frame(width: geometry.size.width * 0.4)
                             
-                            Text("Tap To Adjust")
-                                .textStyle(ShrinkTextStyle())
+                            VStack(spacing: 0)
+                            {
+                                Text("Pattern View").textStyle(ShrinkTextStyle())
+                                
+                                Button(action: {
+                                    self.screen = SelectedScreen.adjustPattern
+                                }){
+                                    //Text("Click Me")
+                                    
+                                    MiniPattern(pattern: self.$pattern)
+                                        //.padding(geometry.size.width * 0.02)
+                                        .border(Color.black, width: geometry.size.width * 0.01)
+                                        .foregroundColor(Color.white)
+                                        //.frame(width: geometry.size.width * 0.25,height: geometry.size.width * 0.25)
+                                }
+                            }
+                            .padding(geometry.size.width * 0.1)
+                            .frame(width: geometry.size.width * 0.6)
+                            //.frame(width: geometry.size.width * 0.25,height: geometry.size.width * 0.25)
                             
+                        
+                            
+                            
+                    //.frame(width: geometry.size.width * 0.35,height: geometry.size.height * 0.85)
+                        
+                        //VStack(spacing: 0){
+                            
+                            //Text("Pattern View").textStyle(ShrinkTextStyle())
+                            
+                            
+                            //Text("Tap To Adjust").textStyle(ShrinkTextStyle())
+                        
+                        //}
+                        //.frame(width: geometry.size.width * 0.25,height: geometry.size.height * 0.85)
                         }
-                        .frame(width: geometry.size.width * 0.25,
-                               height: geometry.size.height * 0.85)
+                        .frame(height: geometry.size.height * 0.85)
                     }
+                    //}
                     
                     // Title Bar
                     ModulationTitleBar(title: self.$modulation.name,
@@ -187,7 +245,7 @@ struct ModulationView: View {
                     
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
-                }//zstack
+                //}//zstack
         }//georeader
     }//view
 }//struct
@@ -203,3 +261,28 @@ struct ModulationView_Previews: PreviewProvider {
     }
 }
 
+
+//@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+/*
+public protocol ToggleStyle2 {
+    associatedtype Body : View
+
+    func makeBody(configuration: Self.Configuration) -> Self.Body
+
+    typealias Configuration = ToggleStyleConfiguration
+}
+ */
+
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        return HStack {
+            configuration.label
+            Spacer()
+            Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+                .resizable()
+                .aspectRatio(1.0, contentMode: .fit)
+                //.frame(width: 22, height: 22)
+                .onTapGesture { configuration.isOn.toggle() }
+        }
+    }
+}

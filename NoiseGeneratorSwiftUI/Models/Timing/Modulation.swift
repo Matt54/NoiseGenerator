@@ -25,10 +25,39 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     public var timeOfLastTimerAction: Double = 0.0
     
-    var isTriggerOnly: Bool = false
+    //Would've rather these be an enum, but I used toggles to adjust them
+    var isFreeMode: Bool = true{
+        didSet{
+            if(isFreeMode){
+                isTriggerMode = false
+                isEnvelopeMode = false
+            }
+        }
+    }
+    var isTriggerMode: Bool = false{
+        didSet{
+            if(isTriggerMode){
+                isFreeMode = false
+                isEnvelopeMode = false
+            }
+        }
+    }
+    var isEnvelopeMode: Bool = false{
+        didSet{
+            if(isEnvelopeMode){
+                isTriggerMode = false
+                isFreeMode = false
+            }
+        }
+    }
+    
+    
     var isTriggered: Bool = false{
         didSet{
-            if(isTriggerOnly && !isTriggered){
+            if(isTriggerMode && !isTriggered){
+                reset()
+            }
+            if(isEnvelopeMode && isTriggered){
                 reset()
             }
         }
@@ -40,6 +69,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     @Published var timeInterval = 0.01{
         didSet {
+            print("Hit timeInterval didSet")
             if(!isBypassed){
                 var leftoverTime = 0.0
                 if(!(timeOfLastTimerAction == 0)){
@@ -233,14 +263,19 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     /// Modulation's timer callback - a modulation step.
     @objc func timerAction(){
         
-        if( ( !isTriggerOnly || isTriggered) && (modulationTargets.count > 0) ){
+        if( ( (!isTriggerMode && !isEnvelopeMode) || isTriggered) && (modulationTargets.count > 0) ){
 
             // Calculate next x value
             xValue = xValue + CGFloat(1.0 / numberOfSteps)
             
             // Reset if required
             if(xValue > 1.0){
-                xValue = CGFloat(1.0 / numberOfSteps)
+                if(!isEnvelopeMode){
+                    xValue = CGFloat(1.0 / numberOfSteps)
+                }
+                else{
+                    xValue = 1.0
+                }
             }
             
             // Calculate next value
@@ -299,6 +334,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     func ToggleTempoSync(_ sender: KnobCompleteModel) {
         // We should change the rate between frequency and timing for the modulation
+        isTempoSynced = !isTempoSynced
     }
     
     /// Returns a color for the modulation based on how many modulations are currently existing.
@@ -309,9 +345,9 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         case 2:
             return Color.init(red: 0.7, green: 0.0, blue: 1.0) // electric purple
         case 3:
-            return Color.init(red: 1.0, green: 0.85, blue: 0.42) // light orange
-        case 4:
             return Color.init(red: 1.0, green: 0.14, blue: 0) // scarlet
+        case 4:
+            return Color.init(red: 1.0, green: 0.65, blue: 0.0) // orange
         case 5:
             return Color.init(red: 0.46, green: 0.85, blue: 1.0) // royal blue
         default:

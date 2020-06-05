@@ -673,3 +673,10 @@ public enum SpecialSelection{
         return "\(self)"
     }
 }
+
+public enum SelectedBlockDisplay{
+    case controls, volume, adsr, list, pattern
+    var name: String {
+        return "\(self)"
+    }
+}

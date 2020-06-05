@@ -98,9 +98,4 @@ struct BlockDisplaySelect_Previews: PreviewProvider {
     }
 }
 
-public enum SelectedBlockDisplay{
-    case controls, volume, adsr, list, pattern
-    var name: String {
-        return "\(self)"
-    }
-}
+

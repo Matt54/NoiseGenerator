@@ -79,7 +79,7 @@ extension Conductor: ModulationDelegateUI {
     func checkForDeadModulation(){
         
         for modulation in modulations{
-            if(modulation.isTriggerOnly){
+            if(modulation.isTriggerMode || modulation.isEnvelopeMode){
                 
                 if((Double(DispatchTime.now().uptimeNanoseconds) - modulation.timeOfLastTimerAction) / 1_000_000_000 > 0.1){
                     print("found a dead modulation!")

@@ -322,6 +322,18 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
 
 public class TremoloAudioEffect: TwoControlAudioEffect{
     var tremolo = AKTremolo()
+    
+    var isTempoSynced : Bool = false{
+        didSet{
+            setControl2()
+        }
+    }
+    override func ToggleTempoSync(_ sender: KnobCompleteModel) {
+        if(sender === control2){
+           isTempoSynced = !isTempoSynced
+        }
+    }
+    
     init(pos: Int){
         super.init(pos: pos, toggle: tremolo, node: tremolo)
         setDefaults()
@@ -358,10 +370,39 @@ public class TremoloAudioEffect: TwoControlAudioEffect{
     }
     
     override func setEffect2(){
-         tremolo.frequency = control2.realModValue * control2.range
+
+        if(isTempoSynced){
+            //Determine the number of tempo selection segments
+            let numberOfSegments = Global.masterTempo.regularIntervals.count
+            
+            //Determine which segment we are rotated into
+            let segment = Int(control2.percentRotated * Double(numberOfSegments - 1))
+            
+            //get the time interval while accounting for how many steps we need to take
+            let timeInterval = Global.masterTempo.getTimeWithSteps(intNumber: segment, numberOfSteps: 1)
+            
+            tremolo.frequency = 1 / timeInterval
+        }
+        else{
+            tremolo.frequency = control2.realModValue * control2.range
+        }
+        
     }
     override func setDisplay2(){
-         control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+        if(isTempoSynced){
+            //Determine the number of tempo selection segments
+            let numberOfSegments = Global.masterTempo.regularIntervals.count
+            
+            //Determine which segment we are rotated into
+            let segment = Int(control2.percentRotated * Double(numberOfSegments - 1))
+            
+            // display the time interval (may need this adjusted)
+            control2.display = Global.masterTempo.regularIntervalStrings[segment]
+        }
+        else
+        {
+            control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+        }
     }
 }
 

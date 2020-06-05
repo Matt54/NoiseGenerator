@@ -4,13 +4,15 @@ struct MiniPattern: View {
     
     @Binding var pattern: Pattern
     
+    
     var body: some View {
         GeometryReader
         { geometry in
             
             ZStack{
                 
-                Color.white
+                //Color.white
+                Color.init(red:0.2, green:0.2, blue:0.2)
                 
                 //Draw the Area Under the curve
                 VStack{
@@ -51,7 +53,51 @@ struct MiniPattern: View {
                         path.move(to: CGPoint(x: 0,
                                               y: self.pattern.points[0].coordinate.y * geometry.size.height))
                     }
-                    .fill(Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.5))
+                    .fill(self.pattern.modulationColor)
+                    //.fill(Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.5))
+                }
+                
+                //Draw the Area Under the curve
+                VStack{
+                    Path{ path in
+                        
+                        //Start at first Point
+                        path.move(to: CGPoint(x: 0,
+                                              y: self.pattern.points[0].coordinate.y * geometry.size.height))
+                        
+                        // Curve Line through the interior Points
+                        self.pattern.points.forEach{
+
+                            if($0.controlPoint1 != nil){
+                                path.addCurve(
+                                    to: .init(
+                                        x: $0.coordinate.x * geometry.size.width,
+                                        y: $0.coordinate.y * geometry.size.height)
+                                    ,
+                                    control1: .init(
+                                        x: $0.controlPoint1!.coordinate.x * geometry.size.width,
+                                        y: $0.controlPoint1!.coordinate.y * geometry.size.height)
+                                    ,
+                                    control2: .init(
+                                        x: $0.controlPoint2!.coordinate.x * geometry.size.width,
+                                        y: $0.controlPoint2!.coordinate.y * geometry.size.height)
+                                    )
+                            }
+                            
+                        }
+
+                        //To bottom right
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
+                        
+                        //To bottom Left
+                        path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                        
+                        //To first point
+                        path.move(to: CGPoint(x: 0,
+                                              y: self.pattern.points[0].coordinate.y * geometry.size.height))
+                    }
+                    .stroke(Color.white)
+                    //.fill(Color(red: 0.2, green: 0.2, blue: 0.2, opacity: 0.5))
                 }
                 
                 VStack{

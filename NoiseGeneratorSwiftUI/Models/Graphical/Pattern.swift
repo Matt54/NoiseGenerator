@@ -63,8 +63,13 @@ public class Pattern : ObservableObject{
         
         while (true) {
             
+            // I think there are cases here when this mixes up the lower and upper?
+            // lowerIndex = 5
+            // upperIndex = 4
             let currentIndex = (lowerIndex + upperIndex) / 2
             
+            // Thread 28: Fatal error: Index out of range
+            // I was trying to delete the second last point.. I had 5 points
             if( (points[currentIndex].coordinate.x > xVal)
                 && (points[currentIndex - 1].coordinate.x < xVal) ){
                 return currentIndex
