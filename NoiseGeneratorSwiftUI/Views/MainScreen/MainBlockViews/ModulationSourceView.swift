@@ -35,36 +35,100 @@ struct ModulationSourceView: View {
                     
                     Divider()
                         
+                    /*
+                    ZStack{
+                        LinearGradient(Color.darkStart,Color.darkGray)
+                        
+                        HStack(spacing: 0){
+                        ForEach(self.noise.allControlEffects , id: \.id){ effect in
+                            
+                            VStack{
+                                if(effect.isDisplayed){
+                                    effect.displayImage
+                                        .resizable()
+                                        .padding(geometry.size.height * 0.02)
+                                        .foregroundColor(Color.yellow)
+                                }
+                                else{
+                                    effect.displayImage
+                                        .resizable()
+                                        .padding(geometry.size.height * 0.025)
+                                        .foregroundColor(Color.white)
+                                }
+                            }
+                                    .frame(width: geometry.size.height * 0.14,
+                                           height: geometry.size.height * 0.14)
+                                    .onTapGesture(count: 1) {
+                                        self.noise.objectWillChange.send()
+                                        self.noise.hideEffects()
+                                        effect.isDisplayed = true
+                                    }
+                            }
+                        
+                        Button(action:{
+                            
+                            //This prevents crash from volume screen graph
+                            self.noise.changeEffectsDisplay()
+                            
+                            self.noise.selectedScreen = SelectedScreen.addEffect
+                        }){
+                            Image(systemName: "plus.circle")
+                                .resizable()
+                                .padding(geometry.size.height * 0.025)
+                                .frame(width: geometry.size.height * 0.14,
+                                       height: geometry.size.height * 0.14)
+                                .foregroundColor(Color.white)
+                        }
+                        Spacer()
+                        }
+                        .padding(.leading, geometry.size.height * 0.025)
+                    }
+                    
+                    */
                     
                     ZStack{
                         LinearGradient(Color.darkStart,Color.darkGray)
                         HStack(spacing: 0){
                         ForEach(self.noise.modulations , id: \.id){ mod in
+                            
+                            /*
                             Button(action: {
+                                
                                 self.noise.objectWillChange.send()
-                                //mod.toggleDisplayed()
                                 self.noise.hideModulations()
                                 mod.isDisplayed = true
+                                
                             }){
-                                if(mod.isDisplayed){
-                                    Image(systemName: "m.circle.fill")
-                                        .resizable()
-                                        .padding(geometry.size.height * 0.01)
-                                        .frame(width: geometry.size.height * 0.1,
-                                               height: geometry.size.height * 0.1)
-                                        //.foregroundColor(mod.modulationColor)
-                                        .foregroundColor(Color.white)
+                                */
+                                VStack{
+                                    if(mod.isDisplayed){
+                                        Image(systemName: "m.circle.fill")
+                                            .resizable()
+                                            .padding(geometry.size.height * 0.02)
+                                            //.frame(width: geometry.size.height * 0.1,
+                                                   //height: geometry.size.height * 0.1)
+                                            .foregroundColor(mod.modulationColor)
+                                            //.foregroundColor(Color.white)
+                                    }
+                                    else{
+                                        Image(systemName: "m.circle")
+                                            .resizable()
+                                            .padding(geometry.size.height * 0.025)
+                                            //.frame(width: geometry.size.height * 0.1,
+                                                   //height: geometry.size.height * 0.1)
+                                            .foregroundColor(mod.modulationColor)
+                                            //.foregroundColor(Color.white)
+                                    }
                                 }
-                                else{
-                                    Image(systemName: "m.circle")
-                                        .resizable()
-                                        .padding(geometry.size.height * 0.01)
-                                        .frame(width: geometry.size.height * 0.1,
-                                               height: geometry.size.height * 0.1)
-                                        //.foregroundColor(mod.modulationColor)
-                                        .foregroundColor(Color.white)
-                                }
+                            .frame(width: geometry.size.height * 0.14,
+                                   height: geometry.size.height * 0.14)
+                            .onTapGesture(count: 1) {
+                                self.noise.objectWillChange.send()
+                                self.noise.hideModulations()
+                                mod.isDisplayed = true
                             }
+                                
+                            
                         }
                         Button(action:{
                             print("Let's create a new modulation source!")
@@ -72,17 +136,16 @@ struct ModulationSourceView: View {
                         }){
                             Image(systemName: "plus.circle")
                                 .resizable()
-                                .padding(geometry.size.height * 0.01)
-                                .frame(width: geometry.size.height * 0.1,
-                                       height: geometry.size.height * 0.1)
+                                .padding(geometry.size.height * 0.025)
+                                .frame(width: geometry.size.height * 0.14,
+                                       height: geometry.size.height * 0.14)
                                 .foregroundColor(Color.white)
                         }
                         Spacer()
                         }
+                        .padding(.leading, geometry.size.height * 0.025)
                     }
                 }
-                .padding(geometry.size.height * 0.0)
-                .border(Color.black, width: geometry.size.height * 0.0)
                 .frame(height: geometry.size.height * 0.22)
             
                 // Add All Modulations
@@ -92,63 +155,11 @@ struct ModulationSourceView: View {
                         ModulationView(modulation: self.$noise.modulations[i],
                           knobModColor: self.$noise.knobModColor,
                           specialSelection: self.$noise.specialSelection,
-                          //isConnectingModulation: self.$noise.modulationBeingAssigned,
-                          //isDeletingModulation: self.$noise.modulationBeingDeleted,
                           pattern: self.$noise.modulations[i].pattern,
                           screen: self.$noise.selectedScreen)
                         }
                     }
                 }
-
-                //Add Modulation Display Buttons
-                /*
-                ZStack{
-                    Color.white
-                    //Rectangle().fill(LinearGradient(Color.darkStart,Color.darkGray))
-                    HStack(spacing: 0){
-                    ForEach(self.noise.modulations , id: \.id){ mod in
-                        Button(action: {
-                            self.noise.objectWillChange.send()
-                            mod.toggleDisplayed()
-                        }){
-                            if(mod.isDisplayed){
-                                Image(systemName: "m.circle.fill")
-                                    .resizable()
-                                    .padding(geometry.size.height * 0.01)
-                                    .frame(width: geometry.size.height * 0.1,
-                                           height: geometry.size.height * 0.1)
-                                    //.foregroundColor(mod.modulationColor)
-                                    .foregroundColor(Color.black)
-                            }
-                            else{
-                                Image(systemName: "m.circle")
-                                    .resizable()
-                                    .padding(geometry.size.height * 0.01)
-                                    .frame(width: geometry.size.height * 0.1,
-                                           height: geometry.size.height * 0.1)
-                                    //.foregroundColor(mod.modulationColor)
-                                    .foregroundColor(Color.black)
-                            }
-                        }
-                    }
-                    Button(action:{
-                        print("Let's create a new modulation source!")
-                    }){
-                        Image(systemName: "plus.circle")
-                            .resizable()
-                            .padding(geometry.size.height * 0.01)
-                            .frame(width: geometry.size.height * 0.1,
-                                   height: geometry.size.height * 0.1)
-                            .foregroundColor(Color.black)
-                    }
-                    Spacer()
-                    }
-                    
-                }
-                .padding(geometry.size.height * 0.02)
-                .border(Color.black, width: geometry.size.height * 0.02)
-                .frame(height: geometry.size.height * 0.15)
-                */
  
             }
             .padding(geometry.size.height * 0.0)

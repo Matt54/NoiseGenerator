@@ -38,7 +38,7 @@ final class Conductor : ObservableObject{
         didSet{ outputMixer.volume = masterVolumeControl.realModValue}
     }
     
-    @Published var tempo = Tempo(bpm: 120)
+    @Published var tempo = Global.masterTempo//Tempo(bpm: 120)
     
     var volumeUpdateTimer : Double = 0.06
     
@@ -135,7 +135,7 @@ final class Conductor : ObservableObject{
     var midiLearnMappings : [MIDILearnMapping] = []
     var isMIDISustained : Bool = false
     var midiSustainedNotes: [ActiveMIDINotes] = []
-    
+
     func transferKeyboardTouch(_ touches: Set<UITouch>, with event: UIEvent){
         keyboardViewController.keyboardView.touchesBegan(touches, with: event)
     }

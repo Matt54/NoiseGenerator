@@ -3,9 +3,9 @@ import SwiftUI
 
 public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
 
-    //@EnvironmentObject var noise: NoiseModel
+    @Published var selectedBlockDisplay = SelectedBlockDisplay.pattern
     
-    var tempo: Tempo
+    //var tempo: Tempo
     
     var delegate:ModulationDelegateUI?
     
@@ -39,19 +39,20 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     @Published var timeInterval = 0.01{
-    didSet {
-        if(!isBypassed){
-            var leftoverTime = 0.0
-            if(!(timeOfLastTimerAction == 0)){
-                leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - timeOfLastTimerAction) / 1_000_000_000
-            }
-            if(leftoverTime > 0)
-            {
-                setTimeInterval(timeInterval: timeInterval, leftoverTime: leftoverTime)
-            }
-            else{
-                setTimeInterval(timeInterval: timeInterval)
-            }
+        didSet {
+            if(!isBypassed){
+                var leftoverTime = 0.0
+                if(!(timeOfLastTimerAction == 0)){
+                    leftoverTime = (Double(DispatchTime.now().uptimeNanoseconds) - timeOfLastTimerAction) / 1_000_000_000
+                }
+                if(leftoverTime > 0)
+                {
+                    setTimeInterval(timeInterval: timeInterval, leftoverTime: leftoverTime)
+                }
+                else{
+                    setTimeInterval(timeInterval: timeInterval)
+                }
+                print("timeInterval didSet: " +  String(timeInterval))
             }
         }
     }
@@ -92,31 +93,14 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     func toggleDisplayed(){
         isDisplayed = !isDisplayed
-        /*
-        isDisplayed.toggle()
-        
-        if(isDisplayed){
-            for target in modulationTargets{
-                target.knobModel.modSelected = true
-            }
-        }
-        else{
-            for target in modulationTargets{
-                target.knobModel.modSelected = false
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.delegate?.modulationDisplayChange(self)
-        }
-        */
     }
     
     var timer = RepeatingTimer(timeInterval: 0.01)
     
-    init(tempo: Tempo){
+    //init(tempo: Tempo){
+    init(){
         
-        self.tempo = tempo
+        //self.tempo = tempo
         
         Modulation.numberOfModulations = Modulation.numberOfModulations + 1
         id = Modulation.numberOfModulations
@@ -184,17 +168,23 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         
         if(isTempoSynced){
             
+            //let bpm = Global.masterTempo.bpm
+            
             //Determine the number of tempo selection segments
-            let numberOfSegments = tempo.regularIntervals.count
+            let numberOfSegments = Global.masterTempo.regularIntervals.count
             
             //Determine which segment we are rotated into
             let segment = Int(timingControl.percentRotated * Double(numberOfSegments - 1))
             
             //get the time interval while accounting for how many steps we need to take
-            timeInterval = tempo.getTimeWithSteps(intNumber: segment, numberOfSteps: numberOfSteps)
+            timeInterval = Global.masterTempo.getTimeWithSteps(intNumber: segment, numberOfSteps: numberOfSteps)
             
             // display the time interval (may need this adjusted)
-            timingControl.display = tempo.regularIntervalStrings[segment]
+            timingControl.display = Global.masterTempo.regularIntervalStrings[segment]
+            
+            print("bpm: " +  String(Global.masterTempo.bpm))
+            print("number of Steps: " +  String(numberOfSteps))
+            print("timeInterval: " +  String(timeInterval))
             
         }
         else{
@@ -298,19 +288,32 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         setTimeInterval()
     }
     
+    func ToggleModulationAssignment() {
+        handoffDelegate?.toggleModulationAssignment()
+    }
+    
+    func ToggleModulationSpecialSelection() {
+        //
+        handoffDelegate?.toggleModulationSpecialSelection()
+    }
+    
+    func ToggleTempoSync(_ sender: KnobCompleteModel) {
+        // We should change the rate between frequency and timing for the modulation
+    }
+    
     /// Returns a color for the modulation based on how many modulations are currently existing.
     func getColorForModulation(num: Int) -> Color{
         switch num{
         case 1:
             return Color.init(red: 0, green: 1.0, blue: 0) //green
         case 2:
-            return Color.init(red: 0.4, green: 0.1, blue: 0.7) // purple
+            return Color.init(red: 0.7, green: 0.0, blue: 1.0) // electric purple
         case 3:
-            return Color.init(red: 1.0, green: 1.0, blue: 0) //yellow
+            return Color.init(red: 1.0, green: 0.85, blue: 0.42) // light orange
         case 4:
             return Color.init(red: 1.0, green: 0.14, blue: 0) // scarlet
         case 5:
-            return Color.init(red: 0.26, green: 0.41, blue: 0.88) // royal blue
+            return Color.init(red: 0.46, green: 0.85, blue: 1.0) // royal blue
         default:
             return Color.init(red: 1.0, green: 1.0, blue: 1.0) //white
         }

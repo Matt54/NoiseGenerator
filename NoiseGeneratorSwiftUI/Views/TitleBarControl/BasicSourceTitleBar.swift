@@ -25,8 +25,9 @@ struct BasicSourceTitleBar: View {
                             .bold()
                             .textStyle(ShrinkTextStyle())
                             .foregroundColor(Color.white)
-                            .padding(.leading, geometry.size.width * 0.02)
-                            .frame(height: geometry.size.height)
+                            .padding(.vertical, geometry.size.height * 0.05)
+                            //.padding(.leading, geometry.size.width * 0.02)
+                            //.frame(height: geometry.size.height)
                         Spacer()
                         
                         

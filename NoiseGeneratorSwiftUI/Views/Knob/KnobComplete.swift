@@ -6,8 +6,6 @@ struct KnobComplete: View {
     @Binding var knobModel : KnobCompleteModel
     @Binding var knobModColor: Color
     @Binding var specialSelection: SpecialSelection
-    //@Binding var modulationBeingAssigned: Bool
-    //@Binding var modulationBeingDeleted: Bool
     
     var sensitivity: Double = 0.01;
     
@@ -20,6 +18,7 @@ struct KnobComplete: View {
     var body: some View {
         GeometryReader{ geometry in
             ZStack{
+                
                 //modulation background
                 Arc(startAngle: .constant(130 * .pi / 180),
                     endAngle: .constant( (270.0 * 1.0 + 140.0) * .pi / 180.0),
@@ -59,74 +58,120 @@ struct KnobComplete: View {
                     }
                 }
                 
+                // the actual knob control
                 KnobControl(percentRotated: self.$knobModel.percentRotated,
                             realModValue: self.$knobModel.realModValue,
                             knobModColor: self.$knobModColor,
                             currentAngle: self.$knobModel.currentAngle)
                     .frame(width:geometry.size.width * 0.9)
                 
-                //if(self.modulationBeingAssigned){
+                    //long press on a knob brings up modulation controls
+                    .simultaneousGesture(LongPressGesture().onEnded({ _ in
+                        self.knobModel.ToggleModulationAssignment()
+                        }
+                    ))
+                
+                // double tap - switch to modulation delete
+                .simultaneousGesture(TapGesture(count: 2).onEnded({ _ in
+                    self.knobModel.ToggleTempoSync()
+                }))
+                
+                //func ToggleTempoSync(_ sender: KnobCompleteModel) {
+                    // We should change the rate between frequency and timing for the modulation
+                //}
+                
+                // OVERLAYS GO HERE
+                
                 if(self.specialSelection == .assignModulation){
-                    VStack{
-                        if(self.knobModel.modSelected){
-                            ZStack{
-                            
-                            Color(red: 0.0, green: 0, blue: 1.0, opacity: 0.2)
-                            .gesture(DragGesture(minimumDistance: 0)
-                                .onChanged{ value in
-                                    //print("touch began")
-                                    
-                                    if (self.currentX != 0.0 && self.currentY != 0.0){
-                                        self.deltaX = Double(self.currentX - value.location.x)
-                                        self.deltaY = Double(self.currentY - value.location.y)
-                                    }
-                                    self.currentX = value.location.x
-                                    self.currentY = value.location.y
-                                    
-                                    let modulationAdjust = self.deltaY * self.sensitivity - self.deltaX * self.sensitivity
-                                
-                                    self.knobModel.adjustModulationRange(adjust: modulationAdjust)
-                                    
-                                }
-                                .onEnded{ value in
-                                    //print("touch ended")
-                                    self.currentX = 0.0
-                                    self.currentY = 0.0
-                                }
-                                
-                            )
-                                Image(systemName: "arrow.up.and.down.circle.fill").resizable()
-                                .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
-                                .foregroundColor(Color.white)
+                    ZStack{
+                        
+                        // Color changing layer
+                        VStack(spacing: 0){
+                            if(self.knobModel.modSelected){
+                                Color(red: 0.0, green: 0, blue: 1.0, opacity: 0.2)
+                            }
+                            else{
+                                Color(red: 1.0, green: 0, blue: 1.0, opacity: 0.2)
                             }
                         }
-                        else{
-                            ZStack{
-                                Color(red: 1.0, green: 0, blue: 1.0, opacity: 0.2)
-                                .gesture(DragGesture(minimumDistance: 0)
-                                    .onChanged{ value in
-                                    //print("touch began")
+                            
+                        //Clear unchanging layer allows for no lapse in the gesture
+                        Color(red: 1.0, green: 1.0, blue: 1.0, opacity: 0.01)
+                        .gesture(DragGesture(minimumDistance: 0)
+                            .onChanged{ value in
+                                //print("touch began")
+                                
+                                if(!self.knobModel.modSelected){
                                     self.knobModel.handoffKnobModel()
                                 }
-                                )
-                                Image(systemName: "plus.circle.fill").resizable()
-                                .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
-                                .foregroundColor(Color.white)
+                                
+                                if (self.currentX != 0.0 && self.currentY != 0.0){
+                                    self.deltaX = Double(self.currentX - value.location.x)
+                                    self.deltaY = Double(self.currentY - value.location.y)
+                                }
+                                self.currentX = value.location.x
+                                self.currentY = value.location.y
+                                
+                                let modulationAdjust = self.deltaY * self.sensitivity - self.deltaX * self.sensitivity
+                            
+                                print("modulationAdjust: " + String(modulationAdjust))
+                                
+                                self.knobModel.adjustModulationRange(adjust: modulationAdjust)
+                                
                             }
+                            .onEnded{ value in
+                                print("touch ended")
+                                self.currentX = 0.0
+                                self.currentY = 0.0
+                            }
+                            
+                        )
+                        
+                        // long hold - switch on/off the mod assignment mode
+                        .simultaneousGesture(LongPressGesture().onEnded({ _ in
+                            self.knobModel.ToggleModulationAssignment()
+                            }
+                        ))
+                        
+                        // double tap - switch to modulation delete
+                        .simultaneousGesture(TapGesture(count: 2).onEnded({ _ in
+                            self.knobModel.ToggleModulationSpecialSelection()
+                        }))
+                        
+                        // switch images once modulation is assigned
+                        if(self.knobModel.modSelected){
+                            Image(systemName: "arrow.up.and.down.circle.fill").resizable()
+                            .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
+                            .foregroundColor(Color.white)
                         }
+                        else{
+                            Image(systemName: "plus.circle.fill").resizable()
+                            .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
+                            .foregroundColor(Color.white)
+                        }
+                        
                     }
+                    
                 }
-                //if(self.modulationBeingDeleted){
+                
                 if(self.specialSelection == .deleteModulation){
                     VStack{
                         if(self.knobModel.modSelected){
                             ZStack{
                                 Color(red: 1.0, green: 0, blue: 0.0, opacity: 0.2)
-                                .gesture(DragGesture(minimumDistance: 0)
-                                    .onChanged{ value in
-                                    //print("touch began")
+                                
+                                
+                                // long hold - deletes modulation
+                                .simultaneousGesture(LongPressGesture().onEnded({ _ in
                                     self.knobModel.removeKnobModel()
-                                })
+                                    }
+                                ))
+                                    
+                                //double tap - switch to modulation apply
+                                .simultaneousGesture(TapGesture(count: 2).onEnded({ _ in
+                                    self.knobModel.ToggleModulationSpecialSelection()
+                                }))
+                                
                                 Image(systemName: "minus.circle.fill").resizable()
                                 .frame(width:geometry.size.width * 0.3, height: geometry.size.height * 0.3)
                                 .foregroundColor(Color.white)

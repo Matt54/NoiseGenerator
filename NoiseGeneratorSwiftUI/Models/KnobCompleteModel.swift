@@ -94,6 +94,18 @@ public class KnobCompleteModel : ObservableObject{
         }
         
     }
+    
+    func ToggleTempoSync(){
+        handoffDelegate?.ToggleTempoSync(self)
+    }
+    
+    func ToggleModulationAssignment(){
+        handoffDelegate?.ToggleModulationAssignment()
+    }
+    
+    func ToggleModulationSpecialSelection(){
+        handoffDelegate?.ToggleModulationSpecialSelection()
+    }
 
     func handoffKnobModel(){
         //print("handoffKnobModel")
@@ -179,6 +191,10 @@ protocol KnobModelHandoff{
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
     func modulationValueWasChanged(_ sender: KnobCompleteModel)
     func handsFreeTextUpdate(_ sender: KnobCompleteModel)
+    
+    func ToggleModulationAssignment()
+    func ToggleModulationSpecialSelection()
+    func ToggleTempoSync(_ sender: KnobCompleteModel)
 }
 
 

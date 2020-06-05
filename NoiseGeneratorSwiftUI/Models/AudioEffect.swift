@@ -109,7 +109,20 @@ public class AudioEffect: Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double) {
-    handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
+        handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
+    }
+    
+    func ToggleModulationAssignment() {
+        //This should tell noise that we are trying to assign a knob
+        handoffDelegate?.toggleModulationAssignment()
+    }
+    
+    func ToggleModulationSpecialSelection() {
+        handoffDelegate?.toggleModulationSpecialSelection()
+    }
+    
+    func ToggleTempoSync(_ sender: KnobCompleteModel) {
+        // this will be override by any tempo synced controls
     }
     
 }
@@ -798,4 +811,6 @@ public class ListedDevice{
 protocol ParameterHandoff{
     func KnobModelHandoff(_ sender: KnobCompleteModel)
     func KnobModelRangeHandoff(_ sender: KnobCompleteModel, adjust: Double)
+    func toggleModulationAssignment()
+    func toggleModulationSpecialSelection()
 }

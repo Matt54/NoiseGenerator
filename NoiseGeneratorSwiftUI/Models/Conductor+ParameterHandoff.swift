@@ -59,4 +59,22 @@ extension Conductor: ParameterHandoff {
         }
     }
     
+    func toggleModulationAssignment(){
+        if(specialSelection == .assignModulation){
+            specialSelection = .none
+        }
+        else{
+            specialSelection = .assignModulation
+        }
+    }
+    
+    func toggleModulationSpecialSelection(){
+        if(specialSelection == .assignModulation){
+            specialSelection = .deleteModulation
+        }
+        else if(specialSelection == .deleteModulation){
+            specialSelection = .assignModulation
+        }
+    }
+    
 }

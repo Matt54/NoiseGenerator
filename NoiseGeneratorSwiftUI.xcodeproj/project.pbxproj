@@ -56,6 +56,7 @@
 		FA855A822442575D0024787D /* PresetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA855A812442575D0024787D /* PresetPicker.swift */; };
 		FA89B9C6247CB34C002593C3 /* iPhoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */; };
 		FA8B61C62461C04F0029DD68 /* Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B61C52461C04F0029DD68 /* Pattern.swift */; };
+		FA90BA7D2489470A008C15DC /* ModulationTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA90BA7C2489470A008C15DC /* ModulationTitleBar.swift */; };
 		FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA922F922448D9E100C63DAD /* FourControlTemplate.swift */; };
 		FA986B4C243B611000700156 /* Audiobus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA986B4B243B611000700156 /* Audiobus.swift */; };
 		FA9CFE162476B33800DAD510 /* ADSR.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9CFE152476B33800DAD510 /* ADSR.swift */; };
@@ -165,6 +166,7 @@
 		FA855A812442575D0024787D /* PresetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPicker.swift; sourceTree = "<group>"; };
 		FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneModel.swift; sourceTree = "<group>"; };
 		FA8B61C52461C04F0029DD68 /* Pattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pattern.swift; sourceTree = "<group>"; };
+		FA90BA7C2489470A008C15DC /* ModulationTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationTitleBar.swift; sourceTree = "<group>"; };
 		FA922F922448D9E100C63DAD /* FourControlTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourControlTemplate.swift; sourceTree = "<group>"; };
 		FA986B4A243B604500700156 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		FA986B4B243B611000700156 /* Audiobus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audiobus.swift; sourceTree = "<group>"; };
@@ -491,6 +493,7 @@
 				FAC8B6B624808F3100C4C1C5 /* EffectTitleBar.swift */,
 				FA0A491B248403A000B5E790 /* InputTitleBar.swift */,
 				FA0A491D2484084700B5E790 /* BasicSourceTitleBar.swift */,
+				FA90BA7C2489470A008C15DC /* ModulationTitleBar.swift */,
 			);
 			path = TitleBarControl;
 			sourceTree = "<group>";
@@ -672,6 +675,7 @@
 				FAC46DD724856A23003B3805 /* FMWavetable3DView.swift in Sources */,
 				FA220F62245483C700AACE5B /* KnobCompleteModel.swift in Sources */,
 				FA986B4C243B611000700156 /* Audiobus.swift in Sources */,
+				FA90BA7D2489470A008C15DC /* ModulationTitleBar.swift in Sources */,
 				FA00559E246ADA22000B16C7 /* AnyGestureRecognizer.swift in Sources */,
 				FAC1F4A6245A4F39007E1331 /* PowerButton.swift in Sources */,
 				FAE0DD66247C15800090C3A2 /* Wavetable3DView.swift in Sources */,

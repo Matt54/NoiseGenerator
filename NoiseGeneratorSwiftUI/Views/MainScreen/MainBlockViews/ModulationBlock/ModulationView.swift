@@ -15,12 +15,10 @@ struct ModulationView: View {
     var body: some View
     {
     GeometryReader
-    { geometryOuter in
-    GeometryReader
         { geometry in
         ZStack
             {
-            //Everything else
+
             VStack(spacing: 0)
                 {
                 HStack(spacing: 0)
@@ -52,18 +50,12 @@ struct ModulationView: View {
                             }
                             
                             Button(action: {
-                                //self.isDeletingModulation.toggle()
-                                //if(self.modulation.modulationTargets.count > 0){
                                 if(self.specialSelection == .none){
                                     self.specialSelection = .deleteModulation
                                 }
                                 else{
                                     self.specialSelection = .none
                                 }
-                                //}
-                                //else{
-                                //    print("no targets")
-                                //}
                             }){
                                 ZStack{
                                     Rectangle()
@@ -74,7 +66,6 @@ struct ModulationView: View {
                                     Text("REMOVE")
                                         .bold()
                                         .textStyle(ShrinkTextStyle())
-                                        //.foregroundColor(Color.white)
                                         .accentColor(Color.white)
                                         .padding(geometry.size.height * 0.04)
                                 }
@@ -139,10 +130,7 @@ struct ModulationView: View {
                         }
                         .frame(width: geometry.size.width * 0.35,
                             height: geometry.size.height * 0.85)
-                        
-                        
-                        
-                        
+
                     //Knob 1
                         VStack(spacing: 0)
                         {
@@ -191,23 +179,22 @@ struct ModulationView: View {
                     }
                     
                     // Title Bar
-                    TitleBar(title: self.$modulation.name, isBypassed: self.$modulation.isBypassed)
-                        .frame(height:geometry.size.height * 0.15)
+                    ModulationTitleBar(title: self.$modulation.name,
+                                       selectedBlockDisplay: self.$modulation.selectedBlockDisplay,
+                                       isBypassed: self.$modulation.isBypassed)
+                    .frame(height:geometry.size.height * 0.15)
+                    
+                    
                 }
                 .background(LinearGradient(Color.white, Color.lightGray))
                 }//zstack
         }//georeader
-        .padding(geometryOuter.size.height * 0.0)
-        .border(Color.BlackWhiteColor(for: self.colorScheme),
-                width: geometryOuter.size.height * 0.0)
-        }
-        
     }//view
 }//struct
 
 struct ModulationView_Previews: PreviewProvider {
     static var previews: some View {
-        ModulationView(modulation: .constant(Modulation(tempo: Tempo(bpm: 120))),
+        ModulationView(modulation: .constant(Modulation()),//tempo: Tempo(bpm: 120))),
         knobModColor: .constant(Color.yellow),
         specialSelection: .constant(SpecialSelection.none),
         pattern: .constant(Pattern(color: Color.yellow)),

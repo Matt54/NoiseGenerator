@@ -46,7 +46,7 @@ extension Conductor: ModulationDelegateUI {
     
     func createNewModulation(){
         hideModulations()
-        let modulation = Modulation(tempo: tempo)
+        let modulation = Modulation()//(tempo: tempo)
         modulation.delegate = self
         modulation.handoffDelegate = self
         modulations.append(modulation)

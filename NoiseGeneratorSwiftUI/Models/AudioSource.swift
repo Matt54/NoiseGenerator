@@ -98,6 +98,19 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     handoffDelegate?.KnobModelRangeHandoff(sender, adjust: adjust)
     }
     
+    func ToggleModulationAssignment() {
+        //This should tell noise that we are trying to assign a knob
+        handoffDelegate?.toggleModulationAssignment()
+    }
+    
+    func ToggleModulationSpecialSelection(){
+        handoffDelegate?.toggleModulationSpecialSelection()
+    }
+    
+    func ToggleTempoSync(_ sender: KnobCompleteModel) {
+        // this will be override by any tempo synced controls - probably none for sources
+    }
+    
 }
 
 public class MonoAudioSource: AudioSource{

@@ -8,6 +8,10 @@
 
 import Foundation
 
+struct Global{
+    static var masterTempo = Tempo(bpm: 120)
+}
+
 public class Tempo: ObservableObject{
     
     // blocks invalid tempo from being created (currently unused)

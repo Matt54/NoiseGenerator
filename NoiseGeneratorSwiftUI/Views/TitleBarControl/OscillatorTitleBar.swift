@@ -23,22 +23,18 @@ struct OscillatorTitleBar: View {
                     
                     HStack(spacing: 0){
                         
-                        //VStack{
-                            PowerButton2(isBypassed: self.$isBypassed)
-                                .padding(geometry.size.width * 0.02)
-                                .aspectRatio(1.0, contentMode: .fit)
-                                .frame(height: geometry.size.height)
-                        //}
-                        //.background(Color.lightGray)
-                        
-                            
+                        PowerButton2(isBypassed: self.$isBypassed)
+                            .padding(geometry.size.width * 0.02)
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .frame(height: geometry.size.height)
                         
                         Text(self.title)
                             .bold()
                             .textStyle(ShrinkTextStyle())
                             .foregroundColor(Color.white)
+                            .padding(.vertical, geometry.size.height * 0.05)
                             //.padding(.leading, geometry.size.width * 0.02)
-                            .frame(height: geometry.size.height)
+                            //.frame(height: geometry.size.height * 0.8)
                         Spacer()
                         
                         Button(action: {
