@@ -63,6 +63,8 @@ public class Pattern : ObservableObject{
         
         while (true) {
             
+            //I think what is happening here is that a point is removed while the modulation is firing this
+            
             // I think there are cases here when this mixes up the lower and upper?
             // lowerIndex = 5
             // upperIndex = 4

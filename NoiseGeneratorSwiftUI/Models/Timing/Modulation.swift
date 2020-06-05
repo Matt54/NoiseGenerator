@@ -58,7 +58,8 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
                 reset()
             }
             if(isEnvelopeMode && isTriggered){
-                reset()
+                //reset()
+                xValue = CGFloat(1.0 / numberOfSteps)
             }
         }
     }
@@ -263,6 +264,13 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     /// Modulation's timer callback - a modulation step.
     @objc func timerAction(){
         
+        /*
+        print("isEnvelopeMode: " + String(isEnvelopeMode))
+        print("isTriggered: " + String(isTriggered))
+        print("modulationTargets.count: " + String(modulationTargets.count))
+        print(String(format: "xVal: %.2f", xValue))
+        */
+        
         if( ( (!isTriggerMode && !isEnvelopeMode) || isTriggered) && (modulationTargets.count > 0) ){
 
             // Calculate next x value
@@ -274,7 +282,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
                     xValue = CGFloat(1.0 / numberOfSteps)
                 }
                 else{
-                    xValue = 1.0
+                    xValue = 0.99999
                 }
             }
             

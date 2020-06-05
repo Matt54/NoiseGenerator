@@ -67,4 +67,11 @@ public class RepeatingTimer {
         state = .suspended
         timer.suspend()
     }
+    
+    func cancel(){
+        timer.setEventHandler {}
+        timer.cancel()
+        resume()
+        eventHandler = nil
+    }
 }
