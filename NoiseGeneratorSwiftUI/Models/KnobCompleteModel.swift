@@ -54,7 +54,8 @@ public class KnobCompleteModel : ObservableObject{
     @Published var midiAssignment : String = "nil"
     @Published var isMidiLearning : Bool = false
     
-    public var isTempoSynced: Bool = false
+    public var isTempoSynced : Bool = false
+    public var isModulatable : Bool = true
     
     init(){
         calculateRealValue()

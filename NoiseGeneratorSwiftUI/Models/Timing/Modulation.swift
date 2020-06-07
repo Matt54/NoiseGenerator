@@ -141,6 +141,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
         
         timingControl = KnobCompleteModel()
         timingControl.handoffDelegate = self
+        timingControl.isModulatable = false
         
         modulationColor = self.getColorForModulation(num: id)
         pattern.modulationColor = modulationColor

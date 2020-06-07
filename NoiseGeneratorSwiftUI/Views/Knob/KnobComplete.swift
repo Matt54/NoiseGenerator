@@ -76,13 +76,8 @@ struct KnobComplete: View {
                     self.knobModel.ToggleTempoSync()
                 }))
                 
-                //func ToggleTempoSync(_ sender: KnobCompleteModel) {
-                    // We should change the rate between frequency and timing for the modulation
-                //}
-                
                 // OVERLAYS GO HERE
-                
-                if(self.specialSelection == .assignModulation){
+                if(self.specialSelection == .assignModulation && self.knobModel.isModulatable){
                     ZStack{
                         
                         // Color changing layer
@@ -124,7 +119,6 @@ struct KnobComplete: View {
                                 self.currentX = 0.0
                                 self.currentY = 0.0
                             }
-                            
                         )
                         
                         // long hold - switch on/off the mod assignment mode
@@ -154,7 +148,7 @@ struct KnobComplete: View {
                     
                 }
                 
-                if(self.specialSelection == .deleteModulation){
+                if(self.specialSelection == .deleteModulation && self.knobModel.isModulatable){
                     VStack{
                         if(self.knobModel.modSelected){
                             ZStack{
