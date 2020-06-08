@@ -136,21 +136,7 @@ final class Conductor : ObservableObject{
     var isMIDISustained : Bool = false
     var midiSustainedNotes: [ActiveMIDINotes] = []
 
-    func transferKeyboardTouch(_ touches: Set<UITouch>, with event: UIEvent){
-        keyboardViewController.keyboardView.touchesBegan(touches, with: event)
-    }
-    
-    func transferKeyboardLift(_ touches: Set<UITouch>, with event: UIEvent){
-        keyboardViewController.keyboardView.touchesEnded(touches, with: event)
-    }
-    
-    func transferKeyboardMoved(_ touches: Set<UITouch>, with event: UIEvent){
-        keyboardViewController.keyboardView.touchesMoved(touches, with: event)
-    }
-    
-    func transferKeyboardCancelled(_ touches: Set<UITouch>, with event: UIEvent){
-        keyboardViewController.keyboardView.touchesCancelled(touches, with: event)
-    }
+    var isMicrophoneDisplayed : Bool = false
     
     init(){
         
@@ -435,14 +421,16 @@ final class Conductor : ObservableObject{
                 if(availableInput.id == id){
                     
                     for source in allControlSources{
-                        source.isDisplayed = false
+                        source.isDisplayed = true
                     }
                     
                     let mic = MicrophoneSource(device: availableInput.device)
+                    mic.isHiddenSource = true
 
                     addSourceToControlArray(source: mic)
                     allControlSources.append(mic)
                     setupSourceAudioChain()
+                    
                     print("we added the mic!")
                     microphoneSources[0].isDisplayed = false
                 }
@@ -457,8 +445,9 @@ final class Conductor : ObservableObject{
         for availableInput in availableInputSources{
             if(availableInput.id == id){
                 microphoneSources[0].setDevice(device: availableInput.device)
+                microphoneSources[0].isHiddenSource = false
+                microphoneSources[0].setBypass()
             }
-            
         }
     }
     

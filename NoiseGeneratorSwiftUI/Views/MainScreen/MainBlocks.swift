@@ -115,6 +115,6 @@ struct MainBlocks: View {
 struct MainBlocks_Previews: PreviewProvider {
     static var previews: some View {
         MainBlocks().environmentObject(Conductor.shared)
-        .previewLayout(.fixed(width: 568, height: 250))
+        .previewLayout(.fixed(width: 500, height: 175))
     }
 }

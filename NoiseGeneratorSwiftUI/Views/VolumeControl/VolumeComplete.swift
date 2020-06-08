@@ -2,16 +2,8 @@ import SwiftUI
 
 struct VolumeComplete: View {
     
-    /*
-    @Binding var amplitude: Double
-    @Binding var volumeControl: Double
-    @Binding var isRightHanded: Bool
-    @Binding var numberOfRects: Int
-    @State var title: String
-    */
-    
     @Binding var volumeMixer: VolumeMixer
-    //
+    
     
     var body: some View {
         GeometryReader { geometry in
@@ -82,7 +74,6 @@ struct VolumeComplete: View {
 struct VolumeComplete_Previews: PreviewProvider {
     static var previews: some View {
         VolumeComplete(volumeMixer: .constant(VolumeMixer()))
-            /*amplitude: .constant(0.5),volumeControl: .constant(1.0), isRightHanded: .constant(true), numberOfRects: .constant(20), title: "IN")*/
         .previewLayout(.fixed(width: 40, height: 200))
     }
 }

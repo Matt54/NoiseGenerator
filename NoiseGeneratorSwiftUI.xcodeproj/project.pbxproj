@@ -93,6 +93,8 @@
 		FAE707DC2465FA4400F27B31 /* ModulationSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */; };
 		FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */; };
 		FAE707E32466188900F27B31 /* InputDeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE707E22466188900F27B31 /* InputDeviceRow.swift */; };
+		FAEC7490248D47B100FBD206 /* StereoVolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEC748F248D47B100FBD206 /* StereoVolumeControl.swift */; };
+		FAEC7492248D4B7700FBD206 /* StereoVolumeComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEC7491248D4B7700FBD206 /* StereoVolumeComplete.swift */; };
 		FAEED71324811C8A00B1F723 /* SourceCategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */; };
 		FAEED71524811DD800B1F723 /* SourceCategoriesForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */; };
 		FAEED717248129F600B1F723 /* AddOscillatorForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEED716248129F600B1F723 /* AddOscillatorForm.swift */; };
@@ -205,6 +207,8 @@
 		FAE707DB2465FA4400F27B31 /* ModulationSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulationSourceView.swift; sourceTree = "<group>"; };
 		FAE707DF2466186000F27B31 /* AddInputDeviceForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInputDeviceForm.swift; sourceTree = "<group>"; };
 		FAE707E22466188900F27B31 /* InputDeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputDeviceRow.swift; sourceTree = "<group>"; };
+		FAEC748F248D47B100FBD206 /* StereoVolumeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVolumeControl.swift; sourceTree = "<group>"; };
+		FAEC7491248D4B7700FBD206 /* StereoVolumeComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoVolumeComplete.swift; sourceTree = "<group>"; };
 		FAEED71224811C8A00B1F723 /* SourceCategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCategoryRow.swift; sourceTree = "<group>"; };
 		FAEED71424811DD800B1F723 /* SourceCategoriesForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCategoriesForm.swift; sourceTree = "<group>"; };
 		FAEED716248129F600B1F723 /* AddOscillatorForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOscillatorForm.swift; sourceTree = "<group>"; };
@@ -447,7 +451,9 @@
 				FA7DA85E2469C03000822786 /* StereoVolumeDisplay.swift */,
 				FA6ACFB924573ADE0009CC20 /* SlidingTriangle.swift */,
 				FA6ACFBB24573D710009CC20 /* VolumeControl.swift */,
+				FAEC748F248D47B100FBD206 /* StereoVolumeControl.swift */,
 				FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */,
+				FAEC7491248D4B7700FBD206 /* StereoVolumeComplete.swift */,
 			);
 			path = VolumeControl;
 			sourceTree = "<group>";
@@ -681,6 +687,7 @@
 				FAE0DD66247C15800090C3A2 /* Wavetable3DView.swift in Sources */,
 				FA7DA85D2469874600822786 /* MasterOutputView.swift in Sources */,
 				FA922F932448D9E100C63DAD /* FourControlTemplate.swift in Sources */,
+				FAEC7492248D4B7700FBD206 /* StereoVolumeComplete.swift in Sources */,
 				FA3565D12450D963004AFA8C /* AddEffectForm.swift in Sources */,
 				FA855A822442575D0024787D /* PresetPicker.swift in Sources */,
 				FAAA3CC62468A42300CA2E47 /* MiniPattern.swift in Sources */,
@@ -713,6 +720,7 @@
 				FA00559C246AD78B000B16C7 /* KeyboardExtensions.swift in Sources */,
 				FA5BEC1C2486E01C0064E989 /* PowerButton2.swift in Sources */,
 				FAEED71324811C8A00B1F723 /* SourceCategoryRow.swift in Sources */,
+				FAEC7490248D47B100FBD206 /* StereoVolumeControl.swift in Sources */,
 				FA377A3A24317C3000CBE2C4 /* ContentView.swift in Sources */,
 				FAFC130A243CF9AB009D1169 /* Knob.swift in Sources */,
 				FAA6F3FC2440D8BE0025DBFF /* TextPicker.swift in Sources */,

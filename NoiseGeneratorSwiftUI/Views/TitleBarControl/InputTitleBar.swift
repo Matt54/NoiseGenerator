@@ -69,7 +69,7 @@ struct InputTitleBar: View {
                         .frame(height: geometry.size.height)
                         */
                         
-                        /*
+                        
                         Button(action: {
                             self.selectedBlockDisplay = SelectedBlockDisplay.controls
                         }){
@@ -78,7 +78,7 @@ struct InputTitleBar: View {
                                     Circle()
                                         .fill(Color.yellow)
                                         .aspectRatio(1.0, contentMode: .fit)
-                                    Image(systemName: "waveform.path")
+                                    Image(systemName: "slider.horizontal.3")
                                         .resizable()
                                         .padding(geometry.size.height * 0.2)
                                         //.border(Color.black, width: geometry.size.width * 0.05)
@@ -89,7 +89,7 @@ struct InputTitleBar: View {
                                     Circle()
                                         .fill(Color.white)
                                         .aspectRatio(1.0, contentMode: .fit)
-                                    Image(systemName: "waveform.path")
+                                    Image(systemName: "slider.horizontal.3")
                                         .resizable()
                                         .padding(geometry.size.height * 0.2)
                                         .foregroundColor(Color.black)
@@ -99,7 +99,7 @@ struct InputTitleBar: View {
                         }
                         .padding(geometry.size.height * 0.15)
                         .frame(height: geometry.size.height)
-                        */
+                        
                         
                         Button(action: {
                             self.selectedBlockDisplay = SelectedBlockDisplay.volume

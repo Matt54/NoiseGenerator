@@ -152,8 +152,8 @@ struct MainHeader: View {
                     StereoVolumeDisplay(leftAmplitude: self.$noise.outputAmplitudeLeft,
                                         rightAmplitude: self.$noise.outputAmplitudeRight,
                                         numberOfRects: .constant(8))
-                    .padding(geometry.size.height * 0.1)
-                    .frame(width:geometry.size.width * (1/15))
+                    .padding(geometry.size.height * 0.15)
+                    .frame(width:geometry.size.width * (1/20))
                     
                 }
             }

@@ -277,6 +277,22 @@ extension Conductor: AKMIDIListener {
         }
     }
     
+    func transferKeyboardTouch(_ touches: Set<UITouch>, with event: UIEvent){
+        keyboardViewController.keyboardView.touchesBegan(touches, with: event)
+    }
+    
+    func transferKeyboardLift(_ touches: Set<UITouch>, with event: UIEvent){
+        keyboardViewController.keyboardView.touchesEnded(touches, with: event)
+    }
+    
+    func transferKeyboardMoved(_ touches: Set<UITouch>, with event: UIEvent){
+        keyboardViewController.keyboardView.touchesMoved(touches, with: event)
+    }
+    
+    func transferKeyboardCancelled(_ touches: Set<UITouch>, with event: UIEvent){
+        keyboardViewController.keyboardView.touchesCancelled(touches, with: event)
+    }
+    
 }
 
 // Keyboard protocol conformance

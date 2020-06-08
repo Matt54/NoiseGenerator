@@ -116,7 +116,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     }
     
     // Is the modulation currently shown on GUI
-    @Published var isBypassed = true{
+    @Published var isBypassed = false{
         didSet{setBypass()}
     }
     

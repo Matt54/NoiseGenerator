@@ -11,6 +11,12 @@ import AudioKit
 
 public class VolumeMixer : ObservableObject{
     @Published var amplitude: Double
+    
+    @Published var leftAmplitude: Double
+    @Published var rightAmplitude: Double
+    
+    @Published var isStereo: Bool = false
+    
     @Published var volumeControl: Double{
         didSet{input.volume = volumeControl}
     }
@@ -22,7 +28,9 @@ public class VolumeMixer : ObservableObject{
     var output = AKAmplitudeTracker()
     
     init(){
-        amplitude = 0
+        amplitude = 0.0
+        leftAmplitude = 0.0
+        rightAmplitude = 0.0
         volumeControl = 1.0
         numberOfRects = 10
         name = "OUT"
@@ -31,7 +39,9 @@ public class VolumeMixer : ObservableObject{
     }
     
     init(isRightHanded: Bool){
-        amplitude = 0
+        amplitude = 0.0
+        leftAmplitude = 0.0
+        rightAmplitude = 0.0
         volumeControl = 1.0
         numberOfRects = 10
         name = "OUT"
@@ -45,6 +55,12 @@ public class VolumeMixer : ObservableObject{
     }
     
     func updateAmplitude(){
-        amplitude = output.amplitude
+        if(!isStereo){
+            amplitude = output.amplitude
+        }
+        else{
+            leftAmplitude = output.leftAmplitude
+            rightAmplitude = output.rightAmplitude
+        }
     }
 }

@@ -12,7 +12,7 @@ struct VolumeControl: View {
             HStack(spacing: 0) {
                 if(!self.isRightHanded){
                     VStack(spacing: 0) {
-                        SlidingTriangle(amplitudeControl: self.$amplitudeControl,
+                        SlidingTriangle(volumeControl: self.$amplitudeControl,
                                         isRightHanded: self.$isRightHanded)
                     }
                     .frame(width: geometry.size.width * 0.5)
@@ -33,7 +33,7 @@ struct VolumeControl: View {
                 }
                 if(self.isRightHanded){
                     VStack(spacing: 0) {
-                        SlidingTriangle(amplitudeControl: self.$amplitudeControl,
+                        SlidingTriangle(volumeControl: self.$amplitudeControl,
                                         isRightHanded: self.$isRightHanded)
                     }
                     .frame(width: geometry.size.width * 0.5)

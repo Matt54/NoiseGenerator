@@ -39,6 +39,8 @@ public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
         }
     }*/
     
+    @Published var isHiddenSource = false
+    
     init(toggle: AKToggleable){
         toggleControls = toggle
         AudioEffect.numberOfEffects = AudioEffect.numberOfEffects + 1
@@ -147,9 +149,13 @@ public class StereoAudioSource: AudioSource{
 public class MicrophoneSource: AudioSource{
     
     var input: AKMicrophone! = AKMicrophone()
+    var stereoFieldLimiter : AKStereoFieldLimiter = AKStereoFieldLimiter()
     
     init(device: AKDevice){
         super.init(toggle: input)
+        //volumeMixer = StereoVolumeMixer()
+        
+        volumeMixer.isStereo = true
 
         do{
             try input.setDevice(device)
@@ -161,20 +167,47 @@ public class MicrophoneSource: AudioSource{
         
         self.name = device.deviceID
         
-        //This is currently Mono, that should toggle based on user preference
-        let stereoFieldLimiter = AKStereoFieldLimiter(input)
-        //stereoFieldLimiter.setOutput(to: outputMixer)
         stereoFieldLimiter.setOutput(to: volumeMixer.input)
+        
+        setStereo()
+        
+        //This is currently Mono, that should toggle based on user preference
+        //let stereoFieldLimiter = AKStereoFieldLimiter(input)
+        //stereoFieldLimiter.setOutput(to: volumeMixer.input)
         
         displayOnImage = Image(systemName: "mic.circle.fill")
         displayOffImage = Image(systemName: "mic.circle")
         setDisplayImage()
         
         selectedBlockDisplay = .volume
+        
     }
     
     init(){
         super.init(toggle: input)
+    }
+    
+    /// Limits the stereo image to create a mono source
+    func setMono(){
+        //This is currently Mono, that should toggle based on user preference
+        
+        
+        input.disconnectOutput()
+        input.setOutput(to: stereoFieldLimiter)
+        
+        //let stereoFieldLimiter = AKStereoFieldLimiter(input)
+        //stereoFieldLimiter.setOutput(to: volumeMixer.input)
+    }
+    
+    /// Allows for seperate left and right signals
+    func setStereo(){
+        //stereoFieldLimiter.disconnectInput()
+        
+        input.disconnectOutput()
+        input.setOutput(to: volumeMixer.input)
+        
+        //input.setOutput(to: stereoFieldLimiter)
+        
     }
     
     func setDevice(device: AKDevice){

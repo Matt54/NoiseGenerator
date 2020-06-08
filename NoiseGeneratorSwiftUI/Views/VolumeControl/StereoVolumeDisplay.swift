@@ -15,12 +15,16 @@ struct StereoVolumeDisplay: View {
                 //Left Amplitude Display
                 VolumeDisplay(volume: self.$leftAmplitude,
                               numberOfRects: self.$numberOfRects )
-                    .padding(geometry.size.height * 0.02)
+                    .padding(.trailing, geometry.size.height * 0.01)
+                
+                    //.padding(geometry.size.height * 0.02)
                 
                 //Right Amplitude Display
                 VolumeDisplay(volume: self.$rightAmplitude,
                               numberOfRects: self.$numberOfRects )
-                    .padding(geometry.size.height * 0.02)
+                    .padding(.leading, geometry.size.height * 0.01)
+                
+                    //.padding(geometry.size.height * 0.02)
             }
         }
     }
@@ -31,5 +35,6 @@ struct StereoVolumeDisplay_Previews: PreviewProvider {
         StereoVolumeDisplay(leftAmplitude: .constant(0.5),
                             rightAmplitude: .constant(0.6),
                             numberOfRects: .constant(30))
+        .previewLayout(.fixed(width: 80, height: 500))
     }
 }

@@ -25,25 +25,27 @@ struct AudioSourceView: View {
                         LinearGradient(Color.darkStart,Color.darkGray)
                         HStack(spacing: 0){
                             
-                            
-                            
                         ForEach(self.noise.allControlSources , id: \.id){ source in
                             VStack{
-                                if(source.isDisplayed){
-                                    source.displayImage
-                                        .resizable()
-                                        .padding(geometry.size.height * 0.02)
-                                        .foregroundColor(Color.yellow)
-                                }
-                                else{
-                                    source.displayImage
-                                        .resizable()
-                                        .padding(geometry.size.height * 0.025)
-                                        .foregroundColor(Color.white)
+                                if(!source.isHiddenSource){
+                                    if(source.isDisplayed){
+                                        source.displayImage
+                                            .resizable()
+                                            .padding(geometry.size.height * 0.02)
+                                            .foregroundColor(Color.yellow)
+                                        .frame(width: geometry.size.height * 0.14,
+                                        height: geometry.size.height * 0.14)
+                                    }
+                                    else{
+                                        source.displayImage
+                                            .resizable()
+                                            .padding(geometry.size.height * 0.025)
+                                            .foregroundColor(Color.white)
+                                        .frame(width: geometry.size.height * 0.14,
+                                        height: geometry.size.height * 0.14)
+                                    }
                                 }
                             }
-                                    .frame(width: geometry.size.height * 0.14,
-                                           height: geometry.size.height * 0.14)
                                     
                                 /*
                                     .onTapGesture(count: 2){
