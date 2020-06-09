@@ -174,6 +174,7 @@ class DrawView : UIView {
             border.stroke()
             UIColor.white.setStroke()
             UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7).setFill()
+            
         }
         else{
             if(!isHighlightView){
@@ -194,21 +195,14 @@ class DrawView : UIView {
         }
 
         let bezierPath = UIBezierPath()
-        
-        /*
         if(!hasClearBackground){
-            // left side, mid y
-            bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
-            
-            //
-            bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
+            bezierPath.lineWidth = CGFloat(width * 0.01)
         }
         else{
-            bezierPath.move(to: CGPoint(x: 0.0,
-                                        y: (1.0 - table[0] / absmax * padding) * height))
+            bezierPath.lineWidth = CGFloat(width * 0.005)
         }
-        */
-         bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
+
+        bezierPath.move(to: CGPoint(x: 0, y: frame.height / 2))
         bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
             
         //for index in 1..<table.count {
@@ -222,37 +216,13 @@ class DrawView : UIView {
         }
 
         bezierPath.addLine(to: CGPoint(x: Double(frame.width), y: (1.0 - table[table.count-1] / absmax * padding) * height))
-        
-        
-        if(!hasClearBackground){
-            bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
-            bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
-            //bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
-            bezierPath.fill()
-            bezierPath.lineWidth = CGFloat(width * 0.005) //2
-            bezierPath.stroke()
-        }
-        else{
-            bezierPath.lineWidth = CGFloat(width * 0.005) //2
-            bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
-            bezierPath.stroke()
-            UIColor.clear.setStroke()
-            bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
-            bezierPath.stroke()
-            //UIColor.black.setStroke()
-           //bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
-            bezierPath.stroke()
-            bezierPath.fill()
-        }
-        
-        
-        
-        
-        //let fillColor = UIColor(red:0.07, green:0.44, blue:0.54, alpha:0.4)
-        //let fillColor = UIColor(red:0.4, green:0.1, blue:0.7, alpha:0.4)
-        //UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7).setFill()
-        //fillColor.setFill()
-        
+
+        bezierPath.addLine(to: CGPoint(x: frame.width, y: frame.height / 2))
+        bezierPath.stroke()
+        UIColor.clear.setStroke()
+        bezierPath.addLine(to: CGPoint(x: 0, y: frame.height / 2))
+        bezierPath.stroke()
+        bezierPath.fill()
         
         
     }
