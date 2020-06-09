@@ -64,6 +64,10 @@ public class Pattern : ObservableObject{
         while (true) {
             
             //I think what is happening here is that a point is removed while the modulation is firing this
+            //A solution may be to lock this function while a delete it occuring -  this would involve:
+            // - pattern telling it's modulation about the delete - this function is prevented from occuring
+            // - delete continuing to adjust it's xVal without adjustment yVal
+            // - pattern tells it's modulation that it is done with delete - this function is no longer prevented
             
             // I think there are cases here when this mixes up the lower and upper?
             // lowerIndex = 5
@@ -193,33 +197,77 @@ public class Pattern : ObservableObject{
         lastTouchY = translatedCoordinate.y
     }
     
+    /**
+        Adjusts the curve between two points by moving control points
+     - Parameter y: The distance to adjust one of the curve's control points.
+     */
     func dragControlPoints(_ y: CGFloat){
         
         let bounds = getMinMax(p1: points[selectedPosition!-1], p2: points[selectedPosition!]) // 0 - min, 1 - max
         
+        // Determine which point is the higher point
+        let maxP = (points[selectedPosition!].coordinate.y < points[selectedPosition!-1].coordinate.y) ? points[selectedPosition!] : points[selectedPosition!-1]
+        let minP = (points[selectedPosition!] === maxP) ? points[selectedPosition!-1] : points[selectedPosition!]
+        
+        // Determine if our points are ramping up or down
+        let isRampUp = (points[selectedPosition!] === maxP)
+        
+        // Determine the min/max control points
+        let maxCP = isRampUp ? points[selectedPosition!].controlPoint2 : points[selectedPosition!].controlPoint1
+        let minCP = isRampUp ? points[selectedPosition!].controlPoint1 : points[selectedPosition!].controlPoint2
+        
+        // Determine what the delta y is
+        let deltaY = maxP.coordinate.y - minP.coordinate.y
+        
+        // Get the intermediate control points that turn the curve into a straight line
+        let minLinearPos = minP.coordinate.y + deltaY / 3
+        let maxLinearPos = maxP.coordinate.y - deltaY / 3
+        
         //down
         if(y < 0){
             
-            //if c2 is at or above the linear location move left control point (c1) first, then right control point (c2)
-            print("down")
+            // Check if minimum is above linear position - if not, move minimum towards linear position
+            if((minCP?.coordinate.y)! < minLinearPos){
+                minCP!.coordinate.y = min(minCP!.coordinate.y - y, minLinearPos)
+            }
             
-            points[selectedPosition!].controlPoint1!.coordinate.y = min(max(points[selectedPosition!].controlPoint1!.coordinate.y - y, bounds[0]), bounds[1])
+            // Check if maximum is above linear position - if not, move maximum towards linear position
+            else if((maxCP?.coordinate.y)! < maxLinearPos){
+                maxCP!.coordinate.y = min(maxCP!.coordinate.y - y, maxLinearPos)
+            }
             
-            //if c1 has hit max, move c2
-            if(points[selectedPosition!].controlPoint1!.coordinate.y == bounds[1]){
-                points[selectedPosition!].controlPoint2!.coordinate.y = min(max(points[selectedPosition!].controlPoint2!.coordinate.y - y, bounds[0]), bounds[1])
+            // Check if minimum is at extreme - if not, move minimum towards extreme
+            else if((minCP?.coordinate.y)! < bounds[1]){
+                minCP!.coordinate.y = min(minCP!.coordinate.y - y, bounds[1])
+            }
+            
+            // Move maximum towards extreme
+            else{
+                maxCP!.coordinate.y = min(maxCP!.coordinate.y - y, bounds[1])
             }
         }
             
         //up
         else{
-            print("up")
             
-            //move right control point (c2) first, then left control point (c1)
-            points[selectedPosition!].controlPoint2!.coordinate.y = min(max(points[selectedPosition!].controlPoint2!.coordinate.y - y, bounds[0]), bounds[1])
+            // Check if maximum is above linear position - if not, move maximum towards linear position
+            if((maxCP?.coordinate.y)! > maxLinearPos){
+                maxCP!.coordinate.y = max(maxCP!.coordinate.y - y, maxLinearPos)
+            }
             
-            if(points[selectedPosition!].controlPoint2!.coordinate.y == bounds[0]){
-                points[selectedPosition!].controlPoint1!.coordinate.y = min(max(points[selectedPosition!].controlPoint1!.coordinate.y - y, bounds[0]), bounds[1])
+            // Check if minimum is above linear position - if not, move minimum towards linear position
+            else if((minCP?.coordinate.y)! > minLinearPos){
+                minCP!.coordinate.y = max(minCP!.coordinate.y - y, minLinearPos)
+            }
+            
+            // Check if maximum is at extreme - if not, move maximum towards extreme
+            else if((maxCP?.coordinate.y)! > bounds[0]){
+                maxCP!.coordinate.y = max(maxCP!.coordinate.y - y, bounds[0])
+            }
+            
+            // Move maximum towards extreme
+            else{
+                minCP!.coordinate.y = max(minCP!.coordinate.y - y, bounds[0])
             }
         }
         
@@ -313,7 +361,7 @@ public class Pattern : ObservableObject{
         isNewPoint = true
     }
     
-    //Create control point between point and previous point
+    ///Create control point between point and previous point
     func resetControlPoint(_ position: Int){
         let controlPointCoordinate1 =
             CGPoint(x: points[position-1].coordinate.x + (points[position].coordinate.x - points[position-1].coordinate.x) * (1/3),// * 0.25,
