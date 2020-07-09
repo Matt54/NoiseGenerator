@@ -51,7 +51,8 @@ struct FMWavetable3DView: View {
                             .offset(x: CGFloat(i) * geometry.size.width * self.xOffset,
                                     y: CGFloat(i) * geometry.size.height * self.yOffset)
                         if(i == self.oscillator.wavePosition){
-                            Wavetable3DHighlight(wavetable: self.oscillator.displayWaveTables[self.oscillator.wavePosition].waveform)
+                            //Wavetable3DHighlight(wavetable: self.oscillator.displayWaveTables[self.oscillator.wavePosition].waveform)
+                            Wavetable3DHighlight(wavetable: self.oscillator.displayWaveform)
                             .frame(width: geometry.size.width * 0.5,
                                    height: geometry.size.height * 0.2)
                             .offset(x: CGFloat(self.oscillator.wavePosition) * geometry.size.width * self.xOffset,

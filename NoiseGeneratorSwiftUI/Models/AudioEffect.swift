@@ -265,6 +265,15 @@ public class OneControlWithPresetsAudioEffect: AudioEffect{
     func setPreset(){}
 }
 
+/*
+public class frequencyTrackingAudioEffect: AudioEffect{
+    var frequencyTracker = AKFrequencyTracker()
+    //var pitchShifter = AKPitchShifter()
+    
+    
+}
+*/
+
 public class MoogLadderAudioEffect: TwoControlAudioEffect{
     var filter = AKMoogLadder()
     init(pos: Int){
@@ -284,6 +293,116 @@ public class MoogLadderAudioEffect: TwoControlAudioEffect{
         control1.range = 20992
         control1.unit = " Hz"
         control1.percentRotated = 1.0
+        
+        control2.name = "Resonance"
+    }
+    
+    override func setControl1(){
+        setEffect1()
+        setDisplay1()
+    }
+    override func setEffect1(){
+         filter.cutoffFrequency = 8 + pow(control1.realModValue, 3) * control1.range
+    }
+    override func setDisplay1(){
+         let displayValue = 8 + pow(control1.percentRotated, 3) * control1.range
+         
+         if(displayValue > 1000){
+             control1.unit = " kHz"
+             control1.display = String(format: "%.2f", (8 + pow(control1.percentRotated, 3) * control1.range) / 1000) + control1.unit
+         }
+         else{
+             control1.unit = " Hz"
+             control1.display = String(format: "%.0f", 8 + pow(control1.percentRotated, 3) * control1.range) + control1.unit
+         }
+    }
+    
+    override func setControl2(){
+        setEffect2()
+        setDisplay2()
+    }
+    override func setEffect2(){
+         filter.resonance = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+    }
+}
+
+public class HighPassFilterAudioEffect: TwoControlAudioEffect{
+    var filter = AKHighPassFilter()
+    init(pos: Int){
+        super.init(pos: pos, toggle: filter, node: filter)
+        setDefaults()
+        setControl1()
+        setControl2()
+    }
+    func setDefaults(){
+        name = "High Pass Filter"
+        displayOnImage = Image(systemName: "f.circle.fill")
+        displayOffImage = Image(systemName: "f.circle")
+        setDisplayImage()
+        
+        //filter.rampDuration = 0.02
+        control1.name = "Cutoff"
+        control1.range = 20992
+        control1.unit = " Hz"
+        control1.percentRotated = 0.0
+        
+        control2.name = "Resonance"
+    }
+    
+    override func setControl1(){
+        setEffect1()
+        setDisplay1()
+    }
+    override func setEffect1(){
+         filter.cutoffFrequency = 8 + pow(control1.realModValue, 3) * control1.range
+    }
+    override func setDisplay1(){
+         let displayValue = 8 + pow(control1.percentRotated, 3) * control1.range
+         
+         if(displayValue > 1000){
+             control1.unit = " kHz"
+             control1.display = String(format: "%.2f", (8 + pow(control1.percentRotated, 3) * control1.range) / 1000) + control1.unit
+         }
+         else{
+             control1.unit = " Hz"
+             control1.display = String(format: "%.0f", 8 + pow(control1.percentRotated, 3) * control1.range) + control1.unit
+         }
+    }
+    
+    override func setControl2(){
+        setEffect2()
+        setDisplay2()
+    }
+    override func setEffect2(){
+         filter.resonance = control2.realModValue * control2.range
+    }
+    override func setDisplay2(){
+         control2.display = String(format: "%.1f", control2.percentRotated * control2.range) + control2.unit
+    }
+}
+
+public class LowPassFilterAudioEffect: TwoControlAudioEffect{
+    var filter = AKLowPassFilter()
+    init(pos: Int){
+        super.init(pos: pos, toggle: filter, node: filter)
+        setDefaults()
+        setControl1()
+        setControl2()
+    }
+    func setDefaults(){
+        name = "Low Pass Filter"
+        displayOnImage = Image(systemName: "f.circle.fill")
+        displayOffImage = Image(systemName: "f.circle")
+        setDisplayImage()
+        
+        //filter.rampDuration = 0.02
+        control1.name = "Cutoff"
+        control1.range = 20992
+        control1.unit = " Hz"
+        control1.percentRotated = 0.0
         
         control2.name = "Resonance"
     }

@@ -58,7 +58,7 @@ struct FMOscillatorView: View {
                                                     removeValue: true)
                                     .frame(width: geometry.size.width * 0.5)
                                     
-                                    KnobVerticalStack(knobModel: self.$morphingOscillator.modulationIndexControl,
+                                    KnobVerticalStack(knobModel: self.$morphingOscillator.warpIndexControl,
                                                       removeValue: true)
                                     .frame(width: geometry.size.width * 0.5)
                                 }
@@ -110,15 +110,7 @@ struct FMOscillatorView: View {
                         
                         
                         if(self.morphingOscillator.selectedBlockDisplay == .volume){
-                            //HStack(spacing: 0){
-                            
-                            /*
-                                Rectangle()
-                                    .border(Color.black, width: geometryOut.size.height * 0.01)
-                                    .padding(geometry.size.height * 0.05)
-                            */
-                                
-                            
+
                             OutputPlotView(inputNode: self.$morphingOscillator.volumeMixer.input)
                                 .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.6)
                             
@@ -126,14 +118,7 @@ struct FMOscillatorView: View {
                                 VolumeComplete(volumeMixer: self.$morphingOscillator.volumeMixer)
                                     .padding(geometry.size.width * 0.05)
                                     .frame(width: geometry.size.width * 0.2)
-                            //}
                         }
-                        //Spacer()
-                        
-                        /*
-                        BlockDisplaySelect(selectedBlockDisplay: .constant(SelectedBlockDisplay.controls))
-                            .frame(width: geometry.size.height * 0.15)
-                        */
                         
                     }
                     .frame(height: geometry.size.height * 0.85)

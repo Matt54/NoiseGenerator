@@ -42,6 +42,8 @@ final class Conductor : ObservableObject{
     
     var volumeUpdateTimer : Double = 0.06
     
+    //var frequencyUpdateTimer : Double = 0.001
+    
     // Master Ouput Amplitude Tracker
     var outputAmplitudeTracker = AKAmplitudeTracker()
     @Published var outputAmplitudeLeft: Double = 0.0
@@ -66,7 +68,6 @@ final class Conductor : ObservableObject{
     @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
     @Published var microphoneSources = [MicrophoneSource]()
-    //@Published var pianoControlSources = [RhodesPianoBank]()
     
     @Published var noiseSource = NoiseSource()
     
@@ -125,10 +126,10 @@ final class Conductor : ObservableObject{
     
     var limiter = AKPeakLimiter()
     
-    
-    let midi = AKMIDI()
     //var midiSignalReceived = false
     //var midiTypeReceived: MidiEventType = .noteNumber
+    
+    let midi = AKMIDI()
     var numberOfNotesOn: Int = 0
     
     // Maps midi cc to control
@@ -170,11 +171,6 @@ final class Conductor : ObservableObject{
         //create a morphing oscillator to play with
         //createNewSource(sourceNumber: 2)
         createNewSource(sourceNumber: 8)
-        
-        //create a noise oscillator to play with
-        //createNewSource(sourceNumber: 1)
-        
-        //createNewSource(sourceNumber: 6)
         
         connectSourceToEffectChain()
         
@@ -242,12 +238,6 @@ final class Conductor : ObservableObject{
         
         inputMixer.disconnectOutput()
         inputMixer.disconnectInput()
-        
-        /*
-        for i in 0..<allControlSources.count {
-            allControlSources[i].output.disconnectOutput()
-        }
-        */
         
         // Route each audio effect to the next in line
         for i in 0..<allControlSources.count {
@@ -323,12 +313,11 @@ final class Conductor : ObservableObject{
     var outputAmplitudeTimer : RepeatingTimer
     
     //This enum determines how fast the screen will refresh
-    var screenUpdateSetting = ScreenUpdateSetting.slowest
+    var screenUpdateSetting = ScreenUpdateSetting.custom
     
     //These are required to limit the screen to a custom refresh rate
-    var screenUpdateTimeDuration = 0.06
-    var timeOfLastScreenUpdate: Double = 0.0
-
+    var screenUpdateTimeDuration : Double = 1/60
+    var timeOfLastScreenUpdate : Double = 0.0
     
     @objc func getOutputAmplitude(){
         DispatchQueue.main.async {
@@ -336,8 +325,6 @@ final class Conductor : ObservableObject{
             //Read amplitude coming out of the master
             self.outputAmplitudeLeft = self.outputAmplitudeTracker.leftAmplitude
             self.outputAmplitudeRight = self.outputAmplitudeTracker.rightAmplitude
-            
-            //print(self.outputAmplitude)
             
             //Read amplitude of any audio source that is displayed
             for i in 0..<self.allControlSources.count {
@@ -480,6 +467,10 @@ final class Conductor : ObservableObject{
             return FlangerAudioEffect(pos: pos)
         case 8:
             return AutoWahAudioEffect(pos: pos)
+        case 9:
+            return HighPassFilterAudioEffect(pos: pos)
+        case 10:
+            return LowPassFilterAudioEffect(pos: pos)
         default:
             print("I have an unexpected case.")
             return MoogLadderAudioEffect(pos: effectNumber)
@@ -548,6 +539,18 @@ final class Conductor : ObservableObject{
                      symbol: Image(systemName: "w.circle.fill"),
                      description: "An Automatic Wah Effect",
                      parameters: ["Wah","Dry/Wet"])
+        ,
+        ListedDevice(id: 9,
+                     display: "High Pass Filter",
+                     symbol: Image(systemName: "f.circle.fill"),
+                     description: "A Simple High Pass Filter",
+                     parameters: ["Cutoff","Resonance"])
+        ,
+        ListedDevice(id: 10,
+                     display: "Low Pass Filter",
+                     symbol: Image(systemName: "f.circle.fill"),
+                     description: "A Simple Low Pass Filter",
+                     parameters: ["Cutoff","Resonance"])
     ]
     
     // All Categories of Audio Sources

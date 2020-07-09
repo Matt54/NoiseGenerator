@@ -169,7 +169,9 @@ public class MicrophoneSource: AudioSource{
         
         stereoFieldLimiter.setOutput(to: volumeMixer.input)
         
-        setStereo()
+        //setStereo()
+        
+        setMono()
         
         //This is currently Mono, that should toggle based on user preference
         //let stereoFieldLimiter = AKStereoFieldLimiter(input)
@@ -693,12 +695,31 @@ public class MorphingOscillatorBank: ADSRVoiceBank{
 public class MorphingFMOscillatorBank: adsrPolyphonicController{
     
     var voices : [FMOscillatorVoice] = []
+    
     var oscillatorMixer = AKMixer()
     
     var displayWaveform : [Float] = []
-
+    
+    // actual highlighted wavetable
+    //var displayWaveTable : DisplayWaveTable!
+    
+    /// actualWaveTable
+    var actualWaveTable : AKTable!
+    
+    /// waveforms are the actual root wavetables that are used to calculate our current wavetable
     var waveforms : [AKTable] = []
-    var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
+
+    
+    /*
+    FROM:
+    https://www.futur3soundz.com/wavetable-synthesis
+    The waveform size in samples. It is usually a power-of-two value: 64, 256, 1024, 2048, etc., yet it can be any value.
+    Size does matter: as per the Nyquist theorem, a N-sized waveform can only hold N/2 partials.
+    This means that smaller sized waveforms will sound duller than bigger waveforms.
+    */
+    //var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
+    
+    var defaultWaves : [AKTable] = [AKTable(.sine, count: 1024), AKTable(.sawtooth, count: 1024)]
     
     var displayWaveTables : [DisplayWaveTable] = []
     @Published var displayIndex: Int = 0
@@ -713,11 +734,9 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         if(velocity > 0){
             let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
-            //newVoice.setADSR(attackDuration: attack, decayDuration: decay, sustainLevel: sustain, releaseDuration: release)
             newVoice.source.setOutput(to: oscillatorMixer)
             newVoice.play()
             voices.append(newVoice)
-            //print(AudioKit.engine.description)
         }
         else{
             let killVoices = voices.filter {$0.note == note}
@@ -768,16 +787,33 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         if(sender === waveformIndexControl){
             setWaveformIndexControl()
         }
-        else if(sender === modulationIndexControl){
-            setModulationIndexControl()
+        else if(sender === warpIndexControl){
+            setWarpIndexControl()
         }
     }
     
+    
+    // TODO: we need to change waveforms when we warp our wavetable
     var wavePosition: Int = 0{
         didSet{
+            
+            //let rootTable = waveforms[wavePosition]
+            
+            //let actualTable = calculateActualWaveTable(waveTable: waveforms[wavePosition])
+            
+            /*
+            actualWaveTable = calculateActualWaveTable(waveTable: waveforms[wavePosition])
+            
             for voice in voices{
-                voice.setWaveTable(table: waveforms[wavePosition])
+                voice.setWaveTable(table: actualWaveTable)//waveforms[wavePosition])
             }
+            
+            displayWaveform = [Float](actualWaveTable.content)
+            */
+            
+            calculateActualWaveTable()
+            
+            //displayWaveform = displayWaveTables[wavePosition].waveform
         }
     }
     
@@ -787,9 +823,9 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         }
     }
     
-    @Published var modulationIndexControl = KnobCompleteModel(){
+    @Published var warpIndexControl = KnobCompleteModel(){
         didSet{
-            setModulationIndexControl()
+            setWarpIndexControl()
         }
     }
     
@@ -797,6 +833,10 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         super.init(toggle: oscillatorMixer, node: oscillatorMixer)
         
         calculateAllWaveTables()
+        
+        calculateActualWaveTable()
+        
+        //actualWaveTable = calculateActualWaveTable(waveTable: waveforms[wavePosition])
         
         isSetup = true
         
@@ -808,23 +848,25 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         waveformIndexControl.handoffDelegate = self
         setWaveformIndexControl()
         
-        modulationIndexControl.name = "Mod Index"
-        modulationIndexControl.handoffDelegate = self
-        modulationIndexControl.range = 10
-        setModulationIndexControl()
+        warpIndexControl.name = "Warp Index"
+        warpIndexControl.handoffDelegate = self
+        //warpIndexControl.range = 1.0
+        setWarpIndexControl()
 
         selectedBlockDisplay = SelectedBlockDisplay.controls
         name = "FM OSC 1"
-
         
+        // These oscillators are loud by default
+        volumeMixer.volumeControl = 0.5
+
     }
     
     func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> FMOscillatorVoice{
         let newVoice = FMOscillatorVoice(note: note,
                                          velocity: velocity,
                                          channel: channel,
-                                         waveform: waveforms[wavePosition],
-                                         modulationIndex: modulationIndex,
+                                         waveform: actualWaveTable, //waveforms[wavePosition],
+                                         modulationIndex: 0.0,//modulationIndex,
                                          attackDuration: attack,
                                          decayDuration: decay,
                                          sustainLevel: sustain,
@@ -834,27 +876,102 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     }
     
     
+    /// sets the new wavePosition, which when set will calculate the actual WaveTable and displayWaveform
     func setWaveformIndexControl(){
+        
+        // Get Integer position of the waveform (root wavetable)
+        // This will call our wavePosition didSet which will calculate the actualWaveTable and displayWaveform
         wavePosition = Int(waveformIndexControl.realModValue * waveformIndexControl.range * numberOfWavePositions)
+        
+        // Get a String value of the integer for display
         waveformIndexControl.display = String(wavePosition)
+        
+        // We don't want to set this before we have created all of our root waveforms
+        /*
         if(isSetup){
-            displayWaveform = displayWaveTables[wavePosition].waveform //calculateDisplayWavetable()
+            
+            // we should replace this with setting a root waveform and then running it through a calculate method
+            displayWaveform = displayWaveTables[wavePosition].waveform
+            
+            // calculate method would allow for the ability to warp our wavetable
+            
         }
+        */
     }
     
-    var modulationIndex: Double = 0.0{
+    var warpIndex: Double = 0.0{
         didSet{
+            
+            calculateActualWaveTable()
+            
+            /*
             for voice in voices{
                 voice.source.modulationIndex = modulationIndex
-                //print(modulationIndex)
             }
+            */
         }
     }
     
-    func setModulationIndexControl(){
-        modulationIndex = modulationIndexControl.realModValue * modulationIndexControl.range
-        waveformIndexControl.display = String(modulationIndex)
+    func setWarpIndexControl(){
+        warpIndex = warpIndexControl.realModValue * warpIndexControl.range
+        waveformIndexControl.display = String(warpIndex)
     }
+    
+    /// This is called whenever we have an waveTable index or warp change to create a new waveTable
+    func calculateActualWaveTable() {
+
+        // get [Float] from our root table
+        /*
+        let rootFloats : [Float] = [Float](waveforms[wavePosition].content) //table
+        
+        // mirror warp
+        var newFloats : [Float] = []
+        for index in 1...rootFloats.count {
+            
+            if(warpIndex > index / rootFloats.count ){
+                //mirror it
+                newFloats.append(rootFloats[rootFloats.count - index])
+            }
+            else{
+                //get regular value
+                newFloats.append(rootFloats[index - 1])
+            }
+        }
+        */
+        
+        // set the actualWaveTable to the new floating point values
+        actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content)) //AKTable(newFloats)
+        
+        
+        
+        // apply waveTable to our voices
+        for voice in voices{
+            voice.setWaveTable(table: actualWaveTable)//waveforms[wavePosition])
+        }
+        
+        // calculate the new displayed wavetable
+        displayWaveform = [Float](actualWaveTable.content)
+        
+    }
+
+    /// returns a mirror warped waveTable created from the input floating point numbers and the modulationIndex
+    func mirrorWarp(rootFloats: [Float]) -> AKTable{
+        
+        var newFloats : [Float] = []
+        for index in 1...rootFloats.count {
+            
+            if(warpIndex > index / rootFloats.count ){
+                //mirror it
+                newFloats.append(rootFloats[rootFloats.count - index])
+            }
+            else{
+                //get regular value
+                newFloats.append(rootFloats[index - 1])
+            }
+        }
+        return AKTable(newFloats)
+    }
+    
 
     func calculateAllWaveTables(){
         
@@ -879,6 +996,8 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         displayWaveTables = []
         waveforms = []
         
+        let thresholdForExact = 0.01 * defaultWaves.count
+        
         // 0 -> 255 (256 total)
         for i in 0...numberOfWavePositions{
             
@@ -891,7 +1010,14 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
             
             // 0.4118 = 35 / 85 % 1.0
             // 0.5882 = 135 / 85 % 1.0
-            let interpolatedIndex = (Double(i) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            var interpolatedIndex = (Double(i) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            
+            if((1.0 - interpolatedIndex) < thresholdForExact){
+                interpolatedIndex = 1.0
+            }
+            else if(interpolatedIndex < thresholdForExact){
+                interpolatedIndex = 0.0
+            }
             
             // calculate float values
             let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](defaultWaves[waveformIndex]),
@@ -900,15 +1026,21 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
             
             displayWaveTables.append(tableElements)
             
-            /*
-            for i in tableElements.waveform.indices {
-                tableElements.waveform[i] *= 0.1
-            }
-            */
+            //TODO: determine why I used this 0.75
+            //waveforms.append( AKTable(tableElements.waveform.map { $0 * 0.75 } ) )
             
-            waveforms.append( AKTable(tableElements.waveform.map { $0 * 0.75 } ) )
+            //TODO: the above was a volume issue - we should just use a booster
+            waveforms.append( AKTable(tableElements.waveform) )
             
         }
+    }
+}
+
+/// A wrapper for a [Float]
+class DisplayWaveTable{
+    var waveform : [Float]
+    init(_ waveform: [Float]){
+        self.waveform = waveform
     }
 }
 
@@ -1418,13 +1550,7 @@ public class MorphingOscillatorVoice: ADSRVoice{
     }
 }
 
-/// A wrapper for a [Float]
-class DisplayWaveTable{
-    var waveform : [Float]
-    init(_ waveform: [Float]){
-        self.waveform = waveform
-    }
-}
+
 
 public class ListedCategory{
     @Published var id: Int

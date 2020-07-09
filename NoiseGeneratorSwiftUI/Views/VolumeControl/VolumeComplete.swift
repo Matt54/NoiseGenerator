@@ -3,7 +3,7 @@ import SwiftUI
 struct VolumeComplete: View {
     
     @Binding var volumeMixer: VolumeMixer
-    
+
     
     var body: some View {
         GeometryReader { geometry in

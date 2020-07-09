@@ -207,7 +207,7 @@ struct ModulationView: View {
                                     //Text("Click Me")
                                     
                                     MiniPattern(pattern: self.$pattern)
-                                        //.padding(geometry.size.width * 0.02)
+                                        .padding(geometry.size.width * 0.01)
                                         .border(Color.black, width: geometry.size.width * 0.01)
                                         .foregroundColor(Color.white)
                                         //.frame(width: geometry.size.width * 0.25,height: geometry.size.width * 0.25)

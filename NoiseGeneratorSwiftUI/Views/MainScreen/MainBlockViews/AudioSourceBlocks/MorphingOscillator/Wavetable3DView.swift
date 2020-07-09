@@ -10,9 +10,7 @@ import SwiftUI
 
 struct Wavetable3DView: View {
     
-    //@EnvironmentObject var noise: NoiseModel
     @Binding var oscillator: MorphingOscillatorBank
-    //@Binding var selectedIndex: Int
     @State var xOffset: CGFloat = 0.0
     @State var yOffset: CGFloat = 0.0
     
@@ -27,21 +25,6 @@ struct Wavetable3DView: View {
                 }
                 
             ZStack{
-                
-                //displayWaveTables
-                
-                /*
-                ForEach(self.oscillator.displayWaveTables.indices, id: \.self){ i in
-                    Group{
-                        Wavetable3DView(wavetable: self.oscillator.displayWaveTables[i].waveform)
-                        .frame(width: geometry.size.width * 0.5,
-                               height: geometry.size.height * 0.2)
-                        .offset(x: CGFloat(i) * geometry.size.width * 0.003,
-                                y: CGFloat(i) * geometry.size.height * -0.003)
-                    }
-                }
-                */
-                
                 
                 ForEach((0 ..< (self.oscillator.numberOf3DTables+1)).reversed(), id: \.self) { i in
                     Group{
@@ -60,38 +43,6 @@ struct Wavetable3DView: View {
                         }
                     }
                 }
-                
-                /*
-                Wavetable3DHighlightView(wavetable: self.oscillator.displayWaveTables[self.selectedIndex].waveform)
-                    .frame(width: geometry.size.width * 0.5,
-                           height: geometry.size.height * 0.2)
-                    .offset(x: CGFloat(self.selectedIndex) * geometry.size.width * 0.004,
-                            y: CGFloat(self.selectedIndex) * geometry.size.height * -0.006)
-                */
-                
-                
-                //.foregroundColor(Color.black)
-                
-                /*
-                ForEach(0 ..< 100) { number in
-                    Group{
-                        Rectangle()
-                            .stroke()
-                        //.fill(Color.white)
-                            .frame(width: geometry.size.width * 0.5,
-                                   height: geometry.size.height * 0.2)
-                        
-                            //.offset(x: 0, y: number * geometry.size.height * 0.01)
-                            //.rotation3DEffect(.degrees(-45), axis: (x: 0, y: 1, z: 0))
-                            //.rotation3DEffect(.degrees(-15), axis: (x: 1, y: 0, z: 0))
-                            //.rotation(Angle(degrees: 60), anchor:.bottom)
-                            //.rotationEffect(Angle(degrees: 10), anchor: .bottom)
-                            .offset(x: CGFloat(number) * geometry.size.width * 0.003,
-                                    y: CGFloat(number) * geometry.size.height * -0.003)
-                    }
-                    //.rotation3DEffect(.degrees(-15), axis: (x: 1, y: 1, z: -1))
-                }
-                */
             }
             .offset(x: geometry.size.width * -0.2, y: geometry.size.height * 0.3)
             }
@@ -102,7 +53,6 @@ struct Wavetable3DView: View {
 struct WaveformTransformView_Previews: PreviewProvider {
     static var previews: some View {
         Wavetable3DView(oscillator: .constant(MorphingOscillatorBank()))
-            //.environmentObject(NoiseModel.shared)
             .previewLayout(.fixed(width: 700, height: 400))
     }
 }
