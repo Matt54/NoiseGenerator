@@ -22,8 +22,8 @@ struct FMWavetable3DView: View {
             ZStack{
             Color.darkGray
                 .onAppear{
-                    self.xOffset = CGFloat(0.4) / CGFloat(self.oscillator.numberOfWavePositions + 1)
-                    self.yOffset = CGFloat(-0.6) / CGFloat(self.oscillator.numberOfWavePositions + 1)
+                    self.xOffset = CGFloat(0.4) / CGFloat(self.oscillator.numberOfWavePositions)
+                    self.yOffset = CGFloat(-0.6) / CGFloat(self.oscillator.numberOfWavePositions)
                 }
                 
             ZStack{
@@ -43,7 +43,7 @@ struct FMWavetable3DView: View {
                 */
                 
                 
-                ForEach((0 ..< (self.oscillator.numberOfWavePositions+1)).reversed(), id: \.self) { i in
+                ForEach((0 ..< (self.oscillator.numberOfWavePositions)).reversed(), id: \.self) { i in
                     Group{
                         Wavetable3D(wavetable: self.oscillator.displayWaveTables[i].waveform)
                         .frame(width: geometry.size.width * 0.5,

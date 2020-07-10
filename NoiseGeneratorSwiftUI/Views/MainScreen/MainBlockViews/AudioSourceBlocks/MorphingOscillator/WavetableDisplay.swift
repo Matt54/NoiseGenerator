@@ -116,7 +116,7 @@ class DrawView : UIView {
         bezierPath.addLine(to: CGPoint(x: 0.0, y: (1.0 - table[0] / absmax * padding) * height))
             
         //for index in 1..<table.count {
-        for index in stride(from: 1, to: table.count, by: table.count / 100){
+        for index in stride(from: 1, to: table.count, by: table.count / 256){
 
             let xPoint = Double(index) / table.count * width
 

@@ -1,6 +1,7 @@
 import AudioKit
 import Combine
 import SwiftUI
+import Accelerate
 
 public class AudioSource: Identifiable, ObservableObject, KnobModelHandoff{
     
@@ -713,20 +714,21 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     /*
     FROM:
     https://www.futur3soundz.com/wavetable-synthesis
-    The waveform size in samples. It is usually a power-of-two value: 64, 256, 1024, 2048, etc., yet it can be any value.
+    The waveform size in samples. It is usually a power-of-two value: 64, 128, 256, 512 ,1024, 2048, etc., yet it can be any value.
     Size does matter: as per the Nyquist theorem, a N-sized waveform can only hold N/2 partials.
     This means that smaller sized waveforms will sound duller than bigger waveforms.
     */
     //var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
     
-    var defaultWaves : [AKTable] = [AKTable(.sine, count: 1024), AKTable(.sawtooth, count: 1024)]
+    let wavetableSize = 512
+    var defaultWaves : [AKTable] = [AKTable(.sine, count: 512), AKTable(.sawtooth, count: 512)]
     
     var displayWaveTables : [DisplayWaveTable] = []
     @Published var displayIndex: Int = 0
     
     @Published var is3DView = false
     
-    var numberOfWavePositions = 255
+    var numberOfWavePositions = 256
     
     var isSetup = false
     
@@ -881,7 +883,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         
         // Get Integer position of the waveform (root wavetable)
         // This will call our wavePosition didSet which will calculate the actualWaveTable and displayWaveform
-        wavePosition = Int(waveformIndexControl.realModValue * waveformIndexControl.range * numberOfWavePositions)
+        wavePosition = Int(waveformIndexControl.realModValue * waveformIndexControl.range * (numberOfWavePositions-1) )
         
         // Get a String value of the integer for display
         waveformIndexControl.display = String(wavePosition)
@@ -940,8 +942,8 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         */
         
         // set the actualWaveTable to the new floating point values
-        actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content)) //AKTable(newFloats)
-        
+        actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        //actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
         
         
         // apply waveTable to our voices
@@ -972,6 +974,113 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         return AKTable(newFloats)
     }
     
+    /// returns a mirror warped waveTable created from the input floating point numbers and the modulationIndex
+    func syncWarp(rootFloats: [Float]) -> AKTable{
+        
+        var newFloats : [Float] = rootFloats
+        
+        let percentageIncrease = 15.0 * warpIndex + 1.0
+        
+        let newLength : Int = Int(rootFloats.count * percentageIncrease)
+        
+        var restartCount = rootFloats.count
+        
+        for index in rootFloats.count...newLength {
+            
+            /*
+            if( (index - 1) != 0  && (index - 1) % rootFloats.count == 0 ) {
+                restartCount = restartCount + rootFloats.count
+            }
+            */
+            
+            if(index != restartCount){
+            
+                if ( (index - 1) != restartCount && (index - 1) % rootFloats.count == 0 ) {
+                    restartCount = restartCount + rootFloats.count
+                }
+                
+                newFloats.append(rootFloats[index - 1 - restartCount])
+            
+            }
+            
+            /*
+            if(index <= rootFloats.count){
+                newFloats.append(rootFloats[index - 1])
+            }
+            else{
+                newFloats.append(rootFloats[index - 1 - rootFloats.count])
+            }
+            */
+        }
+        
+        //let a: [Float] = [0, 0.25, 1, 0.25, 0]
+        
+        //let a = [Float](repeating: 0,count: newFloats.count)
+        
+        //let b: [Float] = [0, 256, 512, 768, 1024]
+        
+        /*
+        let a : [Float] = Array(stride(from: 0.0, through: Float(newFloats.count - 1.0), by: 1.0))
+
+        let n = vDSP_Length(512)
+
+        var placeHolder = [Float](repeating: 0,
+                                  count: Int(n))
+
+
+        let stride = vDSP_Stride(1)
+
+        vDSP_vgenp(newFloats, stride,
+                   a, stride,
+                   &placeHolder, stride,
+                   n,
+                   vDSP_Length(a.count))
+        */
+        
+        //let result = placeHolder
+        
+        /*
+        let inputLength = vDSP_Length(newFloats.count)
+        
+        let filterLength: vDSP_Length = 2
+        let filter = [Float](repeating: 1 / Float(filterLength),
+                             count: Int(filterLength))
+        
+        let n = vDSP_Length((inputLength - filterLength) / vDSP_Length(decimationFactor)) + 1
+        
+
+        var outputSignal = [Float](repeating: 0,
+                                   count: Int(n))
+        */
+        
+        var biquadFilter: vDSP.Biquad<Float>?
+        
+        let biquadLowPass: [Double] = {
+            let a0 = 0.2858411474022905
+            let a1 = 0.571682294804581
+            let a2 = 0.2858411474022905
+            let b1 = -0.19471651170319748
+            let b2 = 0.3380811013123595
+            return [a0, a1, a2, b1, b2]
+        }()
+        
+        biquadFilter = vDSP.Biquad(coefficients: biquadLowPass,
+                                    channelCount: 1,
+                                    sectionCount: 1,
+                                    ofType: Float.self)
+        
+        let sampled = resample(array: biquadFilter!.apply(input: newFloats), toSize: wavetableSize)
+        
+        return AKTable(sampled)
+        
+        //return AKTable(placeHolder)
+    }
+    
+    func resample<T>(array: [T], toSize newSize: Int) -> [T] {
+        let size = array.count
+        return (0 ..< newSize).map { array[$0 * size / newSize] }
+    }
+    
 
     func calculateAllWaveTables(){
         
@@ -990,7 +1099,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
          */
         
         // 85 = 256 / 3
-        let rangeValue = (Double(numberOfWavePositions + 1) / Double(defaultWaves.count - 1)).rounded(.up)
+        let rangeValue = (Double(numberOfWavePositions) / Double(defaultWaves.count - 1)).rounded(.up)
         
         
         displayWaveTables = []
@@ -998,19 +1107,19 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         
         let thresholdForExact = 0.01 * defaultWaves.count
         
-        // 0 -> 255 (256 total)
-        for i in 0...numberOfWavePositions{
+        // 1 -> 256 (256 total)
+        for i in 1...numberOfWavePositions{
             
             // this lets us grab the appropriate wavetables in an arbitrary array of tables
             
             // 0 = Int(37 / 85)
             // 1 = Int(90 / 85)
             // 2 = Int(170 / 85)
-            let waveformIndex = Int(i / rangeValue) // % defaultWaves.count
+            let waveformIndex = Int( (i-1) / rangeValue) // % defaultWaves.count
             
             // 0.4118 = 35 / 85 % 1.0
             // 0.5882 = 135 / 85 % 1.0
-            var interpolatedIndex = (Double(i) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            var interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
             
             if((1.0 - interpolatedIndex) < thresholdForExact){
                 interpolatedIndex = 1.0
