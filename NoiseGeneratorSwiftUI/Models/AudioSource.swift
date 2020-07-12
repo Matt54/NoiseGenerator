@@ -720,8 +720,8 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     */
     //var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
     
-    let wavetableSize = 512
-    var defaultWaves : [AKTable] = [AKTable(.sine, count: 512), AKTable(.sawtooth, count: 512)]
+    let wavetableSize = 2048
+    var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.sawtooth, count: 2048)]
     
     var displayWaveTables : [DisplayWaveTable] = []
     @Published var displayIndex: Int = 0
@@ -729,6 +729,9 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     @Published var is3DView = false
     
     var numberOfWavePositions = 256
+    static var isWaveLocked = false
+    
+    var numberOfWarpPositions = 256
     
     var isSetup = false
     
@@ -736,7 +739,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
         if(velocity > 0){
             let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
-            newVoice.source.setOutput(to: oscillatorMixer)
+            newVoice.output.setOutput(to: oscillatorMixer)
             newVoice.play()
             voices.append(newVoice)
         }
@@ -887,24 +890,16 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         
         // Get a String value of the integer for display
         waveformIndexControl.display = String(wavePosition)
-        
-        // We don't want to set this before we have created all of our root waveforms
-        /*
-        if(isSetup){
-            
-            // we should replace this with setting a root waveform and then running it through a calculate method
-            displayWaveform = displayWaveTables[wavePosition].waveform
-            
-            // calculate method would allow for the ability to warp our wavetable
-            
-        }
-        */
     }
     
-    var warpIndex: Double = 0.0{
+    var warpIndex: Int = 0{
         didSet{
             
-            calculateActualWaveTable()
+            if(!MorphingFMOscillatorBank.isWaveLocked){
+                calculateActualWaveTable()
+            }
+            
+            //TODO: we need a "catch up" swap
             
             /*
             for voice in voices{
@@ -915,7 +910,11 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     }
     
     func setWarpIndexControl(){
-        warpIndex = warpIndexControl.realModValue * warpIndexControl.range
+        
+        //warpIndex = Int(warpIndexControl.realModValue * warpIndexControl.range)
+        
+        warpIndex = Int(warpIndexControl.realModValue * warpIndexControl.range * (numberOfWarpPositions-1) )
+        
         waveformIndexControl.display = String(warpIndex)
     }
     
@@ -942,13 +941,14 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         */
         
         // set the actualWaveTable to the new floating point values
-        actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
-        //actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        //actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
         
         
         // apply waveTable to our voices
         for voice in voices{
-            voice.setWaveTable(table: actualWaveTable)//waveforms[wavePosition])
+            //voice.setWaveTable(table: actualWaveTable)//waveforms[wavePosition])
+            voice.switchWaveTable(table: actualWaveTable)
         }
         
         // calculate the new displayed wavetable
@@ -959,10 +959,22 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     /// returns a mirror warped waveTable created from the input floating point numbers and the modulationIndex
     func mirrorWarp(rootFloats: [Float]) -> AKTable{
         
-        var newFloats : [Float] = []
+        //var newFloats : [Float] = []
+        
+        let warpPosition = Int(Double(warpIndex) / (numberOfWarpPositions - 1) * rootFloats.count)
+        
+        //mirrored values
+        var newFloats = vDSP.multiply(-1.0, rootFloats[0..<warpPosition])
+        //newFloats += rootFloats[rootFloats.count - warpPosition..<rootFloats.count].reversed()
+        
+        // regular values
+        newFloats += rootFloats[warpPosition..<rootFloats.count]
+        
+        /*
         for index in 1...rootFloats.count {
             
-            if(warpIndex > index / rootFloats.count ){
+            
+            if(index > warpPosition ){
                 //mirror it
                 newFloats.append(rootFloats[rootFloats.count - index])
             }
@@ -970,7 +982,10 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
                 //get regular value
                 newFloats.append(rootFloats[index - 1])
             }
+            
         }
+        */
+        
         return AKTable(newFloats)
     }
     
@@ -979,12 +994,32 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         
         var newFloats : [Float] = rootFloats
         
-        let percentageIncrease = 15.0 * warpIndex + 1.0
+        let percentageIncrease = 15.0 * pow(Double(warpIndex) / (numberOfWarpPositions - 1), 3) + 1.0
         
         let newLength : Int = Int(rootFloats.count * percentageIncrease)
         
-        var restartCount = rootFloats.count
+        //var restartCount = rootFloats.count
         
+        while (newLength - newFloats.count) > rootFloats.count{
+           newFloats += rootFloats
+        }
+        
+        let lastIndex = newLength - newFloats.count - 1
+        
+        if(lastIndex >= 0){
+            newFloats += rootFloats[0..<lastIndex]
+        }
+        
+        /*
+        var index = 0
+        
+        while newLength > newFloats.count{
+            newFloats += rootFloats
+            index = index + 1
+        }
+        */
+        
+        /*
         for index in rootFloats.count...newLength {
             
             /*
@@ -1011,7 +1046,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
                 newFloats.append(rootFloats[index - 1 - rootFloats.count])
             }
             */
-        }
+        }*/
         
         //let a: [Float] = [0, 0.25, 1, 0.25, 0]
         
@@ -1053,6 +1088,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
                                    count: Int(n))
         */
         
+        /*
         var biquadFilter: vDSP.Biquad<Float>?
         
         let biquadLowPass: [Double] = {
@@ -1070,6 +1106,9 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
                                     ofType: Float.self)
         
         let sampled = resample(array: biquadFilter!.apply(input: newFloats), toSize: wavetableSize)
+        */
+        
+        let sampled = resample(array: newFloats, toSize: wavetableSize)
         
         return AKTable(sampled)
         
@@ -1279,7 +1318,14 @@ public class adsrSourceWithoutControl{
 /// An audio sources containing a sound source with individual pitch control.
 public class FMOscillatorVoice{
     
+    var output = AKMixer()
+    
     var source : AKFMOscillatorBank
+    var sourceMixer = AKMixer()
+    var switchSource : AKFMOscillatorBank
+    var switchSourceMixer = AKMixer()
+    var isSwitched = true
+    //var isWaveLocked = false
     
     var frequency : Double = 100
     
@@ -1303,6 +1349,7 @@ public class FMOscillatorVoice{
         self.note = note
         self.channel = channel
         self.source = sourceNode
+        self.switchSource = sourceNode
         self.velocity = velocity
         
         
@@ -1324,9 +1371,29 @@ public class FMOscillatorVoice{
                                          pitchBend: 0.0,
                                          vibratoDepth: 0.0,
                                          vibratoRate: 1.0)
+        
+        self.switchSource = AKFMOscillatorBank(waveform: waveform,
+                                                carrierMultiplier: 1.0,
+                                                modulatingMultiplier: 1.0,
+                                                modulationIndex: modulationIndex,
+                                                attackDuration: attackDuration,
+                                                decayDuration: decayDuration,
+                                                sustainLevel: sustainLevel,
+                                                releaseDuration: releaseDuration,
+                                                pitchBend: 0.0,
+                                                vibratoDepth: 0.0,
+                                                vibratoRate: 1.0)
+    
+        source.setOutput(to: sourceMixer)
+        sourceMixer.setOutput(to: output)
+        switchSource.setOutput(to: switchSourceMixer)
+        switchSourceMixer.setOutput(to: output)
+        switchSourceMixer.volume = 0.0
+        
         self.velocity = velocity
         
-        source.rampDuration = 0.0001
+        source.rampDuration = 0.0
+        switchSource.rampDuration = 0.0
         //source.modulationIndex = 0.0
         //source.vibratoDepth = 0.0
         
@@ -1358,6 +1425,7 @@ public class FMOscillatorVoice{
     
     func kill(){
         source.stop(noteNumber: note)
+        switchSource.stop(noteNumber: note)
         //DispatchQueue.main.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
         /*
         DispatchQueue.global.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
@@ -1368,6 +1436,10 @@ public class FMOscillatorVoice{
         
         queue.asyncAfter(deadline: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0) {
             self.source.detach()
+            self.sourceMixer.detach()
+            self.switchSource.detach()
+            self.switchSourceMixer.detach()
+            self.output.detach()
         }
         
         //perform(#selector(killFM), with: nil, afterDelay: .now() + source.attackDuration + source.decayDuration + source.releaseDuration * 5.0)
@@ -1376,6 +1448,10 @@ public class FMOscillatorVoice{
     
     @objc func killFM(){
         self.source.detach()
+        self.switchSource.detach()
+        self.sourceMixer.detach()
+        self.switchSourceMixer.detach()
+        self.output.detach()
     }
     
     func setOscillatorFrequency(){
@@ -1393,12 +1469,63 @@ public class FMOscillatorVoice{
     }
     
     func setWaveTable(table: AKTable){
+        //table.phase = source.waveform!.phaseOffset
         source.waveform = table
+        //source.waveform?.phase = 0.0
+    }
+    
+    func switchWaveTable(table: AKTable){
+        if(!MorphingFMOscillatorBank.isWaveLocked){
+            MorphingFMOscillatorBank.isWaveLocked = true
+            if(isSwitched){
+                source.waveform = table
+            }
+            else{
+                switchSource.waveform = table
+            }
+            fadeSwitch()
+        }
+    }
+    
+    func fadeSwitch(){
+        
+        //trigger switching
+        let timer = RepeatingTimer(timeInterval: 0.0003) //30ms
+        
+        //RepeatingTimer.scheduledTimer(withTimeInterval: 0.0001, repeats: true) { timer in
+        
+        // [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        
+        timer.eventHandler = {
+            if(self.isSwitched){
+                self.sourceMixer.volume = self.sourceMixer.volume + 0.01
+                self.switchSourceMixer.volume = self.switchSourceMixer.volume - 0.01
+                
+                if self.sourceMixer.volume >= 1.0 {
+                    self.isSwitched = false
+                    MorphingFMOscillatorBank.isWaveLocked = false
+                    timer.cancel()
+                }
+            }
+            else{
+                self.switchSourceMixer.volume = self.switchSourceMixer.volume + 0.01
+                self.sourceMixer.volume = self.sourceMixer.volume - 0.01
+
+                if self.switchSourceMixer.volume >= 1.0 {
+                    self.isSwitched = true
+                    MorphingFMOscillatorBank.isWaveLocked = false
+                    timer.cancel()
+                }
+            }
+        }
+        timer.resume()
     }
     
     func play(){
         //let frequency = getFrequencyFromNoteAndPitchBend(note: note, pitchBend: pitchBend)
+        
         source.play(noteNumber: note, velocity: velocity, channel: channel)
+        switchSource.play(noteNumber: note, velocity: velocity, channel: channel)
     }
 }
 

@@ -151,7 +151,7 @@ final class Conductor : ObservableObject{
         //create a filter to play with
         createNewEffect(pos: allControlEffects.count, effectNumber: 1)
         
-        AKSettings.bufferLength = .medium
+        AKSettings.bufferLength = .short//.medium
         AKSettings.audioInputEnabled = true
         AKSettings.defaultToSpeaker = true
         

@@ -20,7 +20,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     var modulationValue = 0.0
     
-    var numberOfSteps = 100.0
+    var numberOfSteps = 100.0 //100.0
     //var refreshPerSecond = 60
     
     public var timeOfLastTimerAction: Double = 0.0
