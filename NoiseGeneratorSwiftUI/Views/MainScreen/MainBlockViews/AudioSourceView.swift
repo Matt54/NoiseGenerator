@@ -108,6 +108,13 @@ struct AudioSourceView: View {
                         }
                     }
                     
+                    ForEach(self.noise.customOscillatorControlSources.indices, id: \.self){ i in
+                        VStack(spacing: 0){
+                            if(self.noise.customOscillatorControlSources[i].isDisplayed){
+                                OscillatorView(morphingOscillator: self.$noise.customOscillatorControlSources[i])
+                            }
+                        }
+                    }
                     
                     ForEach(self.noise.basicSourceControllers.indices, id: \.self){ i in
                         VStack(spacing: 0){

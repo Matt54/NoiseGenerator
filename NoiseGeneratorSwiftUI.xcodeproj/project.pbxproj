@@ -17,6 +17,10 @@
 		FA0A4920248408AB00B5E790 /* BasicSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A491F248408AB00B5E790 /* BasicSourceView.swift */; };
 		FA0A68672469FF590016534A /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A68662469FF590016534A /* Tempo.swift */; };
 		FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0A6868246A01ED0016534A /* MainHeader.swift */; };
+		FA0D474224D1B6AA00E5DC2C /* OscillatorBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D474124D1B6AA00E5DC2C /* OscillatorBank.swift */; };
+		FA0D474424D1B96E00E5DC2C /* OscillatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D474324D1B96E00E5DC2C /* OscillatorView.swift */; };
+		FA0D474624D1B9D500E5DC2C /* OscillatorWavetable3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D474524D1B9D500E5DC2C /* OscillatorWavetable3DView.swift */; };
+		FA0D474824D1C72E00E5DC2C /* Acid.wav in Resources */ = {isa = PBXBuildFile; fileRef = FA0D474724D1C72E00E5DC2C /* Acid.wav */; };
 		FA1211A1246C31460077941E /* KeyBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1211A0246C31460077941E /* KeyBoard.swift */; };
 		FA1A0E0024772F8B00A8FC7D /* WavetableDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */; };
 		FA1C4B3A2458BEB600A7E442 /* VolumeComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */; };
@@ -128,6 +132,10 @@
 		FA0A491F248408AB00B5E790 /* BasicSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSourceView.swift; sourceTree = "<group>"; };
 		FA0A68662469FF590016534A /* Tempo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		FA0A6868246A01ED0016534A /* MainHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHeader.swift; sourceTree = "<group>"; };
+		FA0D474124D1B6AA00E5DC2C /* OscillatorBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OscillatorBank.swift; sourceTree = "<group>"; };
+		FA0D474324D1B96E00E5DC2C /* OscillatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OscillatorView.swift; sourceTree = "<group>"; };
+		FA0D474524D1B9D500E5DC2C /* OscillatorWavetable3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OscillatorWavetable3DView.swift; sourceTree = "<group>"; };
+		FA0D474724D1C72E00E5DC2C /* Acid.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Acid.wav; sourceTree = "<group>"; };
 		FA1211A0246C31460077941E /* KeyBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBoard.swift; sourceTree = "<group>"; };
 		FA1A0DFF24772F8B00A8FC7D /* WavetableDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavetableDisplay.swift; sourceTree = "<group>"; };
 		FA1C4B392458BEB600A7E442 /* VolumeComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeComplete.swift; sourceTree = "<group>"; };
@@ -301,8 +309,19 @@
 				FAE0DD65247C15800090C3A2 /* Wavetable3DView.swift */,
 				FAC46DD4248569BF003B3805 /* FMOscillatorView.swift */,
 				FAC46DD624856A23003B3805 /* FMWavetable3DView.swift */,
+				FA0D474324D1B96E00E5DC2C /* OscillatorView.swift */,
+				FA0D474524D1B9D500E5DC2C /* OscillatorWavetable3DView.swift */,
 			);
 			path = MorphingOscillator;
+			sourceTree = "<group>";
+		};
+		FA0D474024D1B4C200E5DC2C /* AudioSources */ = {
+			isa = PBXGroup;
+			children = (
+				FAE707D52465DC3500F27B31 /* AudioSource.swift */,
+				FA0D474124D1B6AA00E5DC2C /* OscillatorBank.swift */,
+			);
+			path = AudioSources;
 			sourceTree = "<group>";
 		};
 		FA220F632454848200AACE5B /* Models */ = {
@@ -318,7 +337,7 @@
 				FA3EAB212476AF99003638C0 /* Timing */,
 				FA3EAB202476AF7D003638C0 /* Helpers */,
 				FA093A352448A94A00BCD16C /* AudioEffect.swift */,
-				FAE707D52465DC3500F27B31 /* AudioSource.swift */,
+				FA0D474024D1B4C200E5DC2C /* AudioSources */,
 				FA220F61245483C700AACE5B /* KnobCompleteModel.swift */,
 				FA27D2FE24743D9D008BC9D3 /* VolumeMixer.swift */,
 				FA89B9C5247CB34C002593C3 /* iPhoneModel.swift */,
@@ -382,6 +401,7 @@
 		FA377A3424317C3000CBE2C4 /* NoiseGeneratorSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				FA0D474724D1C72E00E5DC2C /* Acid.wav */,
 				FAC8D759243B758C0010078B /* Audiobus.txt */,
 				FA986B4B243B611000700156 /* Audiobus.swift */,
 				FA986B4A243B604500700156 /* BridgingHeader.h */,
@@ -609,6 +629,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA377A4224317C3100CBE2C4 /* LaunchScreen.storyboard in Resources */,
+				FA0D474824D1C72E00E5DC2C /* Acid.wav in Resources */,
 				FA377A3F24317C3100CBE2C4 /* Preview Assets.xcassets in Resources */,
 				FAC8D75A243B758C0010078B /* Audiobus.txt in Resources */,
 				FA377A3C24317C3100CBE2C4 /* Assets.xcassets in Resources */,
@@ -649,7 +670,9 @@
 				FA7C8417247F1E5400F2B553 /* myKeyboard.swift in Sources */,
 				FAD334E7243E6410009B0DDF /* KnobControl.swift in Sources */,
 				FA1211A1246C31460077941E /* KeyBoard.swift in Sources */,
+				FA0D474424D1B96E00E5DC2C /* OscillatorView.swift in Sources */,
 				FA093A362448A94A00BCD16C /* AudioEffect.swift in Sources */,
+				FA0D474624D1B9D500E5DC2C /* OscillatorWavetable3DView.swift in Sources */,
 				FA1C4B3A2458BEB600A7E442 /* VolumeComplete.swift in Sources */,
 				FA1A0E0024772F8B00A8FC7D /* WavetableDisplay.swift in Sources */,
 				FA377A3624317C3000CBE2C4 /* AppDelegate.swift in Sources */,
@@ -671,6 +694,7 @@
 				FAC7922B2482D631006E5811 /* AddInstrumentForm.swift in Sources */,
 				FAEED71524811DD800B1F723 /* SourceCategoriesForm.swift in Sources */,
 				FA0A6869246A01ED0016534A /* MainHeader.swift in Sources */,
+				FA0D474224D1B6AA00E5DC2C /* OscillatorBank.swift in Sources */,
 				FAE707E02466186000F27B31 /* AddInputDeviceForm.swift in Sources */,
 				FABEB093246E22AA00C2F424 /* BluetoothMidiView.swift in Sources */,
 				FAE707D82465F80C00F27B31 /* AudioSourceView.swift in Sources */,

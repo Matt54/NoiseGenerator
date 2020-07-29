@@ -64,6 +64,7 @@ final class Conductor : ObservableObject{
     
     @Published var basicSourceControllers = [adsrPolyphonicController]()
     
+    @Published var customOscillatorControlSources = [OscillatorBank]()
     @Published var FMOscillatorControlSources = [MorphingFMOscillatorBank]()
     @Published var oscillatorControlSources = [MorphingOscillatorBank]()
     @Published var noiseControlSources = [NoiseSource]()
@@ -170,7 +171,8 @@ final class Conductor : ObservableObject{
         
         //create a morphing oscillator to play with
         //createNewSource(sourceNumber: 2)
-        createNewSource(sourceNumber: 8)
+        //createNewSource(sourceNumber: 8)
+        createNewSource(sourceNumber: 9)
         
         connectSourceToEffectChain()
         
@@ -198,6 +200,122 @@ final class Conductor : ObservableObject{
         //Calculate the padding and size of the keyboard based on the aspect ratio
         deviceLayout.calculateLayoutPadding()
         
+        parseWave()
+    }
+    
+    func parseWave(){
+        
+        do {
+            // Let's create an AKaudioFile :
+            let akAudioFile = try AKAudioFile(readFileName: "Acid.wav")
+            print("akAudioFile.sampleRate: \(akAudioFile.sampleRate)")
+            print("akAudioFile.duration: \(akAudioFile.duration)")
+            print("akAudioFile.length: \(akAudioFile.length)")
+            let numberOfCycles = akAudioFile.length / 2048
+            print("number of cycles:  \(numberOfCycles)")
+            
+            var waveforms : [AKTable] = []
+            
+            let myGroup = DispatchGroup()
+            
+            AKAudioFile.cleanTempDirectory()
+            
+            for i in 0 ..< numberOfCycles {
+                myGroup.enter()
+                let name : String = "exported_" + String(i) + ".wav"
+                akAudioFile.exportAsynchronously(name: name,
+                                                 baseDir: .temp,
+                                                      exportFormat: .wav,
+                                                      fromSample: 2048 * i,
+                                                      toSample: 2048 * (i+1)) { exportedFile, error in
+                    print("myExportCallBack has been triggered. It means that export ended")
+                    if error == nil {
+                        print("Export succeeded")
+                        // If it is valid, we can play it :
+                        if let successfulFile = exportedFile {
+                            print(successfulFile.fileNamePlusExtension)
+                            
+                            do{
+                                let tempFile = try AKAudioFile(readFileName: name,baseDir: .temp)
+                                let tempTable = AKTable(file: tempFile)
+                                waveforms.append(tempTable)
+                                myGroup.leave()
+                            }
+                            catch let error as NSError {
+                                print("There's an error: \(error)")
+                            }
+                            
+                        }
+
+                    } else {
+                        print(akAudioFile.fileNamePlusExtension)
+                        print("Export failed: \(error)")
+                    }
+                }
+            }
+            
+            myGroup.notify(queue: .main) {
+                print("Finished all requests.")
+                self.customOscillatorControlSources[0].switchWaveForms(newWaveforms: waveforms)
+            }
+            
+        } catch let error as NSError {
+            print("There's an error: \(error)")
+        }
+        
+        /*
+        let url = Bundle.main.url(forResource: "Acid", withExtension: "wav")!
+        let asset = AVAsset(url: url)
+        let formatsKey = "availableMetadataFormats"
+
+        
+        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
+            var error: NSError? = nil
+            let status = asset.statusOfValue(forKey: formatsKey, error: &error)
+            if status == .loaded {
+                for format in asset.availableMetadataFormats {
+                    let metadata = asset.metadata(forFormat: format)
+                    print(format)
+                    print(metadata)
+                    // process format-specific metadata collection
+                }
+            }
+        }
+        */
+        /*
+        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
+            var error: NSError? = nil
+            let status = asset.statusOfValue(forKey: formatsKey, error: &error)
+            if status == .loaded {
+                for format in asset.availableMetadataFormats {
+                    let metadata = asset.metadata(forFormat: format)
+                    print("format:\(format)")
+                    print("metadata description:\(metadata.description)")
+                }
+            }
+        }
+        */
+        // Create reference to the file whose metadata we want to retrieve
+        //let forestRef = storageRef.child("Acid.wav")
+        
+        /*
+        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
+            for metadata in asset.metadata{
+                print("metadata description:\(metadata.description)")
+            }
+        }
+        */
+
+        // Get metadata properties
+        /*
+        asset.metadata { metadata, error in
+          if let error = error {
+            // Uh-oh, an error occurred!
+          } else {
+            // Metadata now contains the metadata for 'images/forest.jpg'
+          }
+        }
+        */
     }
     
     func hideSources(){
@@ -373,6 +491,8 @@ final class Conductor : ObservableObject{
             return BellBank()
         case 8:
             return MorphingFMOscillatorBank()
+        case 9:
+            return OscillatorBank()
         default:
             print("I have an unexpected case.")
             return NoiseSource()
@@ -390,6 +510,10 @@ final class Conductor : ObservableObject{
         }
         else if let mySource = source as? MorphingFMOscillatorBank {
             FMOscillatorControlSources.append(mySource)
+            adsrPolyphonicControllers.append(mySource)
+        }
+        else if let mySource = source as? OscillatorBank {
+            customOscillatorControlSources.append(mySource)
             adsrPolyphonicControllers.append(mySource)
         }
         else if let mySource = source as? MicrophoneSource {
@@ -607,6 +731,12 @@ final class Conductor : ObservableObject{
                      description: "A wavetable oscillator with FM",
                      parameters: ["Amplitude", "Waveform"]
         ),
+        ListedDevice(id: 9,
+                     display: "Oscillator",
+                     symbol: Image(systemName: "waveform.circle"),
+                     description: "A wavetable oscillator",
+                     parameters: ["Amplitude", "Waveform"]
+        )
     ]
     
     // All Physical Sources that can be added

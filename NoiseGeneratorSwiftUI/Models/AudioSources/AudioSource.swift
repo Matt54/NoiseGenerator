@@ -589,7 +589,7 @@ public class ADSRVoiceBank: adsrPolyphonicController{
 public class MorphingOscillatorBank: ADSRVoiceBank{
 
     //REMEMBER THAT THIS MUST ALWAYS HAVE EXACTLY 4 TABLES (WE USE 1 AND 2)
-    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.square), AKTable(.triangle)]
+    var waveforms : [AKTable] = [AKTable(.sine), AKTable(.square), AKTable(.sawtooth), AKTable(.triangle)]
     var displayWaveform : [Float] = [Float](AKTable(.sine))
     
     var displayWaveTables : [DisplayWaveTable] = []
@@ -711,6 +711,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     var waveforms : [AKTable] = []
 
     
+    
     /*
     FROM:
     https://www.futur3soundz.com/wavetable-synthesis
@@ -721,7 +722,9 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     //var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
     
     let wavetableSize = 2048
-    var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.sawtooth, count: 2048)]
+    var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.sawtooth, count: 2048), AKTable(.square, count: 2048)]
+    //var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048),  AKTable(.square, count: 2048)]
+    //var waveforms : [AKTable] = [AKTable(.sine), AKTable(.sawtooth), AKTable(.square), AKTable(.triangle)]
     
     var displayWaveTables : [DisplayWaveTable] = []
     @Published var displayIndex: Int = 0
@@ -797,8 +800,6 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         }
     }
     
-    
-    // TODO: we need to change waveforms when we warp our wavetable
     var wavePosition: Int = 0{
         didSet{
             
@@ -942,7 +943,8 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
         
         // set the actualWaveTable to the new floating point values
         //actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
-        actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        //actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        actualWaveTable = pwmWarp(rootFloats: [Float](waveforms[wavePosition].content))
         
         
         // apply waveTable to our voices
@@ -990,6 +992,26 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
     }
     
     /// returns a mirror warped waveTable created from the input floating point numbers and the modulationIndex
+    func pwmWarp(rootFloats: [Float]) -> AKTable{
+        
+        var newFloats : [Float] = rootFloats
+        
+        // 0.0 to 1.0
+        let warpPercent = Double(warpIndex) / Double(numberOfWarpPositions - 1)
+        
+        var sampled = [Float](repeating: 0.0,count: newFloats.count)
+        
+        if(warpPercent != 1.0){
+            //var addAmount = 0.0
+            let addAmount = Int(newFloats.count / (1.0 - warpPercent) - newFloats.count)
+            newFloats += [Float](repeating: ( (-1) * rootFloats[wavetableSize-1] ),count: addAmount)
+            sampled = resample(array: newFloats, toSize: wavetableSize)
+        }
+        
+        return AKTable(sampled)
+    }
+    
+    /// returns a mirror warped waveTable created from the input floating point numbers and the modulationIndex
     func syncWarp(rootFloats: [Float]) -> AKTable{
         
         var newFloats : [Float] = rootFloats
@@ -1010,6 +1032,8 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
             newFloats += rootFloats[0..<lastIndex]
         }
         
+        
+
         /*
         var index = 0
         
@@ -1161,24 +1185,27 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
             var interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
             
             if((1.0 - interpolatedIndex) < thresholdForExact){
-                interpolatedIndex = 1.0
+                //interpolatedIndex = 1.0
+                let tableElements = DisplayWaveTable([Float](defaultWaves[waveformIndex+1]))
+                displayWaveTables.append(tableElements)
+                waveforms.append( AKTable(tableElements.waveform) )
             }
             else if(interpolatedIndex < thresholdForExact){
-                interpolatedIndex = 0.0
+                //interpolatedIndex = 0.0
+                let tableElements = DisplayWaveTable([Float](defaultWaves[waveformIndex]))
+                displayWaveTables.append(tableElements)
+                waveforms.append( AKTable(tableElements.waveform) )
+            }
+            else{
+                // calculate float values
+                let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](defaultWaves[waveformIndex]),
+                                                                            [Float](defaultWaves[waveformIndex+1]),
+                                                                            using: Float(interpolatedIndex) ) ) )
+                displayWaveTables.append(tableElements)
+                waveforms.append( AKTable(tableElements.waveform) )
             }
             
-            // calculate float values
-            let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](defaultWaves[waveformIndex]),
-                                                                        [Float](defaultWaves[waveformIndex+1]),
-                                                                        using: Float(interpolatedIndex) ) ) )
             
-            displayWaveTables.append(tableElements)
-            
-            //TODO: determine why I used this 0.75
-            //waveforms.append( AKTable(tableElements.waveform.map { $0 * 0.75 } ) )
-            
-            //TODO: the above was a volume issue - we should just use a booster
-            waveforms.append( AKTable(tableElements.waveform) )
             
         }
     }
@@ -1490,7 +1517,7 @@ public class FMOscillatorVoice{
     func fadeSwitch(){
         
         //trigger switching
-        let timer = RepeatingTimer(timeInterval: 0.0003) //30ms
+        let timer = RepeatingTimer(timeInterval: 0.0001) //30ms
         
         //RepeatingTimer.scheduledTimer(withTimeInterval: 0.0001, repeats: true) { timer in
         
