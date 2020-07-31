@@ -11,125 +11,80 @@ import Combine
 import SwiftUI
 import Accelerate
 
-/// A container for many morphing voices with FM
+/// A bank of oscillator voices capable of morphing and warping wavetables
 public class OscillatorBank: adsrPolyphonicController{
     
+    /// list of oscillator voices
     var voices : [OscillatorVoice] = []
     
+    /// common mixer for all of the oscillator voices
     var oscillatorMixer = AKMixer()
     
+    // TODO: DETERMINE IF THIS IS BEING USED
     var displayWaveform : [Float] = []
     
-    // actual highlighted wavetable
-    //var displayWaveTable : DisplayWaveTable!
-    
-    /// actualWaveTable
+    /// The real wavetable from which the oscillators are pulling values
     var actualWaveTable : AKTable!
     
-    /// waveforms are the actual root wavetables that are used to calculate our current wavetable
+    /// Root wavetables that are used to calculate our current wavetable (can be warped from these to get actualWaveTable)
     var waveforms : [AKTable] = []
 
-    
-    /*
-    FROM:
-    https://www.futur3soundz.com/wavetable-synthesis
-    The waveform size in samples. It is usually a power-of-two value: 64, 128, 256, 512 ,1024, 2048, etc., yet it can be any value.
-    Size does matter: as per the Nyquist theorem, a N-sized waveform can only hold N/2 partials.
-    This means that smaller sized waveforms will sound duller than bigger waveforms.
-    */
-    //var defaultWaves : [AKTable] = [AKTable(.sine, count: 4096), AKTable(.sawtooth, count: 4096)]
-    
+    /// Number of floating point samples in the AKTable for each wavetable
     let wavetableSize = 2048
-    //var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.sawtooth, count: 2048), AKTable(.square, count: 2048)]
-    //var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048),  AKTable(.square, count: 2048)]
-    var defaultWaves : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.triangle, count: 2048), AKTable(.square, count: 2048), AKTable(.sawtooth, count: 2048)]
     
+    /// Wavetable Name to Display
+    @Published var wavetableName = "Default"
+    
+    /// Input wavetables that are interpolated to create the waveforms
+    var inputWaveTables : [AKTable] = [AKTable(.sine, count: 2048), AKTable(.triangle, count: 2048), AKTable(.square, count: 2048), AKTable(.sawtooth, count: 2048)]
+    
+    /// The collection of wavetables that display in the 3D View
     var displayWaveTables : [DisplayWaveTable] = []
-    @Published var displayIndex: Int = 0
     
+    /// Tells the UI to display wavetable as 2D (false) or 3D (true)
     @Published var is3DView = false
     
-    var numberOfWavePositions = 256
-    static var isWaveLocked = false
-    
-    var numberOfWarpPositions = 256
-    
+    /// This prevents unwanted calculations during initialization (probably could be removed in favor of more appropriate initialization procedure)
     var isSetup = false
     
-    //This is handling both the on and the off events
-    override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
-        if(velocity > 0){
-            let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
-            newVoice.output.setOutput(to: oscillatorMixer)
-            newVoice.play()
-            voices.append(newVoice)
-        }
-        else{
-            let killVoices = voices.filter {$0.note == note}
-            for killVoice in killVoices{
-                killVoice.kill()
-            }
-            voices = voices.filter {$0.note != note}
-        }
-    }
+    /// When true, prevents a new wavetable swap
+    static var isWaveLocked = false
     
-    override func attackControlChange(){
-        for voice in voices{
-            voice.source.attackDuration = attack
-        }
-    }
-     override func decayControlChange(){
-         for voice in voices{
-             voice.source.decayDuration = decay
-         }
-     }
-     override func sustainControlChange(){
-         for voice in voices{
-             voice.source.sustainLevel = sustain
-         }
-     }
-     override func releaseControlChange(){
-         for voice in voices{
-             voice.source.releaseDuration = release
-         }
-     }
+    /// The number of wave tables (think resolution of the interpolation between the wavetables fed in)
+    var numberOfWavePositions = 256
     
-    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
-        for voice in voices{
-            if(voice.channel.hex == channel.hex){
-                //print("same channel")
-                voice.pitchBend = pitchWheelValue
-            }
-        }
-    }
-    
-    /* Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter */
-    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
-        checkCustomControls(sender)
-        checkControlsADSR(sender)
-    }
-    
-    func checkCustomControls(_ sender: KnobCompleteModel){
-        if(sender === waveformIndexControl){
-            setWaveformIndexControl()
-        }
-        else if(sender === warpIndexControl){
-            setWarpIndexControl()
-        }
-    }
-    
+    /// Determines the actual root wavetable that is used to calculate the actualWaveTable
     var wavePosition: Int = 0{
         didSet{
             calculateActualWaveTable()
         }
     }
     
+    /// Controller which adjusts the wavePosition
     @Published var waveformIndexControl = KnobCompleteModel(){
         didSet{
             setWaveformIndexControl()
         }
     }
     
+    /// determines which warp mode is used to calculate the actual wavetable
+    var warpMode : WarpMode = .none
+    
+    /// The resolution of the wavetable warp
+    var numberOfWarpPositions = 256
+    
+    /// Determines the amount the root wavetable is warped according to the selected WarpMode
+    var warpIndex: Int = 0{
+        didSet{
+            
+            if(!OscillatorBank.isWaveLocked){
+                calculateActualWaveTable()
+            }
+            //TODO: we need a "catch up" swap
+        }
+    }
+    
+    /// Controller which adjusts the warpIndex
     @Published var warpIndexControl = KnobCompleteModel(){
         didSet{
             setWarpIndexControl()
@@ -167,6 +122,75 @@ public class OscillatorBank: adsrPolyphonicController{
 
     }
     
+    ///Handles both the on and the off events (velocity = 0 means note off)
+    override func play(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel){
+        if(velocity > 0){
+            let newVoice = createSpecificVoice(note: note, velocity: velocity, channel: channel)
+            newVoice.output.setOutput(to: oscillatorMixer)
+            newVoice.play()
+            voices.append(newVoice)
+        }
+        else{
+            let killVoices = voices.filter {$0.note == note}
+            for killVoice in killVoices{
+                killVoice.kill()
+            }
+            voices = voices.filter {$0.note != note}
+        }
+    }
+    
+    /// passes new attack value to all the voices
+    override func attackControlChange(){
+        for voice in voices{
+            voice.source.attackDuration = attack
+        }
+    }
+    
+    /// passes new decay value to all the voices
+    override func decayControlChange(){
+        for voice in voices{
+         voice.source.decayDuration = decay
+        }
+    }
+    
+    /// passes new sustain value to all the voices
+    override func sustainControlChange(){
+        for voice in voices{
+         voice.source.sustainLevel = sustain
+        }
+    }
+    
+    /// passes new release value to all the voices
+    override func releaseControlChange(){
+        for voice in voices{
+         voice.source.releaseDuration = release
+        }
+    }
+    
+    /// Determines which voice the pitch bend is associated with and forwards it to that oscillator
+    func handlePitchBend(pitchWheelValue: MIDIWord, channel: MIDIChannel){
+        for voice in voices{
+            if(voice.channel.hex == channel.hex){
+                voice.pitchBend = pitchWheelValue
+            }
+        }
+    }
+    
+    ///Determines which KnobCompleteModel sent the change and forwards the update to the appropriate parameter
+    override func modulationValueWasChanged(_ sender: KnobCompleteModel) {
+        checkCustomControls(sender)
+        checkControlsADSR(sender)
+    }
+    
+    func checkCustomControls(_ sender: KnobCompleteModel){
+        if(sender === waveformIndexControl){
+            setWaveformIndexControl()
+        }
+        else if(sender === warpIndexControl){
+            setWarpIndexControl()
+        }
+    }
+    
     func createSpecificVoice(note: MIDINoteNumber, velocity: MIDIVelocity, channel: MIDIChannel) -> OscillatorVoice{
         let newVoice = OscillatorVoice(note: note,
                                          velocity: velocity,
@@ -191,70 +215,37 @@ public class OscillatorBank: adsrPolyphonicController{
         waveformIndexControl.display = String(wavePosition)
     }
     
-    var warpIndex: Int = 0{
-        didSet{
-            
-            if(!OscillatorBank.isWaveLocked){
-                calculateActualWaveTable()
-            }
-            
-            //TODO: we need a "catch up" swap
-            
-            /*
-            for voice in voices{
-                voice.source.modulationIndex = modulationIndex
-            }
-            */
-        }
-    }
-    
+    /// Sets the new warp index and the associated string display value
     func setWarpIndexControl(){
-        
-        //warpIndex = Int(warpIndexControl.realModValue * warpIndexControl.range)
-        
         warpIndex = Int(warpIndexControl.realModValue * warpIndexControl.range * (numberOfWarpPositions-1) )
-        
         waveformIndexControl.display = String(warpIndex)
     }
     
-    func switchWaveForms(newWaveforms: [AKTable]){
-        //waveforms = newWaveforms
-        defaultWaves = newWaveforms
+    /// Sets the newWaveforms as the inputWaveTables and then interpolates them to create the oscillator banks waveforms
+    func switchWaveForms(newWaveforms: [AKTable], name: String){
+        inputWaveTables = newWaveforms
+        wavetableName = name
         calculateAllWaveTables()
         calculateActualWaveTable()
     }
     
     /// This is called whenever we have an waveTable index or warp change to create a new waveTable
     func calculateActualWaveTable() {
-
-        // get [Float] from our root table
-        /*
-        let rootFloats : [Float] = [Float](waveforms[wavePosition].content) //table
         
-        // mirror warp
-        var newFloats : [Float] = []
-        for index in 1...rootFloats.count {
-            
-            if(warpIndex > index / rootFloats.count ){
-                //mirror it
-                newFloats.append(rootFloats[rootFloats.count - index])
-            }
-            else{
-                //get regular value
-                newFloats.append(rootFloats[index - 1])
-            }
+        // select correct algorithm to determine new actualWaveTable
+        switch warpMode {
+        case .none:
+            actualWaveTable = waveforms[wavePosition]
+        case .pwm:
+            actualWaveTable = pwmWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        case .mirror:
+            actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
+        case .sync:
+            actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
         }
-        */
         
-        // set the actualWaveTable to the new floating point values
-        //actualWaveTable = mirrorWarp(rootFloats: [Float](waveforms[wavePosition].content))
-        //actualWaveTable = syncWarp(rootFloats: [Float](waveforms[wavePosition].content))
-        actualWaveTable = pwmWarp(rootFloats: [Float](waveforms[wavePosition].content))
-        
-        
-        // apply waveTable to our voices
+        // apply actualWaveTable to our voices
         for voice in voices{
-            //voice.setWaveTable(table: actualWaveTable)//waveforms[wavePosition])
             voice.switchWaveTable(table: actualWaveTable)
         }
         
@@ -363,13 +354,13 @@ public class OscillatorBank: adsrPolyphonicController{
          */
         
         // 85 = 256 / 3
-        let rangeValue = (Double(numberOfWavePositions) / Double(defaultWaves.count - 1)).rounded(.up)
+        let rangeValue = (Double(numberOfWavePositions) / Double(inputWaveTables.count - 1)).rounded(.up)
         
         
         displayWaveTables = []
         waveforms = []
         
-        let thresholdForExact = 0.01 * defaultWaves.count
+        let thresholdForExact = 0.01 * inputWaveTables.count
         
         // 1 -> 256 (256 total)
         for i in 1...numberOfWavePositions{
@@ -387,20 +378,20 @@ public class OscillatorBank: adsrPolyphonicController{
             
             if((1.0 - interpolatedIndex) < thresholdForExact){
                 //interpolatedIndex = 1.0
-                let tableElements = DisplayWaveTable([Float](defaultWaves[waveformIndex+1]))
+                let tableElements = DisplayWaveTable([Float](inputWaveTables[waveformIndex+1]))
                 displayWaveTables.append(tableElements)
                 waveforms.append( AKTable(tableElements.waveform) )
             }
             else if(interpolatedIndex < thresholdForExact){
                 //interpolatedIndex = 0.0
-                let tableElements = DisplayWaveTable([Float](defaultWaves[waveformIndex]))
+                let tableElements = DisplayWaveTable([Float](inputWaveTables[waveformIndex]))
                 displayWaveTables.append(tableElements)
                 waveforms.append( AKTable(tableElements.waveform) )
             }
             else{
                 // calculate float values
-                let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](defaultWaves[waveformIndex]),
-                                                                            [Float](defaultWaves[waveformIndex+1]),
+                let tableElements = DisplayWaveTable([Float](vDSP.linearInterpolate([Float](inputWaveTables[waveformIndex]),
+                                                                            [Float](inputWaveTables[waveformIndex+1]),
                                                                             using: Float(interpolatedIndex) ) ) )
                 displayWaveTables.append(tableElements)
                 waveforms.append( AKTable(tableElements.waveform) )
@@ -521,7 +512,7 @@ public class OscillatorVoice{
     }
     
     deinit{
-        print("killed the voice")
+        //print("killed the voice")
     }
     
     func setWaveTable(table: AKTable){
@@ -576,4 +567,8 @@ public class OscillatorVoice{
         source.play(noteNumber: note, velocity: velocity, channel: channel)
         switchSource.play(noteNumber: note, velocity: velocity, channel: channel)
     }
+}
+
+enum WarpMode: Int {
+    case none = 1, mirror, sync, pwm
 }

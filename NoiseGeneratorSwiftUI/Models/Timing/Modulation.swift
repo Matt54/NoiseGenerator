@@ -70,7 +70,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
     
     @Published var timeInterval = 0.01{
         didSet {
-            print("Hit timeInterval didSet")
+            //print("Hit timeInterval didSet")
             if(!isBypassed){
                 var leftoverTime = 0.0
                 if(!(timeOfLastTimerAction == 0)){
@@ -83,7 +83,7 @@ public class Modulation : Identifiable, ObservableObject, KnobModelHandoff{
                 else{
                     setTimeInterval(timeInterval: timeInterval)
                 }
-                print("timeInterval didSet: " +  String(timeInterval))
+                //print("timeInterval didSet: " +  String(timeInterval))
             }
         }
     }

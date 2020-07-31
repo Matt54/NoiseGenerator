@@ -85,22 +85,22 @@ class DrawView : UIView {
             bgcolor.setFill()
             border.fill()
             UIColor.black.setStroke()
-            border.lineWidth =  CGFloat(width * 0.015) //8
-            border.stroke()
+            //border.lineWidth =  CGFloat(width * 0.015) //8
+            //border.stroke()
             UIColor.white.setStroke()
             UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.7).setFill()
             
         }
         else{
             if(!isHighlightView){
-                UIColor(red:1.0, green:1.0, blue:1.0, alpha:0.5).setStroke()
-                UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.025).setFill()
+                UIColor(red:1.0, green:1.0, blue:1.0, alpha:0.2).setStroke()
+                UIColor(red:0.05, green:1.0, blue:0.3, alpha:0.005).setFill()
             }
             else{
                 
                 //neon yellow
                 UIColor(red:0.98, green:0.93, blue:0.15, alpha:1.0).setStroke()
-                UIColor(red:0.98, green:0.93, blue:0.15, alpha:0.4).setFill()
+                UIColor(red:0.98, green:0.93, blue:0.15, alpha:0.8).setFill()
             }
         }
 

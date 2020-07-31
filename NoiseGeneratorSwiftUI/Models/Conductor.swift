@@ -190,6 +190,8 @@ final class Conductor : ObservableObject{
             assert(false, error.localizedDescription)
         }
         
+        AKAudioFile.cleanTempDirectory()
+        
         //START AUDIOBUS
         Audiobus.start()
 
@@ -203,11 +205,55 @@ final class Conductor : ObservableObject{
         parseWave()
     }
     
+    func getAllPListFrom(_ subdir:String)->[URL]? {
+        guard let fURL = Bundle.main.urls(forResourcesWithExtension: "plist", subdirectory: subdir) else { return nil }
+        return fURL
+    }
+    
     func parseWave(){
+        
+        var wavetablePath = ""
+        var wavetableName = ""
+        
+        
+        let directoryPath = Bundle.main.resourcePath! + "/Wavetables"
+        let fileManager = FileManager.default
+
+        do {
+            let directoryArray = try fileManager.contentsOfDirectory(atPath: directoryPath)
+            for file in directoryArray{
+                print(file)
+            }
+            let wavetableDirectory = directoryArray.randomElement()!
+            let wavetableDirectoryPath = Bundle.main.resourcePath! + "/Wavetables/" + wavetableDirectory
+            let wavetableArray = try fileManager.contentsOfDirectory(atPath: wavetableDirectoryPath)
+            for file in wavetableArray{
+                print(file)
+            }
+            
+            // grab the name of the file without the extension to display
+            let wavetableFileName = wavetableArray.randomElement()!
+            let split = wavetableFileName.components(separatedBy: ".")
+            wavetableName = split[0]
+            
+            wavetablePath = "Wavetables/" + wavetableDirectory + "/" + wavetableFileName
+        } catch {
+            print(error)
+        }
+        
+        /*
+        if let files = try? FileManager.default.contentsOfDirectory(atPath: Bundle.main.bundlePath ){
+            for file in files {
+                print(file)
+            }
+        }
+        */
+        
+        print("chosen wavetable: " + wavetableName)
         
         do {
             // Let's create an AKaudioFile :
-            let akAudioFile = try AKAudioFile(readFileName: "Acid.wav")
+            let akAudioFile = try AKAudioFile(readFileName: wavetablePath)
             print("akAudioFile.sampleRate: \(akAudioFile.sampleRate)")
             print("akAudioFile.duration: \(akAudioFile.duration)")
             print("akAudioFile.length: \(akAudioFile.length)")
@@ -218,7 +264,7 @@ final class Conductor : ObservableObject{
             
             let myGroup = DispatchGroup()
             
-            AKAudioFile.cleanTempDirectory()
+            
             
             for i in 0 ..< numberOfCycles {
                 myGroup.enter()
@@ -228,12 +274,12 @@ final class Conductor : ObservableObject{
                                                       exportFormat: .wav,
                                                       fromSample: 2048 * i,
                                                       toSample: 2048 * (i+1)) { exportedFile, error in
-                    print("myExportCallBack has been triggered. It means that export ended")
+                    //print("myExportCallBack has been triggered. It means that export ended")
                     if error == nil {
-                        print("Export succeeded")
+                        //print("Export succeeded")
                         // If it is valid, we can play it :
                         if let successfulFile = exportedFile {
-                            print(successfulFile.fileNamePlusExtension)
+                            //print(successfulFile.fileNamePlusExtension)
                             
                             do{
                                 let tempFile = try AKAudioFile(readFileName: name,baseDir: .temp)
@@ -256,7 +302,8 @@ final class Conductor : ObservableObject{
             
             myGroup.notify(queue: .main) {
                 print("Finished all requests.")
-                self.customOscillatorControlSources[0].switchWaveForms(newWaveforms: waveforms)
+                self.customOscillatorControlSources[0].switchWaveForms(newWaveforms: waveforms, name: wavetableName)
+                AKAudioFile.cleanTempDirectory()
             }
             
         } catch let error as NSError {

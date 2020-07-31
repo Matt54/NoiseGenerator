@@ -30,36 +30,50 @@ struct OscillatorView: View {
                         if(self.morphingOscillator.selectedBlockDisplay == .controls){
                             VStack(spacing: geometry.size.height * 0.02){
                                 
-                                Text("Wavetable Plot")
-                                .bold()
-                                .textStyle(ShrinkTextStyle())
-                                .frame(height: geometry.size.height * 0.1)
-                                
-                                Button(action: {
-                                    self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
-                                }){
-                                     if(self.morphingOscillator.is3DView){
-                                         OscillatorWavetable3DView(oscillator: self.$morphingOscillator)
-                                     }
-                                     else{
-                                        WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
+                                ZStack(alignment: .top){
+                                    
+                                    VStack(spacing: 0.0){
+                                        
+                                        ZStack{
+                                            Rectangle()
+                                                .fill(Color.init(UIColor(red:0.2, green:0.2, blue:0.2, alpha: 1.0)))
+                                            Text(self.morphingOscillator.wavetableName)
+                                                .bold()
+                                                .textStyle(ShrinkTextStyle())
+                                                .foregroundColor(.white)
+                                        }
+                                        //.border(Color.black, width: geometry.size.width * 0.5 * 0.015)
+                                        .frame(height: geometry.size.height * 0.1)
+                                        
+                                        Divider()
+                                        
+                                        Button(action: {
+                                            self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
+                                        }){
+                                             if(self.morphingOscillator.is3DView){
+                                                 OscillatorWavetable3DView(oscillator: self.$morphingOscillator)
+                                                    //.padding(geometry.size.width * 0.4 * 0.015)
+                                                    //.border(Color.black, width: geometry.size.width * 0.4 * 0.015)
+                                             }
+                                             else{
+                                                WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
+                                            }
+                                        }
                                     }
+                                    
                                 }
                                 .padding(geometry.size.height * 0.01)
                                 .border(Color.black, width: geometry.size.height * 0.01)
-                                .frame(width: geometry.size.width * 0.6,
-                                       height: geometry.size.height * 0.4)
-                                
+                                .padding(geometry.size.height * 0.03)
+                                .frame(height: geometry.size.height * 0.55)
                                 
                                 
                                 HStack(spacing: 0){
                                     
-                                    KnobVerticalStack(knobModel: self.$morphingOscillator.waveformIndexControl,
-                                                    removeValue: true)
+                                    KnobVerticalStack(knobModel: self.$morphingOscillator.waveformIndexControl, removeValue: true)
                                     .frame(width: geometry.size.width * 0.5)
                                     
-                                    KnobVerticalStack(knobModel: self.$morphingOscillator.warpIndexControl,
-                                                      removeValue: true)
+                                    KnobVerticalStack(knobModel: self.$morphingOscillator.warpIndexControl, removeValue: true)
                                     .frame(width: geometry.size.width * 0.5)
                                 }
                             }
