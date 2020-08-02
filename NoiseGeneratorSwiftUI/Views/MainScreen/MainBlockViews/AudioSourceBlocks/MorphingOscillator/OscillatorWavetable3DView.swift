@@ -11,20 +11,29 @@ import SwiftUI
 struct OscillatorWavetable3DView: View {
     
     //@EnvironmentObject var noise: NoiseModel
+    
     @Binding var oscillator: OscillatorBank
-    //@Binding var selectedIndex: Int
-    @State var xOffset: CGFloat = 0.0
-    @State var yOffset: CGFloat = 0.0
+    @State private var xOffset: CGFloat = 0.0
+    @State private var yOffset: CGFloat = 0.0
+    
+    init(oscillator: Binding<OscillatorBank>) {
+        self._oscillator = oscillator
+
+        _xOffset = State(initialValue: CGFloat(0.45) / CGFloat(self.oscillator.numberOfWavePositions))
+        _yOffset = State(initialValue: CGFloat(-0.6) / CGFloat(self.oscillator.numberOfWavePositions))
+    }
     
     var body: some View {
-        GeometryReader
+        
+        return GeometryReader
         { geometry in
             ZStack{
             Color.darkGray
+                /*
                 .onAppear{
-                    self.xOffset = CGFloat(0.45) / CGFloat(self.oscillator.numberOfWavePositions)
-                    self.yOffset = CGFloat(-0.6) / CGFloat(self.oscillator.numberOfWavePositions)
-                }
+                    //self.xOffset = CGFloat(0.45) / CGFloat(self.oscillator.numberOfWavePositions)
+                    //self.yOffset = CGFloat(-0.6) / CGFloat(self.oscillator.numberOfWavePositions)
+                }*/
                 
             ZStack{
                 

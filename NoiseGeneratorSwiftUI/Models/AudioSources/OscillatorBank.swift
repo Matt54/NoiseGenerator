@@ -50,6 +50,9 @@ public class OscillatorBank: adsrPolyphonicController{
     /// When true, prevents a new wavetable swap
     static var isWaveLocked = false
     
+    /// Currently Loading new wavetable
+    @Published var isWavetableSwap = false
+    
     /// The number of wave tables (think resolution of the interpolation between the wavetables fed in)
     var numberOfWavePositions = 256
     
@@ -120,6 +123,7 @@ public class OscillatorBank: adsrPolyphonicController{
         // These oscillators are loud by default
         volumeMixer.volumeControl = 0.5
 
+        //parseWave()
     }
     
     ///Handles both the on and the off events (velocity = 0 means note off)
@@ -233,6 +237,7 @@ public class OscillatorBank: adsrPolyphonicController{
     func calculateActualWaveTable() {
         
         // select correct algorithm to determine new actualWaveTable
+        //TODO: bug - caught Fatal error: Index out of range during waveform switch
         switch warpMode {
         case .none:
             actualWaveTable = waveforms[wavePosition]
@@ -374,7 +379,7 @@ public class OscillatorBank: adsrPolyphonicController{
             
             // 0.4118 = 35 / 85 % 1.0
             // 0.5882 = 135 / 85 % 1.0
-            var interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            let interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
             
             if((1.0 - interpolatedIndex) < thresholdForExact){
                 //interpolatedIndex = 1.0
@@ -398,6 +403,175 @@ public class OscillatorBank: adsrPolyphonicController{
             }
         }
     }
+    
+    /*func testLoadWavetable(){
+        loadWavetable(wavetableURL: DirectorySystem.sharedInstance.getNextWavetable()!)
+        //loadWavetable(wavetableURL: DirectorySystem.sharedInstance.getURLForWavetable(name: "Acid.wav")!)
+    }*/
+    
+    func loadWavetable(wavetableURL: URL){
+        isWavetableSwap = true
+        do {
+            let akAudioFile = try AKAudioFile(forReading: wavetableURL)
+            print("akAudioFile.sampleRate: \(akAudioFile.sampleRate)")
+            print("akAudioFile.duration: \(akAudioFile.duration)")
+            print("akAudioFile.length: \(akAudioFile.length)")
+            let numberOfCycles = akAudioFile.length / 2048
+            print("number of cycles:  \(numberOfCycles)")
+            
+            var newWaveforms : [AKTable] = []
+            
+            let myGroup = DispatchGroup()
+            
+            for i in 0 ..< numberOfCycles {
+                myGroup.enter()
+                let name : String = "exported_" + String(i) + ".wav"
+                
+                /*do { // delete old video
+                    try FileManager.default.removeItem(at: URL(fileURLWithPath:name) )
+                } catch { print(error.localizedDescription) }*/
+                akAudioFile.exportAsynchronously(name: name,
+                                                 baseDir: .temp,
+                                                      exportFormat: .wav,
+                                                      fromSample: 2048 * i,
+                                                      toSample: 2048 * (i+1))
+                { exportedFile, error in
+                    if error == nil {
+                        if let successfulFile = exportedFile {
+                            let tempTable = AKTable(file: successfulFile)
+                            newWaveforms.append(tempTable)
+                            myGroup.leave()
+                        }
+
+                    } else {
+                        print(akAudioFile.fileNamePlusExtension)
+                        print("Export failed: \(String(describing: error))")
+                    }
+                }
+            }
+            
+            myGroup.notify(queue: .main) {
+                print("Finished all requests.")
+                self.switchWaveForms(newWaveforms: newWaveforms, name: wavetableURL.deletingPathExtension().lastPathComponent)
+                AKAudioFile.cleanTempDirectory()
+                self.isWavetableSwap = false
+            }
+        } catch let error as NSError {
+            print("There's an error: \(error)")
+        }
+        
+    }
+    
+    func randomizeWaveform(){
+        
+        var wavetablePath = ""
+        var newWavetableName = ""
+        
+        
+        let directoryPath = Bundle.main.resourcePath! + "/Wavetables"
+        let fileManager = FileManager.default
+
+        do {
+            let directoryArray = try fileManager.contentsOfDirectory(atPath: directoryPath)
+            for file in directoryArray{
+                print(file)
+            }
+            let wavetableDirectory = directoryArray.randomElement()!
+            let wavetableDirectoryPath = Bundle.main.resourcePath! + "/Wavetables/" + wavetableDirectory
+            let wavetableArray = try fileManager.contentsOfDirectory(atPath: wavetableDirectoryPath)
+            for file in wavetableArray{
+                print(file)
+            }
+            
+            // grab the name of the file without the extension to display
+            let wavetableFileName = wavetableArray.randomElement()!
+            newWavetableName = wavetableFileName
+            //let split = wavetableFileName.components(separatedBy: ".")
+           // newWavetableName = split[0]
+            
+            wavetablePath = "Wavetables/" + wavetableDirectory + "/" + wavetableFileName
+        } catch {
+            print(error)
+        }
+        
+        /*
+        if let files = try? FileManager.default.contentsOfDirectory(atPath: Bundle.main.bundlePath ){
+            for file in files {
+                print(file)
+            }
+        }
+        */
+        
+        print("chosen wavetable: " + wavetableName)
+        
+        let url = DirectorySystem.sharedInstance.getURLForWavetable(name: newWavetableName)
+        loadWavetable(wavetableURL: url!)
+        
+        /*
+        do {
+            // Let's create an AKaudioFile :
+            let akAudioFile = try AKAudioFile(readFileName: wavetablePath)
+            print("akAudioFile.sampleRate: \(akAudioFile.sampleRate)")
+            print("akAudioFile.duration: \(akAudioFile.duration)")
+            print("akAudioFile.length: \(akAudioFile.length)")
+            let numberOfCycles = akAudioFile.length / 2048
+            print("number of cycles:  \(numberOfCycles)")
+            
+            var newWaveforms : [AKTable] = []
+            
+            let myGroup = DispatchGroup()
+            
+            
+            
+            for i in 0 ..< numberOfCycles {
+                myGroup.enter()
+                let name : String = "exported_" + String(i) + ".wav"
+                akAudioFile.exportAsynchronously(name: name,
+                                                 baseDir: .temp,
+                                                      exportFormat: .wav,
+                                                      fromSample: 2048 * i,
+                                                      toSample: 2048 * (i+1)) { exportedFile, error in
+                    //print("myExportCallBack has been triggered. It means that export ended")
+                    if error == nil {
+                        //print("Export succeeded")
+                        // If it is valid, we can play it :
+                        if let successfulFile = exportedFile {
+                            //print(successfulFile.fileNamePlusExtension)
+                            
+                            //do{
+                                //let tempFile = try AKAudioFile(readFileName: name,baseDir: .temp)
+                                //let tempTable = AKTable(file: tempFile)
+                            let tempTable = AKTable(file: successfulFile)
+                            newWaveforms.append(tempTable)
+                            myGroup.leave()
+                            //}
+                            /*
+                            catch let error as NSError {
+                                print("There's an error: \(error)")
+                            }*/
+                            
+                        }
+
+                    } else {
+                        print(akAudioFile.fileNamePlusExtension)
+                        print("Export failed: \(String(describing: error))")
+                    }
+                }
+            }
+            
+            myGroup.notify(queue: .main) {
+                print("Finished all requests.")
+                self.switchWaveForms(newWaveforms: newWaveforms, name: newWavetableName)
+                //self.customOscillatorControlSources[0].switchWaveForms(newWaveforms: waveforms, name: wavetableName)
+                AKAudioFile.cleanTempDirectory()
+            }
+            
+        } catch let error as NSError {
+            print("There's an error: \(error)")
+        }
+        */
+    }
+    
 }
 
 /// An audio sources containing a sound source with individual pitch control.

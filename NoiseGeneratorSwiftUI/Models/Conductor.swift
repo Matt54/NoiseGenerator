@@ -173,6 +173,7 @@ final class Conductor : ObservableObject{
         //createNewSource(sourceNumber: 2)
         //createNewSource(sourceNumber: 8)
         createNewSource(sourceNumber: 9)
+        //createNewSource(sourceNumber: 1)
         
         connectSourceToEffectChain()
         
@@ -202,167 +203,12 @@ final class Conductor : ObservableObject{
         //Calculate the padding and size of the keyboard based on the aspect ratio
         deviceLayout.calculateLayoutPadding()
         
-        parseWave()
+        //parseWave()
     }
     
     func getAllPListFrom(_ subdir:String)->[URL]? {
         guard let fURL = Bundle.main.urls(forResourcesWithExtension: "plist", subdirectory: subdir) else { return nil }
         return fURL
-    }
-    
-    func parseWave(){
-        
-        var wavetablePath = ""
-        var wavetableName = ""
-        
-        
-        let directoryPath = Bundle.main.resourcePath! + "/Wavetables"
-        let fileManager = FileManager.default
-
-        do {
-            let directoryArray = try fileManager.contentsOfDirectory(atPath: directoryPath)
-            for file in directoryArray{
-                print(file)
-            }
-            let wavetableDirectory = directoryArray.randomElement()!
-            let wavetableDirectoryPath = Bundle.main.resourcePath! + "/Wavetables/" + wavetableDirectory
-            let wavetableArray = try fileManager.contentsOfDirectory(atPath: wavetableDirectoryPath)
-            for file in wavetableArray{
-                print(file)
-            }
-            
-            // grab the name of the file without the extension to display
-            let wavetableFileName = wavetableArray.randomElement()!
-            let split = wavetableFileName.components(separatedBy: ".")
-            wavetableName = split[0]
-            
-            wavetablePath = "Wavetables/" + wavetableDirectory + "/" + wavetableFileName
-        } catch {
-            print(error)
-        }
-        
-        /*
-        if let files = try? FileManager.default.contentsOfDirectory(atPath: Bundle.main.bundlePath ){
-            for file in files {
-                print(file)
-            }
-        }
-        */
-        
-        print("chosen wavetable: " + wavetableName)
-        
-        do {
-            // Let's create an AKaudioFile :
-            let akAudioFile = try AKAudioFile(readFileName: wavetablePath)
-            print("akAudioFile.sampleRate: \(akAudioFile.sampleRate)")
-            print("akAudioFile.duration: \(akAudioFile.duration)")
-            print("akAudioFile.length: \(akAudioFile.length)")
-            let numberOfCycles = akAudioFile.length / 2048
-            print("number of cycles:  \(numberOfCycles)")
-            
-            var waveforms : [AKTable] = []
-            
-            let myGroup = DispatchGroup()
-            
-            
-            
-            for i in 0 ..< numberOfCycles {
-                myGroup.enter()
-                let name : String = "exported_" + String(i) + ".wav"
-                akAudioFile.exportAsynchronously(name: name,
-                                                 baseDir: .temp,
-                                                      exportFormat: .wav,
-                                                      fromSample: 2048 * i,
-                                                      toSample: 2048 * (i+1)) { exportedFile, error in
-                    //print("myExportCallBack has been triggered. It means that export ended")
-                    if error == nil {
-                        //print("Export succeeded")
-                        // If it is valid, we can play it :
-                        if let successfulFile = exportedFile {
-                            //print(successfulFile.fileNamePlusExtension)
-                            
-                            do{
-                                let tempFile = try AKAudioFile(readFileName: name,baseDir: .temp)
-                                let tempTable = AKTable(file: tempFile)
-                                waveforms.append(tempTable)
-                                myGroup.leave()
-                            }
-                            catch let error as NSError {
-                                print("There's an error: \(error)")
-                            }
-                            
-                        }
-
-                    } else {
-                        print(akAudioFile.fileNamePlusExtension)
-                        print("Export failed: \(error)")
-                    }
-                }
-            }
-            
-            myGroup.notify(queue: .main) {
-                print("Finished all requests.")
-                self.customOscillatorControlSources[0].switchWaveForms(newWaveforms: waveforms, name: wavetableName)
-                AKAudioFile.cleanTempDirectory()
-            }
-            
-        } catch let error as NSError {
-            print("There's an error: \(error)")
-        }
-        
-        /*
-        let url = Bundle.main.url(forResource: "Acid", withExtension: "wav")!
-        let asset = AVAsset(url: url)
-        let formatsKey = "availableMetadataFormats"
-
-        
-        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
-            var error: NSError? = nil
-            let status = asset.statusOfValue(forKey: formatsKey, error: &error)
-            if status == .loaded {
-                for format in asset.availableMetadataFormats {
-                    let metadata = asset.metadata(forFormat: format)
-                    print(format)
-                    print(metadata)
-                    // process format-specific metadata collection
-                }
-            }
-        }
-        */
-        /*
-        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
-            var error: NSError? = nil
-            let status = asset.statusOfValue(forKey: formatsKey, error: &error)
-            if status == .loaded {
-                for format in asset.availableMetadataFormats {
-                    let metadata = asset.metadata(forFormat: format)
-                    print("format:\(format)")
-                    print("metadata description:\(metadata.description)")
-                }
-            }
-        }
-        */
-        // Create reference to the file whose metadata we want to retrieve
-        //let forestRef = storageRef.child("Acid.wav")
-        
-        /*
-        asset.loadValuesAsynchronously(forKeys: [formatsKey]) {
-            for metadata in asset.metadata{
-                print("metadata description:\(metadata.description)")
-            }
-        }
-        */
-
-        // Get metadata properties
-        /*
-        asset.metadata { metadata, error in
-          if let error = error {
-            // Uh-oh, an error occurred!
-          } else {
-            // Metadata now contains the metadata for 'images/forest.jpg'
-          }
-        }
-        */
     }
     
     func hideSources(){
@@ -848,4 +694,79 @@ public enum SelectedBlockDisplay{
     var name: String {
         return "\(self)"
     }
+}
+
+class DirectorySystem {
+    static let sharedInstance = DirectorySystem()
+    
+    let wavetablePath = Bundle.main.resourcePath! + "/Wavetables"
+    var wavetableCategories : [String] = []
+    var wavetableCategoryIndex = 0
+    var wavetableWavFiles : [[String]] = []
+    var wavetableFileIndex = 0
+    
+    init(){
+        let fileManager = FileManager.default
+        do {
+            
+            // get array of children (categories) at the wavetable directory location
+            let categoryArray = try fileManager.contentsOfDirectory(atPath: wavetablePath)
+            
+            // go through all the categories
+            for categoryName in categoryArray{
+                
+                //get the category name and path
+                wavetableCategories.append(categoryName)
+                let categoryPath = wavetablePath + "/" + categoryName
+                
+                // get array of children (wav files) at the category directory location
+                let wavetableArray = try fileManager.contentsOfDirectory(atPath: categoryPath)
+                
+                // get all the wav file names for a category and push them into our list of lists
+                var wavetableListForCategory : [String] = []
+                for wavetableName in wavetableArray{
+                    wavetableListForCategory.append(wavetableName)
+                }
+                wavetableWavFiles.append(wavetableListForCategory)
+
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func getURLForWavetable(name: String) -> URL? {
+        for i in 0...wavetableWavFiles.count - 1 {
+            if wavetableWavFiles[i].contains(name) {
+                return URL(fileURLWithPath: wavetablePath + "/" + wavetableCategories[i] + "/" + name)
+            }
+        }
+        return nil
+    }
+    
+    func getNextWavetable() -> URL? {
+        wavetableFileIndex += 1
+        if(wavetableFileIndex > wavetableWavFiles[wavetableCategoryIndex].count - 1){
+            wavetableFileIndex = 0
+            wavetableCategoryIndex += 1
+            if(wavetableCategoryIndex > wavetableCategories.count - 1){
+                wavetableCategoryIndex = 0
+            }
+        }
+        return getURLForWavetable(name: wavetableWavFiles[wavetableCategoryIndex][wavetableFileIndex])
+    }
+    
+    func getPreviousWavetable() -> URL? {
+        wavetableFileIndex -= 1
+        if(wavetableFileIndex < 0){
+            wavetableFileIndex = 0
+            wavetableCategoryIndex -= 1
+            if(wavetableCategoryIndex < 0){
+                wavetableCategoryIndex = wavetableCategories.count - 1
+                wavetableFileIndex = wavetableWavFiles[wavetableCategoryIndex].count - 1
+            }
+        }
+        return getURLForWavetable(name: wavetableWavFiles[wavetableCategoryIndex][wavetableFileIndex])
+    }
+    
 }

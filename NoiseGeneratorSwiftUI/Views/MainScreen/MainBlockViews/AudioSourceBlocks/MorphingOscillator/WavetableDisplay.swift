@@ -13,7 +13,7 @@ import AudioKit
 struct WavetableDisplay: View {
     
     @Binding var wavetable: [Float]
-    @State var pointCount: Int = 1
+    //@State var pointCount: Int = 1
     var resolutionFactor: Int = 40
     
     var body: some View {
@@ -21,7 +21,7 @@ struct WavetableDisplay: View {
         { geometry in
             ZStack{
                 Color.darkGray
-                    .onAppear{self.pointCount = self.wavetable.count}
+                    //.onAppear{self.pointCount = self.wavetable.count}
                 
                 ZStack{
                     WavetableView(wavetable: self.$wavetable)

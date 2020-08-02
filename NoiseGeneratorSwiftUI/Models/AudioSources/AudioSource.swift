@@ -1182,7 +1182,7 @@ public class MorphingFMOscillatorBank: adsrPolyphonicController{
             
             // 0.4118 = 35 / 85 % 1.0
             // 0.5882 = 135 / 85 % 1.0
-            var interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
+            let interpolatedIndex = (Double(i-1) / rangeValue).truncatingRemainder(dividingBy: 1.0)
             
             if((1.0 - interpolatedIndex) < thresholdForExact){
                 //interpolatedIndex = 1.0

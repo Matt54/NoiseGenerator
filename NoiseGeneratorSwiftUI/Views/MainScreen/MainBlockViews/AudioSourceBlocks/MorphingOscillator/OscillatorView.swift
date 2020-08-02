@@ -13,14 +13,68 @@ struct OscillatorView: View {
     @EnvironmentObject var noise: Conductor
     @Binding var morphingOscillator: OscillatorBank
     
-    //@Binding var knobModColor: Color
-    //@Binding var specialSelection: SpecialSelection
+    // how far the circle has been dragged
+    @State private var offset = CGSize.zero
+
+    // whether it is currently being dragged or not
+    @State private var isDragging = false
+    
+    @State private var swipeDistance : CGFloat = 0.0
     
     var body: some View {
-        GeometryReader
+        
+        // a drag gesture that updates offset and isDragging as it moves around
+        let dragGesture = DragGesture(minimumDistance: 0.0, coordinateSpace: .local)
+            .onChanged {
+                value in self.offset = value.translation
+                print(value.location.x)
+                
+                //if(!self.hasDragged){ self.hasDragged = true }
+                
+                //print(self.offset)
+                
+                if(!self.morphingOscillator.isWavetableSwap){
+                    if(value.location.x > self.swipeDistance){
+                        self.offset = .zero
+                        self.isDragging = false
+                        self.morphingOscillator.loadWavetable(wavetableURL: DirectorySystem.sharedInstance.getNextWavetable()!)
+                    }
+                    else if(value.location.x < 0){
+                        self.offset = .zero
+                        self.isDragging = false
+                        self.morphingOscillator.loadWavetable(wavetableURL: DirectorySystem.sharedInstance.getPreviousWavetable()!)
+                        
+                    }
+                }
+                
+            }
+            .onEnded { _ in
+                withAnimation {
+                    self.offset = .zero
+                    self.isDragging = false
+                    print("drag ended")
+                }
+            }
+
+        // a long press gesture that enables isDragging
+        let pressGesture = LongPressGesture(minimumDuration: 0.5)
+            .onEnded { value in
+                withAnimation {
+                    if(!self.morphingOscillator.isWavetableSwap){
+                        self.isDragging = true
+                        print("is Dragging is true")
+                    }
+                }
+            }
+        
+        // a combined gesture that forces the user to long press then drag
+        let combined = pressGesture.sequenced(before: dragGesture)
+        
+        return GeometryReader
         { geometryOut in
             GeometryReader
             { geometry in
+
                 VStack(spacing: 0){
                     
                     HStack(spacing: 0){
@@ -47,34 +101,87 @@ struct OscillatorView: View {
                                         
                                         Divider()
                                         
-                                        Button(action: {
+                                        /*Button(action: {
                                             self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
-                                        }){
+                                        }){*/
+                                        
+                                        ZStack{
                                              if(self.morphingOscillator.is3DView){
                                                  OscillatorWavetable3DView(oscillator: self.$morphingOscillator)
-                                                    //.padding(geometry.size.width * 0.4 * 0.015)
-                                                    //.border(Color.black, width: geometry.size.width * 0.4 * 0.015)
                                              }
                                              else{
                                                 WavetableDisplay(wavetable: self.$morphingOscillator.displayWaveform)
                                             }
+                                            if(self.isDragging){
+                                                HStack(spacing: 0.0){
+                                                    Image(systemName: "arrowtriangle.left.fill")
+                                                        .resizable()
+                                                        .aspectRatio(0.5, contentMode: .fit)
+                                                        .padding(geometry.size.height * 0.07)
+                                                        .foregroundColor(Color.white)
+                                                        .background(Color.black)
+                                                        .opacity(0.4)
+                                                    
+                                                    
+                                                    ZStack{
+                                                        Rectangle().opacity(0.4)
+                                                            
+                                                        Text("SWAP WAVETABLE")
+                                                            .bold()
+                                                            .textStyle(ShrinkTextStyle())
+                                                            .foregroundColor(.white)
+                                                    }
+                                                    
+                                                    
+                                                    Image(systemName: "arrowtriangle.right.fill")
+                                                        .resizable()
+                                                        .aspectRatio(0.5, contentMode: .fit)
+                                                        .padding(geometry.size.height * 0.07)
+                                                        .foregroundColor(Color.white)
+                                                        .background(Color.black)
+                                                        .opacity(0.4)
+                                                }.animation(.easeInOut)
+                                            
+                                            }
+                                            if(self.morphingOscillator.isWavetableSwap){
+                                                ZStack{
+                                                    Rectangle()
+                                                        
+                                                    Text("Loading")
+                                                        .bold()
+                                                        .textStyle(ShrinkTextStyle())
+                                                        .foregroundColor(.white)
+                                                    }.opacity(0.5)
+                                            }
                                         }
+                                        .onTapGesture(count: 2){
+                                            self.morphingOscillator.randomizeWaveform()
+                                        }
+                                        .onTapGesture {
+                                            self.morphingOscillator.is3DView = !self.morphingOscillator.is3DView
+                                            self.offset = .zero
+                                            self.isDragging = false
+                                        }
+                                        .simultaneousGesture(combined)
+                                        
+                                        //.gesture(combined)
+                                        .onAppear(perform: {self.swipeDistance = geometry.size.width})
+                                        
                                     }
                                     
                                 }
                                 .padding(geometry.size.height * 0.01)
                                 .border(Color.black, width: geometry.size.height * 0.01)
-                                .padding(geometry.size.height * 0.03)
-                                .frame(height: geometry.size.height * 0.55)
+                                //.padding(geometry.size.height * 0.03)
+                                .frame(height: geometry.size.height * 0.5)
                                 
                                 
                                 HStack(spacing: 0){
-                                    
                                     KnobVerticalStack(knobModel: self.$morphingOscillator.waveformIndexControl, removeValue: true)
-                                    .frame(width: geometry.size.width * 0.5)
+                                    //.frame(width: geometry.size.width * 0.5)
                                     
                                     KnobVerticalStack(knobModel: self.$morphingOscillator.warpIndexControl, removeValue: true)
-                                    .frame(width: geometry.size.width * 0.5)
+                                    //.frame(width: geometry.size.width * 0.5)
                                 }
                             }
                             //.frame(width: geometry.size.width)
